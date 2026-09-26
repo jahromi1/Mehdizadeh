@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>امتیاز کلاس</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4ef; --card:#ffffff; --text:#241f1a; --muted:#8a8078;
+  --brand:#2f6f4f; --brand2:#8a5a2b; --green:#e6f4ea; --green-t:#1e7a3d;
+  --red:#fbe9e7; --red-t:#c0392b; --border:#e7e1d8;
+  --great:#2e7d32; --good:#8bc34a; --ok:#f4c430; --weak:#e53935;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#1c1a17; --card:#262320; --text:#f1ece4; --muted:#a89e92;
+    --green:#173a24; --green-t:#5fd58b; --red:#3a1c1a; --red-t:#ff8a7a; --border:#3a352f;
+  }
+}
+html,body{height:100%;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Vazirmatn,Tahoma,sans-serif;}
+.wrap{max-width:480px;margin:0 auto;padding:16px;}
+h1{font-size:20px;margin:8px 0 16px;text-align:center;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:12px;}
+.btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;background:var(--brand);color:#fff;font-family:inherit;font-size:16px;font-weight:600;cursor:pointer;margin-top:10px;position:relative;overflow:hidden;transition:transform .12s ease;}
+.btn:active{transform:scale(0.97);}
+.btn.alt{background:var(--brand2);}
+.btn.sm{width:auto;padding:8px 12px;font-size:14px;margin:0 0 0 6px;}
+.btn.xs{width:auto;padding:4px 8px;font-size:12px;margin:0 0 0 4px;}
+.btn.danger{background:var(--red-t);}
+.btn.ghost{background:transparent;color:var(--brand);border:1px solid var(--brand);}
+.btn:not(.sm):not(.xs):not(.ghost):not(.danger){animation:pulseGlow 2.6s ease-in-out infinite;}
+.btn.alt:not(.sm):not(.xs){animation:pulseGlowAlt 2.6s ease-in-out infinite;}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 rgba(47,111,79,0);}50%{box-shadow:0 0 16px rgba(47,111,79,.55);}}
+@keyframes pulseGlowAlt{0%,100%{box-shadow:0 0 0 rgba(138,90,43,0);}50%{box-shadow:0 0 16px rgba(138,90,43,.5);}}
+.btn:not(.sm):not(.xs):not(.ghost)::after{
+  content:"";position:absolute;top:0;right:-60%;width:40%;height:100%;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.35),transparent);
+  transform:skewX(-20deg);animation:sweep 3.4s ease-in-out infinite;
+}
+@keyframes sweep{0%{right:-60%;}45%{right:120%;}100%{right:120%;}}
+@media (prefers-reduced-motion: reduce){ .btn,.btn::after,.tab.active{animation:none !important;} }
+input[type=text],input[type=number]{width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:inherit;font-size:16px;margin-top:6px;}
+.row{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap;}
+.row:last-child{border-bottom:none;}
+.name{font-weight:600;flex:1;min-width:90px;}
+.total{font-weight:800;font-size:17px;min-width:30px;text-align:center;}
+.pos{background:var(--green);color:var(--green-t);border-radius:8px;padding:2px 8px;}
+.neg{background:var(--red);color:var(--red-t);border-radius:8px;padding:2px 8px;}
+.neu{color:var(--muted);}
+.muted{color:var(--muted);font-size:13px;}
+.hist-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.hist-item:last-child{border-bottom:none;}
+.scroll-hist{max-height:320px;overflow-y:auto;}
+.center{text-align:center;}
+.hidden{display:none !important;}
+.code{font-size:12px;color:var(--muted);}
+.top-actions{display:flex;justify-content:flex-end;margin-bottom:8px;gap:6px;}
+.actions{display:flex;flex-wrap:wrap;}
+.two-col{display:flex;gap:8px;}
+.two-col>*{flex:1;}
+.tabs{display:flex;gap:8px;margin-bottom:12px;}
+.tab{flex:1;text-align:center;padding:10px;border-radius:10px;background:var(--card);border:1px solid var(--border);cursor:pointer;font-weight:600;}
+.tab.active{background:var(--brand);color:#fff;border-color:var(--brand);animation:pulseGlow 2.6s ease-in-out infinite;}
+.subject-row{padding:10px 0;border-bottom:1px solid var(--border);}
+.subject-row:last-child{border-bottom:none;}
+.subject-head{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.subj-bar{width:6px;height:22px;border-radius:3px;flex-shrink:0;}
+.subj-name{flex:1;font-weight:600;}
+.subj-last{font-size:12px;color:var(--muted);}
+.subject-detail{margin-top:8px;padding-right:14px;}
+.lvl-btn{display:inline-block;width:auto;padding:8px 10px;font-size:13px;margin:4px 4px 0 0;border-radius:8px;color:#fff;border:none;cursor:pointer;transition:transform .12s ease,filter .12s ease;}
+.lvl-btn:active{transform:scale(0.92);filter:brightness(0.9);}
+.lvl-great{background:var(--great);}
+.lvl-good{background:var(--good);color:#20320f;}
+.lvl-ok{background:var(--ok);color:#3a2c00;}
+.lvl-weak{background:var(--weak);}
+.grade-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px;border-bottom:1px solid var(--border);gap:6px;}
+.grade-item:last-child{border-bottom:none;}
+.badge{padding:2px 8px;border-radius:8px;color:#fff;font-size:12px;}
+.abs-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;}
+.abs-item:last-child{border-bottom:none;}
+.grade-entry{padding:6px 0;border-bottom:1px solid var(--border);}
+.grade-entry:last-child{border-bottom:none;}
+.grade-note{margin-top:2px;font-size:12px;color:var(--muted);}
+.note-input{margin:6px 0 2px 0 !important;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🏅 امتیاز کلاس</h1>
+
+  <div id="view-loading">
+    <div class="card center muted">در حال اتصال...</div>
+  </div>
+
+  <div id="view-landing" class="hidden">
+    <div class="card">
+      <button class="btn" id="btn-go-teacher">ورود معلم</button>
+      <button class="btn alt" id="btn-go-student">ورود دانش‌آموز</button>
+    </div>
+  </div>
+
+  <div id="view-teacher-pin" class="hidden">
+    <div class="card">
+      <div class="muted">پین معلم را وارد کن</div>
+      <input type="text" id="pin-input" placeholder="پین" inputmode="numeric">
+      <button class="btn" id="btn-pin-submit">ورود</button>
+      <button class="btn ghost" id="btn-pin-back">بازگشت</button>
+      <div class="muted center" id="pin-msg" style="margin-top:8px;"></div>
+    </div>
+  </div>
+
+  <div id="view-teacher" class="hidden">
+    <div class="top-actions"><button class="btn ghost sm" id="btn-teacher-exit">خروج</button></div>
+    <div class="card center muted" id="teacher-date"></div>
+    <div class="card">
+      <div class="muted" style="margin-bottom:6px;">امتیاز گروهی به کل کلاس</div>
+      <div class="two-col">
+        <input type="number" id="bulk-amount" value="50" min="1">
+        <div></div>
+      </div>
+      <div class="two-col">
+        <button class="btn" id="btn-bulk-plus">افزودن به همه</button>
+        <button class="btn ghost" id="btn-bulk-minus">کاهش از همه</button>
+      </div>
+    </div>
+    <div class="card">
+      <input type="text" id="teacher-search" placeholder="جستجوی نام دانش‌آموز">
+    </div>
+    <div class="card" id="teacher-list"></div>
+    <div class="card">
+      <div class="muted">افزودن دانش‌آموز</div>
+      <input type="text" id="new-student-name" placeholder="نام دانش‌آموز">
+      <button class="btn" id="btn-add-student">افزودن</button>
+    </div>
+  </div>
+
+  <div id="view-teacher-report" class="hidden">
+    <div class="top-actions"><button class="btn ghost sm" id="btn-report-back">بازگشت</button></div>
+    <div class="card center" id="report-student-name" style="font-weight:800;"></div>
+    <div class="card" id="report-subjects"></div>
+  </div>
+
+  <div id="view-student-login" class="hidden">
+    <div class="card">
+      <div class="muted">کد ورود خودت را بزن</div>
+      <input type="text" id="student-code-input" placeholder="کد ۴ رقمی" inputmode="numeric">
+      <button class="btn" id="btn-student-submit">ورود</button>
+      <button class="btn ghost" id="btn-student-back">بازگشت</button>
+      <div class="muted center" id="student-login-msg" style="margin-top:8px;"></div>
+    </div>
+  </div>
+
+  <div id="view-student" class="hidden">
+    <div class="top-actions"><button class="btn ghost sm" id="btn-student-exit">خروج</button></div>
+    <div class="tabs">
+      <div class="tab active" id="tab-score">امتیاز</div>
+      <div class="tab" id="tab-report">کارنامه</div>
+    </div>
+
+    <div id="student-score-view">
+      <div class="card center">
+        <div class="muted" id="student-name-label"></div>
+        <div style="font-size:40px;font-weight:800;margin:6px 0;" id="student-total-label"></div>
+        <div class="muted" id="student-rank-label"></div>
+      </div>
+      <div class="card">
+        <div class="muted" style="margin-bottom:6px;">روند امتیاز</div>
+        <div id="student-chart"></div>
+      </div>
+      <div class="card">
+        <div class="muted" style="margin-bottom:6px;">تاریخچه امتیازها</div>
+        <div class="scroll-hist" id="student-history"></div>
+      </div>
+      <div class="card">
+        <div class="muted" style="margin-bottom:6px;">غیبت‌ها</div>
+        <div id="student-absences"></div>
+      </div>
+    </div>
+
+    <div id="student-report-view" class="hidden">
+      <div class="card" id="student-subjects"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Firebase (compat SDK, loaded from Google's CDN) -->
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAAPIa_YMuiFIy69lVt4oG8Su7dC56aUyQ",
+  authDomain: "mehdizadeh-4b959.firebaseapp.com",
+  projectId: "mehdizadeh-4b959",
+  storageBucket: "mehdizadeh-4b959.firebasestorage.app",
+  messagingSenderId: "338237664584",
+  appId: "1:338237664584:web:b7ab6f5dbcdb913f05177d"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const stateRef = db.collection('app').doc('classScoreboard');
+
+const SUBJECTS = ['فارسی','ریاضی','علوم','مطالعات اجتماعی','قرآن','املا','هدیه‌های آسمانی','کار و فناوری'];
+const LEVELS = [
+  {key:'great', label:'خیلی خوب', color:'var(--great)', cls:'lvl-great', value:4},
+  {key:'good',  label:'خوب',       color:'var(--good)',  cls:'lvl-good',  value:3},
+  {key:'ok',    label:'قابل قبول', color:'var(--ok)',    cls:'lvl-ok',    value:2},
+  {key:'weak',  label:'نیاز به تلاش', color:'var(--weak)', cls:'lvl-weak', value:1}
+];
+function levelByKey(k){ return LEVELS.find(l=>l.key===k); }
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+let state = null;
+let currentStudentId = null;
+let reportStudentId = null;
+let pendingDeleteId = null, pendingDeleteTimeout = null;
+let editingGrade = null;
+let currentView = 'view-loading';
+let suppressNextSnapshot = false;
+
+const DEFAULT_STATE = {"pin": "52608187", "students": [{"id": "s179042264653387", "name": "ابراهیمیان محمد پرهام", "code": "3712", "history": [{"date": "2026-09-26", "delta": 50}, {"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}, {"date": "2026-09-26", "delta": 50}, {"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [{"date": "2026-09-26", "level": "weak", "note": "کسر ها"}], "ریاضی": [{"date": "2026-09-26", "level": "good"}, {"date": "2026-09-26", "level": "great"}, {"date": "2026-09-26", "level": "weak"}], "علوم": [{"date": "2026-09-26", "level": "weak"}, {"date": "2026-09-26", "level": "ok"}], "مطالعات اجتماعی": [{"date": "2026-09-26", "level": "ok"}], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s17904228933266", "name": "اسفندیاری اهورا", "code": "8232", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042290500943", "name": "باقری امیر علی", "code": "8465", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s17904229134497", "name": "بهادر سام", "code": "4254", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s17904229398815", "name": "بیاتی ماهان", "code": "4085", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042295202871", "name": "پابوس محمد جواد", "code": "2375", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042296581112", "name": "پوردشتی ایلیا", "code": "2954", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s17904229758357", "name": "تاجیک محمد طه", "code": "6942", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042329293192", "name": "خزلی رضا", "code": "9163", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042330999466", "name": "رحمانی سیدمهدی", "code": "3346", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042336235340", "name": "رحیمخانی علیرضا", "code": "8913", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042337842033", "name": "رمضانی ابوالفضل", "code": "6982", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042339077258", "name": "سالاروند محمد حسن", "code": "4659", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042340174277", "name": "سرحد یاسین", "code": "8068", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}], "step": 50};
+
+function normalize(){
+  if(!state.pin) state.pin = "52608187";
+  if(!state.step) state.step = 50;
+  if(!state.students) state.students = [];
+  state.students.forEach(s=>{
+    if(!s.grades) s.grades = {};
+    SUBJECTS.forEach(sub=>{ if(!s.grades[sub]) s.grades[sub]=[]; });
+    if(!s.absences) s.absences = [];
+    if(!s.history) s.history = [];
+    delete s.homework;
+  });
+}
+
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function todayFa(){ return new Date().toLocaleDateString('fa-IR'); }
+function faDate(iso){ return new Date(iso).toLocaleDateString('fa-IR'); }
+function total(s){ return s.history.reduce((a,h)=>a+h.delta,0); }
+function todayDelta(s){ return s.history.filter(h=>h.date===todayISO()).reduce((a,h)=>a+h.delta,0); }
+function genCode(){
+  let c;
+  do { c = String(Math.floor(1000+Math.random()*9000)); }
+  while(state.students.some(s=>s.code===c));
+  return c;
+}
+function rankColor(rank, count){
+  if(count<=1) return 'hsl(140,70%,40%)';
+  const t=(rank-1)/(count-1);
+  return `hsl(${140-t*140},75%,40%)`;
+}
+function sortedByScore(){ return [...state.students].sort((a,b)=>total(b)-total(a)); }
+function sortedByName(){ return [...state.students].sort((a,b)=>a.name.localeCompare(b.name,'fa')); }
+function lastLevel(s, subject){
+  const arr = s.grades[subject];
+  return arr.length ? levelByKey(arr[arr.length-1].level) : null;
+}
+
+function show(id){
+  currentView = id;
+  ['view-loading','view-landing','view-teacher-pin','view-teacher','view-teacher-report','view-student-login','view-student'].forEach(v=>{
+    document.getElementById(v).classList.toggle('hidden', v!==id);
+  });
+}
+
+function rerenderCurrentView(){
+  if(currentView==='view-teacher') renderTeacher();
+  else if(currentView==='view-teacher-report') renderReport();
+  else if(currentView==='view-student') renderStudent();
+}
+
+// ---------- TEACHER: student list ----------
+function renderTeacher(){
+  document.getElementById('teacher-date').textContent = 'امروز: ' + todayFa();
+  document.getElementById('bulk-amount').value = state.step;
+  const list = document.getElementById('teacher-list');
+  list.innerHTML='';
+  const q = (document.getElementById('teacher-search').value||'').trim();
+  sortedByName().filter(s=>!q || s.name.includes(q)).forEach(s=>{
+    const td = todayDelta(s);
+    const cls = td>0?'pos':(td<0?'neg':'neu');
+    const absentToday = s.absences.some(a=>a.date===todayISO());
+    const row = document.createElement('div');
+    row.className='row';
+    row.innerHTML = `
+      <div class="name">${s.name}<div class="code">کد: ${s.code}</div></div>
+      <div class="total ${cls}">${total(s)}</div>
+      <div class="actions">
+        <button class="btn sm ghost" data-act="minus" data-id="${s.id}">−${state.step}</button>
+        <button class="btn sm" data-act="plus" data-id="${s.id}">+${state.step}</button>
+        <button class="btn sm ${absentToday?'danger':'ghost'}" data-act="absent" data-id="${s.id}">${absentToday?'غایب ✓':'غیبت'}</button>
+        <button class="btn sm ghost" data-act="report" data-id="${s.id}">کارنامه</button>
+        <button class="btn sm danger" data-act="del" data-id="${s.id}">حذف</button>
+      </div>`;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const id = b.getAttribute('data-id');
+      const act = b.getAttribute('data-act');
+      if(act==='plus') addScore(id, state.step);
+      else if(act==='minus') addScore(id, -state.step);
+      else if(act==='absent') toggleAbsence(id);
+      else if(act==='report'){ reportStudentId=id; editingGrade=null; renderReport(); show('view-teacher-report'); }
+      else if(act==='del') handleDeleteClick(id, b);
+    });
+  });
+}
+
+function handleDeleteClick(id, btn){
+  if(pendingDeleteId===id){
+    clearTimeout(pendingDeleteTimeout);
+    state.students = state.students.filter(x=>x.id!==id);
+    pendingDeleteId=null;
+    renderTeacher(); persist();
+    return;
+  }
+  pendingDeleteId = id;
+  btn.textContent = 'مطمئنی؟ دوباره بزن';
+  pendingDeleteTimeout = setTimeout(()=>{ pendingDeleteId=null; renderTeacher(); }, 3000);
+}
+
+function toggleAbsence(id){
+  const s = state.students.find(x=>x.id===id);
+  if(!s) return;
+  const t = todayISO();
+  const idx = s.absences.findIndex(a=>a.date===t);
+  if(idx>=0) s.absences.splice(idx,1);
+  else s.absences.push({date:t});
+  renderTeacher();
+  persist();
+}
+
+// ---------- TEACHER: report card editor ----------
+function renderReport(){
+  const s = state.students.find(x=>x.id===reportStudentId);
+  if(!s) return;
+  document.getElementById('report-student-name').textContent = s.name;
+  const box = document.getElementById('report-subjects');
+  box.innerHTML='';
+  SUBJECTS.forEach(sub=>{
+    const lv = lastLevel(s, sub);
+    const arr = s.grades[sub];
+    const historyHtml = arr.length ? [...arr].map((g,i)=>{
+      const l = levelByKey(g.level);
+      const isEditing = editingGrade && editingGrade.subject===sub && editingGrade.index===i;
+      return `<div class="grade-entry">
+        <div class="grade-item">
+          <span>${faDate(g.date)}</span>
+          <span class="badge" style="background:${l.color}">${l.label}</span>
+          <span>
+            <button class="btn xs ghost" data-editsub="${sub}" data-editidx="${i}">ویرایش</button>
+            <button class="btn xs danger" data-delsub="${sub}" data-delidx="${i}">حذف</button>
+          </span>
+        </div>
+        ${g.note?`<div class="grade-note">${escapeHtml(g.note)}</div>`:''}
+        ${isEditing?`<div>${LEVELS.map(l2=>`<button class="lvl-btn ${l2.cls}" data-editsetsub="${sub}" data-editsetidx="${i}" data-lvl="${l2.key}">${l2.label}</button>`).join('')}</div>`:''}
+      </div>`;
+    }).reverse().join('') : '<div class="muted">هنوز نمره‌ای ثبت نشده</div>';
+    const row = document.createElement('div');
+    row.className='subject-row';
+    row.innerHTML = `
+      <div class="subject-head" data-sub="${sub}">
+        <div class="subj-bar" style="background:${lv?lv.color:'var(--border)'}"></div>
+        <div class="subj-name">${sub}</div>
+        <div class="subj-last">${lv?lv.label:'بدون نمره'}</div>
+      </div>
+      <div class="subject-detail hidden" data-detail="${sub}">
+        <div class="muted" style="margin-bottom:4px;">ثبت نمره جدید (توضیح اختیاری است):</div>
+        <input type="text" class="note-input" data-notesub="${sub}" placeholder="مثلاً: امتحان فصل ۲ - کسرها">
+        ${LEVELS.map(l=>`<button class="lvl-btn ${l.cls}" data-sub="${sub}" data-lvl="${l.key}">${l.label}</button>`).join('')}
+        <div style="margin-top:10px;">${historyHtml}</div>
+      </div>`;
+    box.appendChild(row);
+  });
+  box.querySelectorAll('.subject-head').forEach(h=>{
+    h.addEventListener('click', ()=>{
+      const sub = h.getAttribute('data-sub');
+      box.querySelector(`[data-detail="${sub}"]`).classList.toggle('hidden');
+    });
+  });
+  box.querySelectorAll('[data-lvl][data-sub]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const sub = b.getAttribute('data-sub');
+      const lvl = b.getAttribute('data-lvl');
+      const noteInput = box.querySelector(`[data-notesub="${sub}"]`);
+      const note = noteInput ? noteInput.value.trim() : '';
+      const entry = {date: todayISO(), level: lvl};
+      if(note) entry.note = note;
+      s.grades[sub].push(entry);
+      renderReport();
+      persist();
+    });
+  });
+  box.querySelectorAll('[data-editsub]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      editingGrade = {subject:b.getAttribute('data-editsub'), index:parseInt(b.getAttribute('data-editidx'))};
+      renderReport();
+    });
+  });
+  box.querySelectorAll('[data-delsub]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const sub=b.getAttribute('data-delsub'), idx=parseInt(b.getAttribute('data-delidx'));
+      s.grades[sub].splice(idx,1);
+      renderReport();
+      persist();
+    });
+  });
+  box.querySelectorAll('[data-editsetsub]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const sub=b.getAttribute('data-editsetsub'), idx=parseInt(b.getAttribute('data-editsetidx')), lvl=b.getAttribute('data-lvl');
+      s.grades[sub][idx].level = lvl;
+      editingGrade=null;
+      renderReport();
+      persist();
+    });
+  });
+}
+
+// ---------- shared charts ----------
+function buildLineChart(values, domainMin, domainMax){
+  if(values.length<2) return '<div class="muted">برای نمودار حداقل ۲ ثبت لازم است</div>';
+  const w=300,h=90,pad=10;
+  const min = domainMin!==undefined?domainMin:Math.min(...values,0);
+  const max = domainMax!==undefined?domainMax:Math.max(...values,0);
+  const range=(max-min)||1;
+  const stepX=(w-2*pad)/(values.length-1);
+  const coords=values.map((v,i)=>{
+    const x=pad+i*stepX;
+    const y = h-pad-((v-min)/range)*(h-2*pad);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:80px;"><polyline points="${coords}" fill="none" stroke="var(--brand)" stroke-width="3"/></svg>`;
+}
+
+// ---------- STUDENT ----------
+function renderStudent(){
+  const s = state.students.find(x=>x.id===currentStudentId);
+  if(!s) return;
+  const ranked = sortedByScore();
+  const rank = ranked.findIndex(x=>x.id===s.id)+1;
+  document.getElementById('student-name-label').textContent = s.name;
+  const totalEl = document.getElementById('student-total-label');
+  totalEl.textContent = total(s);
+  totalEl.style.color = rankColor(rank, ranked.length);
+  document.getElementById('student-rank-label').textContent = `رتبه ${rank} از ${ranked.length} نفر کلاس`;
+
+  const sorted=[...s.history].sort((a,b)=>a.date.localeCompare(b.date));
+  let sum=0; const cum = sorted.map(h=>{sum+=h.delta; return sum;});
+  document.getElementById('student-chart').innerHTML = buildLineChart(cum);
+
+  const hist = document.getElementById('student-history');
+  hist.innerHTML='';
+  if(s.history.length===0){
+    hist.innerHTML = '<div class="muted">هنوز امتیازی ثبت نشده</div>';
+  } else {
+    [...s.history].reverse().forEach(h=>{
+      const cls = h.delta>0?'pos':'neg';
+      hist.insertAdjacentHTML('beforeend', `<div class="hist-item"><span>${faDate(h.date)}</span><span class="${cls}">${h.delta>0?'+':''}${h.delta}</span></div>`);
+    });
+  }
+
+  const absBox = document.getElementById('student-absences');
+  if(s.absences.length===0){
+    absBox.innerHTML = '<div class="muted">غیبتی ثبت نشده</div>';
+  } else {
+    absBox.innerHTML = [...s.absences].reverse().map(a=>`<div class="abs-item"><span>${faDate(a.date)}</span><span class="muted">غایب</span></div>`).join('');
+  }
+
+  renderStudentReport();
+}
+
+function renderStudentReport(){
+  const s = state.students.find(x=>x.id===currentStudentId);
+  if(!s) return;
+  const box = document.getElementById('student-subjects');
+  box.innerHTML='';
+  SUBJECTS.forEach(sub=>{
+    const arr = s.grades[sub];
+    const lv = arr.length ? levelByKey(arr[arr.length-1].level) : null;
+    const row = document.createElement('div');
+    row.className='subject-row';
+    const historyHtml = arr.length ? [...arr].reverse().map(g=>{
+      const l = levelByKey(g.level);
+      return `<div class="grade-entry">
+        <div class="grade-item"><span>${faDate(g.date)}</span><span class="badge" style="background:${l.color}">${l.label}</span></div>
+        ${g.note?`<div class="grade-note">${escapeHtml(g.note)}</div>`:''}
+      </div>`;
+    }).join('') : '<div class="muted">هنوز نمره‌ای ثبت نشده</div>';
+    const chartVals = arr.map(g=>levelByKey(g.level).value);
+    row.innerHTML = `
+      <div class="subject-head" data-sub="${sub}">
+        <div class="subj-bar" style="background:${lv?lv.color:'var(--border)'}"></div>
+        <div class="subj-name">${sub}</div>
+        <div class="subj-last">${lv?lv.label:'—'}</div>
+      </div>
+      <div class="subject-detail hidden" data-detail="${sub}">
+        ${buildLineChart(chartVals,1,4)}
+        ${historyHtml}
+      </div>`;
+    box.appendChild(row);
+  });
+  box.querySelectorAll('.subject-head').forEach(h=>{
+    h.addEventListener('click', ()=>{
+      const sub = h.getAttribute('data-sub');
+      box.querySelector(`[data-detail="${sub}"]`).classList.toggle('hidden');
+    });
+  });
+}
+
+// ---------- Firestore persistence ----------
+async function persist(){
+  try{
+    suppressNextSnapshot = true;
+    await stateRef.set(state);
+  } catch(e){
+    console.error('save failed', e);
+  }
+}
+
+function addScore(id, delta){
+  const s = state.students.find(x=>x.id===id);
+  if(!s) return;
+  s.history.push({date: todayISO(), delta});
+  renderTeacher();
+  persist();
+}
+
+function bulkScore(delta){
+  const today = todayISO();
+  state.students.forEach(s=> s.history.push({date: today, delta}));
+  renderTeacher();
+  persist();
+}
+
+function addStudent(){
+  const input = document.getElementById('new-student-name');
+  const name = input.value.trim();
+  if(!name) return;
+  const grades={}; SUBJECTS.forEach(sub=>grades[sub]=[]);
+  state.students.push({id: 's'+Date.now()+Math.floor(Math.random()*99), name, code: genCode(), history: [], grades, absences:[]});
+  input.value='';
+  renderTeacher();
+  persist();
+}
+
+document.getElementById('btn-go-teacher').addEventListener('click', ()=> show('view-teacher-pin'));
+document.getElementById('btn-go-student').addEventListener('click', ()=> show('view-student-login'));
+document.getElementById('btn-pin-back').addEventListener('click', ()=> show('view-landing'));
+document.getElementById('btn-student-back').addEventListener('click', ()=> show('view-landing'));
+document.getElementById('btn-teacher-exit').addEventListener('click', ()=>{
+  try{ localStorage.removeItem('teacherUnlocked'); }catch(e){}
+  show('view-landing');
+});
+document.getElementById('btn-report-back').addEventListener('click', ()=>{ renderTeacher(); show('view-teacher'); });
+document.getElementById('btn-student-exit').addEventListener('click', ()=>{
+  currentStudentId=null;
+  try{ localStorage.removeItem('studentCode'); }catch(e){}
+  show('view-landing');
+});
+document.getElementById('btn-add-student').addEventListener('click', addStudent);
+document.getElementById('teacher-search').addEventListener('input', renderTeacher);
+document.getElementById('btn-bulk-plus').addEventListener('click', ()=>{
+  const v = parseInt(document.getElementById('bulk-amount').value)||0;
+  state.step = v;
+  if(v>0) bulkScore(v);
+});
+document.getElementById('btn-bulk-minus').addEventListener('click', ()=>{
+  const v = parseInt(document.getElementById('bulk-amount').value)||0;
+  state.step = v;
+  if(v>0) bulkScore(-v);
+});
+
+document.getElementById('btn-pin-submit').addEventListener('click', ()=>{
+  const v = document.getElementById('pin-input').value.trim();
+  if(v === state.pin){
+    try{ localStorage.setItem('teacherUnlocked','yes'); }catch(e){}
+    renderTeacher(); show('view-teacher');
+  } else document.getElementById('pin-msg').textContent = 'پین اشتباه است';
+});
+
+document.getElementById('btn-student-submit').addEventListener('click', ()=>{
+  const v = document.getElementById('student-code-input').value.trim();
+  const s = state.students.find(x=>x.code===v);
+  if(s){
+    currentStudentId = s.id;
+    try{ localStorage.setItem('studentCode', v); }catch(e){}
+    document.getElementById('tab-score').classList.add('active');
+    document.getElementById('tab-report').classList.remove('active');
+    document.getElementById('student-score-view').classList.remove('hidden');
+    document.getElementById('student-report-view').classList.add('hidden');
+    renderStudent(); show('view-student');
+  } else document.getElementById('student-login-msg').textContent = 'کد اشتباه است';
+});
+
+document.getElementById('tab-score').addEventListener('click', ()=>{
+  document.getElementById('tab-score').classList.add('active');
+  document.getElementById('tab-report').classList.remove('active');
+  document.getElementById('student-score-view').classList.remove('hidden');
+  document.getElementById('student-report-view').classList.add('hidden');
+});
+document.getElementById('tab-report').addEventListener('click', ()=>{
+  document.getElementById('tab-report').classList.add('active');
+  document.getElementById('tab-score').classList.remove('active');
+  document.getElementById('student-report-view').classList.remove('hidden');
+  document.getElementById('student-score-view').classList.add('hidden');
+});
+
+function decideInitialView(){
+  try{
+    if(localStorage.getItem('teacherUnlocked')==='yes'){
+      renderTeacher(); show('view-teacher'); return;
+    }
+    const savedCode = localStorage.getItem('studentCode');
+    if(savedCode){
+      const s = state.students.find(x=>x.code===savedCode);
+      if(s){ currentStudentId=s.id; renderStudent(); show('view-student'); return; }
+    }
+  }catch(e){}
+  show('view-landing');
+}
+
+// ---------- boot: load from Firestore, then listen for realtime changes ----------
+let booted = false;
+stateRef.onSnapshot((snap)=>{
+  if(suppressNextSnapshot){ suppressNextSnapshot = false; if(booted) return; }
+  if(snap.exists){
+    state = snap.data();
+    normalize();
+  } else if(!booted){
+    state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+    normalize();
+    stateRef.set(state);
+  }
+  if(!booted){
+    booted = true;
+    decideInitialView();
+  } else {
+    rerenderCurrentView();
+  }
+}, (err)=>{
+  document.getElementById('view-loading').innerHTML = '<div class="card center muted">خطا در اتصال به دیتابیس. اتصال اینترنت را چک کن.</div>';
+  console.error(err);
+});
+</script>
+</body>
+</html>
