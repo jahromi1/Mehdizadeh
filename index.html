@@ -104,6 +104,8 @@ input[type=text],input[type=number]{width:100%;padding:12px;border-radius:10px;b
 .grade-entry:last-child{border-bottom:none;}
 .grade-note{margin-top:2px;font-size:12px;color:var(--muted);}
 .note-input{margin:6px 0 2px 0 !important;}
+.lvl-absent{background:var(--muted);}
+#streamer-banner{background:var(--red);color:var(--red-t);font-weight:700;letter-spacing:.2px;}
 </style>
 </head>
 <body>
@@ -146,8 +148,11 @@ input[type=text],input[type=number]{width:100%;padding:12px;border-radius:10px;b
   </div>
 
   <div id="view-teacher" class="hidden">
-    <div class="top-actions"><button class="btn ghost sm" id="btn-teacher-exit">خروج</button></div>
-    <div class="card center muted" id="teacher-date"></div>
+    <div class="top-actions">
+      <button class="btn ghost sm" id="btn-streamer">🙈 حالت پنهان</button>
+      <button class="btn ghost sm" id="btn-teacher-exit">خروج</button>
+    </div>
+    <div class="card center hidden" id="streamer-banner">🙈 حالت پنهان فعال — امتیاز و کد دانش‌آموزها مخفی است</div>
     <div class="card">
       <div class="muted" style="margin-bottom:6px;">امتیاز گروهی به کل کلاس</div>
       <div class="two-col">
@@ -161,6 +166,10 @@ input[type=text],input[type=number]{width:100%;padding:12px;border-radius:10px;b
     </div>
     <div class="card">
       <input type="text" id="teacher-search" placeholder="جستجوی نام دانش‌آموز">
+    </div>
+    <div class="card">
+      <div class="muted" style="margin-bottom:6px;">گزارش غیبت هفتگی (شنبه تا چهارشنبه)</div>
+      <button class="btn ghost" id="btn-export-absences">📄 خروجی PDF غیبت‌های هفته</button>
     </div>
     <div class="card" id="teacher-list"></div>
     <div class="card">
@@ -241,7 +250,8 @@ const LEVELS = [
   {key:'great', label:'خیلی خوب', color:'var(--great)', cls:'lvl-great', value:4},
   {key:'good',  label:'خوب',       color:'var(--good)',  cls:'lvl-good',  value:3},
   {key:'ok',    label:'قابل قبول', color:'var(--ok)',    cls:'lvl-ok',    value:2},
-  {key:'weak',  label:'نیاز به تلاش', color:'var(--weak)', cls:'lvl-weak', value:1}
+  {key:'weak',  label:'نیاز به تلاش', color:'var(--weak)', cls:'lvl-weak', value:1},
+  {key:'absent',label:'غایب',      color:'var(--muted)', cls:'lvl-absent', value:null}
 ];
 function levelByKey(k){ return LEVELS.find(l=>l.key===k); }
 function escapeHtml(str){
@@ -255,6 +265,8 @@ let pendingDeleteId = null, pendingDeleteTimeout = null;
 let editingGrade = null;
 let currentView = 'view-loading';
 let suppressNextSnapshot = false;
+function loadStreamerMode(){ try{ return localStorage.getItem('streamerMode')==='1'; }catch(e){ return false; } }
+let streamerMode = loadStreamerMode();
 
 const DEFAULT_STATE = {"pin": "52608187", "students": [{"id": "s179042264653387", "name": "ابراهیمیان محمد پرهام", "code": "3712", "history": [{"date": "2026-09-26", "delta": 50}, {"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}, {"date": "2026-09-26", "delta": 50}, {"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [{"date": "2026-09-26", "level": "weak", "note": "کسر ها"}], "ریاضی": [{"date": "2026-09-26", "level": "good"}, {"date": "2026-09-26", "level": "great"}, {"date": "2026-09-26", "level": "weak"}], "علوم": [{"date": "2026-09-26", "level": "weak"}, {"date": "2026-09-26", "level": "ok"}], "مطالعات اجتماعی": [{"date": "2026-09-26", "level": "ok"}], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s17904228933266", "name": "اسفندیاری اهورا", "code": "8232", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042290500943", "name": "باقری امیر علی", "code": "8465", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s17904229134497", "name": "بهادر سام", "code": "4254", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s17904229398815", "name": "بیاتی ماهان", "code": "4085", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042295202871", "name": "پابوس محمد جواد", "code": "2375", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042296581112", "name": "پوردشتی ایلیا", "code": "2954", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s17904229758357", "name": "تاجیک محمد طه", "code": "6942", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042329293192", "name": "خزلی رضا", "code": "9163", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042330999466", "name": "رحمانی سیدمهدی", "code": "3346", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042336235340", "name": "رحیمخانی علیرضا", "code": "8913", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042337842033", "name": "رمضانی ابوالفضل", "code": "6982", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042339077258", "name": "سالاروند محمد حسن", "code": "4659", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}, {"id": "s179042340174277", "name": "سرحد یاسین", "code": "8068", "history": [{"date": "2026-09-26", "delta": -50}, {"date": "2026-09-26", "delta": 50}], "grades": {"فارسی": [], "ریاضی": [], "علوم": [], "مطالعات اجتماعی": [], "قرآن": [], "املا": [], "هدیه‌های آسمانی": [], "کار و فناوری": []}, "absences": []}], "step": 50};
 
@@ -271,9 +283,12 @@ function normalize(){
   });
 }
 
-function todayISO(){ return new Date().toISOString().slice(0,10); }
+function pad2(n){ return String(n).padStart(2,'0'); }
+function isoFromDate(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
+function parseISOLocal(iso){ const [y,m,d] = iso.split('-').map(Number); return new Date(y, m-1, d); }
+function todayISO(){ return isoFromDate(new Date()); }
 function todayFa(){ return new Date().toLocaleDateString('fa-IR'); }
-function faDate(iso){ return new Date(iso).toLocaleDateString('fa-IR'); }
+function faDate(iso){ return parseISOLocal(iso).toLocaleDateString('fa-IR'); }
 function total(s){ return s.history.reduce((a,h)=>a+h.delta,0); }
 function todayDelta(s){ return s.history.filter(h=>h.date===todayISO()).reduce((a,h)=>a+h.delta,0); }
 function genCode(){
@@ -318,11 +333,13 @@ function renderTeacher(){
     const td = todayDelta(s);
     const cls = td>0?'pos':(td<0?'neg':'neu');
     const absentToday = s.absences.some(a=>a.date===todayISO());
+    const codeDisplay = streamerMode ? '••••' : s.code;
+    const totalDisplay = streamerMode ? '•••' : total(s);
     const row = document.createElement('div');
     row.className='row';
     row.innerHTML = `
-      <div class="name">${s.name}<div class="code">کد: ${s.code}</div></div>
-      <div class="total ${cls}">${total(s)}</div>
+      <div class="name">${s.name}<div class="code">کد: ${codeDisplay}</div></div>
+      <div class="total ${cls}">${totalDisplay}</div>
       <div class="actions">
         <button class="btn sm ghost" data-act="minus" data-id="${s.id}">−${state.step}</button>
         <button class="btn sm" data-act="plus" data-id="${s.id}">+${state.step}</button>
@@ -407,6 +424,10 @@ function renderReport(){
         <div class="muted" style="margin-bottom:4px;">ثبت نمره جدید (توضیح اختیاری است):</div>
         <input type="text" class="note-input" data-notesub="${sub}" placeholder="مثلاً: امتحان فصل ۲ - کسرها">
         ${LEVELS.map(l=>`<button class="lvl-btn ${l.cls}" data-sub="${sub}" data-lvl="${l.key}">${l.label}</button>`).join('')}
+        <div style="margin-top:10px;">
+          <div class="muted" style="margin-bottom:4px;">روند نمرات:</div>
+          ${buildAcademicChart(arr)}
+        </div>
         <div style="margin-top:10px;">${historyHtml}</div>
       </div>`;
     box.appendChild(row);
@@ -471,6 +492,31 @@ function buildLineChart(values, domainMin, domainMax){
   return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:80px;"><polyline points="${coords}" fill="none" stroke="var(--brand)" stroke-width="3"/></svg>`;
 }
 
+// ---------- academic chart (handles absent entries: interpolated, colorless) ----------
+function buildAcademicChart(arr){
+  if(arr.length<2) return '<div class="muted">برای نمودار حداقل ۲ ثبت لازم است</div>';
+  const raw = arr.map(g => g.level==='absent' ? null : levelByKey(g.level).value);
+  const values = raw.slice();
+  for(let i=0;i<values.length;i++){
+    if(raw[i]===null){
+      let prev=null, prevIdx=-1;
+      for(let j=i-1;j>=0;j--){ if(raw[j]!==null){ prev=raw[j]; prevIdx=j; break; } }
+      let next=null, nextIdx=-1;
+      for(let j=i+1;j<raw.length;j++){ if(raw[j]!==null){ next=raw[j]; nextIdx=j; break; } }
+      if(prev!==null && next!==null) values[i] = prev + (next-prev)*((i-prevIdx)/(nextIdx-prevIdx));
+      else if(prev!==null) values[i] = prev;
+      else if(next!==null) values[i] = next;
+      else values[i] = 2.5;
+    }
+  }
+  const w=300,h=90,pad=10,min=1,max=4,range=max-min;
+  const stepX=(w-2*pad)/(values.length-1);
+  const coords = values.map((v,i)=>({x:+(pad+i*stepX).toFixed(1), y:+(h-pad-((v-min)/range)*(h-2*pad)).toFixed(1)}));
+  const pointsAttr = coords.map(c=>`${c.x},${c.y}`).join(' ');
+  const dots = coords.map((c,i)=> raw[i]===null ? `<circle cx="${c.x}" cy="${c.y}" r="4" fill="var(--muted)"/>` : '').join('');
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:80px;"><polyline points="${pointsAttr}" fill="none" stroke="var(--brand)" stroke-width="3"/>${dots}</svg>`;
+}
+
 // ---------- STUDENT ----------
 function renderStudent(){
   const s = state.students.find(x=>x.id===currentStudentId);
@@ -525,7 +571,6 @@ function renderStudentReport(){
         ${g.note?`<div class="grade-note">${escapeHtml(g.note)}</div>`:''}
       </div>`;
     }).join('') : '<div class="muted">هنوز نمره‌ای ثبت نشده</div>';
-    const chartVals = arr.map(g=>levelByKey(g.level).value);
     row.innerHTML = `
       <div class="subject-head" data-sub="${sub}">
         <div class="subj-bar" style="background:${lv?lv.color:'var(--border)'}"></div>
@@ -533,7 +578,7 @@ function renderStudentReport(){
         <div class="subj-last">${lv?lv.label:'—'}</div>
       </div>
       <div class="subject-detail hidden" data-detail="${sub}">
-        ${buildLineChart(chartVals,1,4)}
+        ${buildAcademicChart(arr)}
         ${historyHtml}
       </div>`;
     box.appendChild(row);
@@ -582,13 +627,107 @@ function addStudent(){
   persist();
 }
 
+function getWeekRange(){
+  const now = new Date();
+  const dow = now.getDay(); // 0=Sun..6=Sat
+  const daysSinceSaturday = (dow - 6 + 7) % 7;
+  const sat = new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysSinceSaturday);
+  const wed = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 4);
+  return {sat, wed};
+}
+
+function exportWeeklyAbsences(){
+  const {sat, wed} = getWeekRange();
+  const dayNames = ['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+  const accents = ['#2f6f4f','#8a5a2b'];
+  let sections = '';
+  let totalAbsences = 0;
+  for(let i=0;i<5;i++){
+    const d = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate()+i);
+    const iso = isoFromDate(d);
+    const names = state.students.filter(s=>s.absences.some(a=>a.date===iso)).sort((a,b)=>a.name.localeCompare(b.name,'fa')).map(s=>s.name);
+    totalAbsences += names.length;
+    const accent = accents[i%2];
+    const countLabel = names.length ? `${names.length} نفر` : 'بدون غیبت';
+    const body = names.length
+      ? `<div class="day-names">${names.map(n=>escapeHtml(n)).join('&nbsp;&nbsp;–&nbsp;&nbsp;')}</div>`
+      : `<div class="day-empty">✅ غایبی نداشتیم</div>`;
+    sections += `
+      <div class="day-block" style="border-right-color:${accent};">
+        <div class="day-head">
+          <div class="day-head-right">
+            <span class="day-name">${dayNames[d.getDay()]}</span>
+            <span class="day-date">${d.toLocaleDateString('fa-IR')}</span>
+          </div>
+          <span class="day-count" style="background:${names.length?accent:'#e7e1d8'};color:${names.length?'#fff':'#8a8078'};">${countLabel}</span>
+        </div>
+        ${body}
+      </div>`;
+  }
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8">
+    <title>غایبین این هفته</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+      *{box-sizing:border-box;}
+      body{font-family:Vazirmatn,Tahoma,sans-serif;padding:44px;color:#241f1a;background:#fff;}
+      .header{text-align:center;margin-bottom:8px;}
+      .header-icon{font-size:34px;line-height:1;margin-bottom:6px;}
+      h1{font-size:28px;font-weight:800;margin:0 0 6px;letter-spacing:.3px;}
+      .subtitle{color:#8a8078;font-size:14px;font-weight:500;margin-bottom:6px;}
+      .summary{color:#8a5a2b;font-size:13px;font-weight:600;margin-bottom:30px;}
+      .divider{border:none;border-top:2px solid #e7e1d8;margin:0 0 30px;}
+      .day-block{margin-bottom:20px;border-right:5px solid #2f6f4f;padding:14px 18px;border-radius:0 10px 10px 0;background:#f6f4ef;page-break-inside:avoid;}
+      .day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+      .day-head-right{display:flex;align-items:baseline;gap:10px;}
+      .day-name{font-size:19px;font-weight:800;}
+      .day-date{font-size:12.5px;color:#8a8078;font-weight:400;}
+      .day-count{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+      .day-names{font-size:15.5px;font-weight:600;line-height:2.1;}
+      .day-empty{font-size:14px;font-weight:600;color:#1e7a3d;}
+      .footer{margin-top:38px;text-align:center;color:#a89e92;font-size:11px;font-weight:400;border-top:1px solid #e7e1d8;padding-top:14px;}
+      @media print{
+        body{padding:14px;}
+        .day-block{background:#fafaf8 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      }
+    </style></head><body>
+    <div class="header">
+      <div class="header-icon">🏅</div>
+      <h1>غایبین این هفته</h1>
+      <div class="subtitle">${sat.toLocaleDateString('fa-IR')} تا ${wed.toLocaleDateString('fa-IR')}</div>
+      <div class="summary">${totalAbsences ? `مجموع غیبت‌های هفته: ${totalAbsences} مورد` : 'این هفته هیچ غیبتی ثبت نشده است 🎉'}</div>
+    </div>
+    <hr class="divider">
+    ${sections}
+    <div class="footer">تهیه‌شده در ${new Date().toLocaleDateString('fa-IR')} — سامانه امتیاز کلاس</div>
+    </body></html>`);
+  win.document.close();
+  setTimeout(()=>win.print(), 400);
+}
+
+function applyStreamerMode(){
+  document.body.classList.toggle('streamer-mode', streamerMode);
+  document.getElementById('btn-streamer').textContent = streamerMode ? '👁️ نمایش عادی' : '🙈 حالت پنهان';
+  document.getElementById('streamer-banner').classList.toggle('hidden', !streamerMode);
+}
+applyStreamerMode();
+
 document.getElementById('btn-go-teacher').addEventListener('click', ()=> show('view-teacher-pin'));
 document.getElementById('btn-go-student').addEventListener('click', ()=> show('view-student-login'));
 document.getElementById('btn-pin-back').addEventListener('click', ()=> show('view-landing'));
 document.getElementById('btn-student-back').addEventListener('click', ()=> show('view-landing'));
 document.getElementById('btn-teacher-exit').addEventListener('click', ()=>{
   try{ localStorage.removeItem('teacherUnlocked'); }catch(e){}
+  streamerMode = false;
+  try{ localStorage.removeItem('streamerMode'); }catch(e){}
+  applyStreamerMode();
   show('view-landing');
+});
+document.getElementById('btn-streamer').addEventListener('click', ()=>{
+  streamerMode = !streamerMode;
+  try{ if(streamerMode) localStorage.setItem('streamerMode','1'); else localStorage.removeItem('streamerMode'); }catch(e){}
+  applyStreamerMode();
+  renderTeacher();
 });
 document.getElementById('btn-report-back').addEventListener('click', ()=>{ renderTeacher(); show('view-teacher'); });
 document.getElementById('btn-student-exit').addEventListener('click', ()=>{
@@ -597,6 +736,7 @@ document.getElementById('btn-student-exit').addEventListener('click', ()=>{
   show('view-landing');
 });
 document.getElementById('btn-add-student').addEventListener('click', addStudent);
+document.getElementById('btn-export-absences').addEventListener('click', exportWeeklyAbsences);
 document.getElementById('teacher-search').addEventListener('input', renderTeacher);
 document.getElementById('btn-bulk-plus').addEventListener('click', ()=>{
   const v = parseInt(document.getElementById('bulk-amount').value)||0;
