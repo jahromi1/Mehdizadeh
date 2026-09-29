@@ -3,163 +3,226 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>امتیاز کلاس</title>
+<title>کلاس ما</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#000000;
-  --brand:#28e39a; --brand-2:#12b579; --amber:#ffbf5e; --amber-2:#e69a2e; --teal:#4bd8d8;
-  --ink:#f5f5f7; --ink-soft:#c7c7cc; --muted:#8e8e96;
-  --glass-edge:rgba(255,255,255,.18); --glass-edge-bright:rgba(255,255,255,.6);
-  --shadow:0 20px 50px rgba(0,0,0,.6), 0 3px 8px rgba(0,0,0,.5);
-  --red:#ff6a55; --gray-pill:#8e8e96;
-  --great:#2e7d32; --good:#8bc34a; --ok:#f4c430; --weak:#ff6a55;
-  --border:rgba(255,255,255,.14);
+  --bg:#070711; --line:rgba(255,255,255,.13); --text:#f7f5ff; --muted:#a6a1bb;
+  --purple:#9a72ff; --purple2:#6c43e8; --cyan:#6fe7ff; --green:#56e0b0; --yellow:#ffd98a; --danger:#ff7d9c; --gray:#8c879d;
   --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
 html,body{height:100%;}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Vazirmatn,-apple-system,Tahoma,sans-serif;
-  padding-top:var(--safe-t); padding-bottom:var(--safe-b); overflow-x:hidden;}
-
-.aurora{position:fixed; inset:-12%; z-index:-2; filter:blur(90px) saturate(190%); pointer-events:none;}
-.aurora span{position:absolute; border-radius:50%; opacity:.45; mix-blend-mode:screen;}
-.aurora span:nth-child(1){width:58vw;height:58vw; left:-16vw; top:-18vw; background:radial-gradient(circle,var(--brand),transparent 68%);}
-.aurora span:nth-child(2){width:50vw;height:50vw; right:-18vw; top:10vw; background:radial-gradient(circle,var(--amber),transparent 68%);}
-.aurora span:nth-child(3){width:54vw;height:54vw; left:10vw; bottom:-22vw; background:radial-gradient(circle,var(--teal),transparent 68%);}
-
-/* ---------- اتصال / آفلاین ---------- */
-.conn-box{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;padding:40px 20px;position:relative;z-index:1;}
-.conn-icon{font-size:56px;animation:conn-pulse 1.4s ease-in-out infinite;}
-.conn-ring{width:46px;height:46px;border:4px solid rgba(40,227,154,.18);border-top-color:var(--brand);border-radius:50%;animation:conn-spin .9s linear infinite;}
-.conn-title{font-size:19px;font-weight:800;margin:0;color:var(--ink);}
-.conn-sub{font-size:13px;color:var(--muted);margin:0;}
-@keyframes conn-pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.18);opacity:.65;}}
-@keyframes conn-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
-@media (prefers-reduced-motion: reduce){ .conn-icon,.conn-ring{animation:none;} }
-
-#offline-overlay{
-  position:fixed;inset:0;z-index:99999;
-  background:rgba(0,0,0,.88);
-  display:none;align-items:center;justify-content:center;
-  backdrop-filter:blur(6px);
-}
-#offline-overlay .conn-box{max-width:320px;}
-.wrap{max-width:480px;margin:0 auto;padding:18px 16px 10px;position:relative;z-index:1;}
-.hero-brand{display:flex;align-items:center;justify-content:center;gap:10px;margin:4px 0 18px;}
-.hero-brand .mark{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none;
-  background:linear-gradient(155deg,var(--brand),var(--brand-2));box-shadow:0 8px 20px rgba(40,227,154,.4), inset 0 1.5px 0 rgba(255,255,255,.6);}
-h1{font-size:19px;font-weight:800;margin:0;color:var(--ink);}
-
-/* convex, tactile liquid glass */
-.card{
-  background:
-    radial-gradient(130% 90% at 22% -15%, rgba(255,255,255,.18), transparent 55%),
-    radial-gradient(120% 90% at 85% 120%, rgba(0,0,0,.35), transparent 60%),
-    rgba(255,255,255,.07);
-  backdrop-filter:blur(28px) saturate(190%); -webkit-backdrop-filter:blur(28px) saturate(190%);
-  border:1px solid var(--glass-edge);
-  border-radius:24px;
-  box-shadow:var(--shadow), inset 0 1.5px 0 rgba(255,255,255,.4), inset 0 -14px 24px -10px rgba(0,0,0,.5), inset 0 10px 20px -14px rgba(255,255,255,.12);
-  padding:16px;margin-bottom:14px;position:relative;
-}
-.card::before{content:"";position:absolute;top:1px;left:16%;right:16%;height:1px;border-radius:99px;
-  background:linear-gradient(90deg,transparent,var(--glass-edge-bright),transparent);opacity:.85;pointer-events:none;}
-
-.btn{display:block;width:100%;padding:15px;border:none;border-radius:20px;background:linear-gradient(160deg,var(--brand) 0%,var(--brand-2) 100%);color:#fff;font-family:inherit;font-size:15.5px;font-weight:700;cursor:pointer;margin-top:10px;position:relative;overflow:hidden;transition:transform .12s ease;
-  box-shadow:0 14px 28px rgba(18,181,121,.4), inset 0 1.5px 0 rgba(255,255,255,.6), inset 0 -10px 16px -6px rgba(0,0,0,.3);}
-.btn:active{transform:scale(0.96);}
-.btn.alt{background:linear-gradient(160deg,var(--amber) 0%,var(--amber-2) 100%);box-shadow:0 14px 28px rgba(230,154,46,.4), inset 0 1.5px 0 rgba(255,255,255,.6), inset 0 -10px 16px -6px rgba(0,0,0,.3);}
-.btn.sm{width:auto;padding:9px 14px;font-size:13px;margin:0 0 0 6px;border-radius:14px;}
-.btn.xs{width:auto;padding:5px 10px;font-size:11.5px;margin:0 0 0 4px;border-radius:10px;box-shadow:none;}
-.btn.danger{background:linear-gradient(160deg,var(--red) 0%,#c0392b 100%);box-shadow:0 10px 22px rgba(255,106,85,.35), inset 0 1.5px 0 rgba(255,255,255,.5);}
-.btn.ghost{background:rgba(255,255,255,.07);backdrop-filter:blur(20px);color:var(--brand);border:1px solid var(--glass-edge);box-shadow:inset 0 0 0 1.4px rgba(40,227,154,.4), inset 0 1px 0 rgba(255,255,255,.15);}
-@media (prefers-reduced-motion: reduce){ .btn,.tab.active{animation:none !important;} }
-input[type=text],input[type=number]{width:100%;padding:13px 14px;border-radius:16px;border:1px solid var(--glass-edge);background:rgba(255,255,255,.05);color:var(--ink);font-family:inherit;font-size:15px;margin-top:6px;box-shadow:inset 0 2px 6px rgba(0,0,0,.35);}
-input::placeholder{color:var(--muted);}
-
-/* teacher list rows */
-.list-card{padding:8px 8px;}
-.row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 8px;border-radius:18px;}
-.row+.row{margin-top:2px;border-top:1px solid rgba(255,255,255,.07);}
-.avatar{width:38px;height:38px;border-radius:50%;flex:none;
-  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6), inset 0 -6px 8px -4px rgba(0,0,0,.35), 0 4px 10px rgba(0,0,0,.3);}
-.name{font-weight:700;font-size:14.5px;flex:1;min-width:90px;color:var(--ink);}
-.total{font-weight:800;font-size:15px;min-width:44px;text-align:center;padding:6px 0;border-radius:13px;direction:ltr;}
-.pos{background:rgba(40,227,154,.16);color:var(--brand);border-radius:13px;padding:6px 10px;font-weight:800;direction:ltr;display:inline-block;}
-.neg{background:rgba(255,106,85,.16);color:var(--red);border-radius:13px;padding:6px 10px;font-weight:800;direction:ltr;display:inline-block;}
-.neu{color:var(--muted);}
-.muted{color:var(--muted);font-size:13px;}
-.hist-item{display:flex;justify-content:space-between;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,.07);font-size:13.5px;}
-.hist-item:last-child{border-bottom:none;}
-.scroll-hist{max-height:320px;overflow-y:auto;}
-.center{text-align:center;}
+body{margin:0; font-family:Vazirmatn,Arial,sans-serif; color:var(--text); background:var(--bg); overflow-x:hidden;}
+body::before,body::after{content:""; position:fixed; z-index:-2; border-radius:50%; filter:blur(80px); opacity:.5; pointer-events:none;}
+body::before{width:75vw; height:75vw; top:-30vw; right:-22vw; background:#6236d7;}
+body::after{width:65vw; height:65vw; bottom:-28vw; left:-20vw; background:#172d83;}
 .hidden{display:none !important;}
-.code{font-size:11.5px;color:var(--muted);margin-top:1px;}
-.top-actions{display:flex;margin-bottom:12px;gap:8px;}
-.top-actions .btn.sm{flex:1;width:auto;margin:0;padding:13px 8px;font-size:13.5px;border-radius:17px;text-align:center;}
-.actions{display:flex;flex-wrap:wrap;gap:6px;width:100%;margin-top:2px;}
-.two-col{display:flex;gap:8px;}
-.two-col>*{flex:1;}
-.tabs{display:flex;gap:2px;margin-bottom:14px;background:rgba(255,255,255,.06);backdrop-filter:blur(20px);padding:3px;border-radius:17px;border:1px solid var(--glass-edge);}
-.tab{flex:1;text-align:center;padding:10px 4px;border-radius:14px;background:transparent;border:none;cursor:pointer;font-weight:700;color:var(--ink-soft);font-size:14px;}
-.tab.active{background:rgba(255,255,255,.16);color:var(--ink);box-shadow:0 3px 10px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.25);}
 
-.subject-row{padding:0;border-top:1px solid rgba(255,255,255,.07);}
-.subject-row:first-child{border-top:none;}
-.subject-head{display:flex;align-items:center;gap:10px;cursor:pointer;padding:12px 4px;}
-.subj-bar{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.subj-name{flex:1;font-weight:700;font-size:14px;color:var(--ink);}
-.subj-date{font-size:11px;color:var(--muted);margin-top:2px;font-weight:500;}
-.subj-last{font-size:11.5px;font-weight:700;color:#0b0b0d;background:var(--gray-pill);padding:4px 11px;border-radius:999px;}
-.subject-detail{padding:2px 4px 14px 22px;}
-.lvl-btn{display:inline-block;width:auto;padding:9px 12px;font-size:12.5px;margin:4px 4px 0 0;border-radius:12px;color:#fff;border:none;cursor:pointer;transition:transform .12s ease,filter .12s ease;font-family:inherit;font-weight:700;}
-.lvl-btn:active{transform:scale(0.92);filter:brightness(0.9);}
-.lvl-great{background:var(--great);}
-.lvl-good{background:var(--good);color:#20320f;}
-.lvl-ok{background:var(--ok);color:#3a2c00;}
-.lvl-weak{background:var(--weak);}
-.grade-item{display:flex;justify-content:space-between;align-items:center;padding:8px 4px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.06);gap:6px;color:var(--ink-soft);}
-.grade-item:last-child{border-bottom:none;}
-.badge{padding:3px 10px;border-radius:999px;color:#fff;font-size:11.5px;font-weight:700;}
-.abs-item{display:flex;justify-content:space-between;padding:9px 4px;border-bottom:1px solid rgba(255,255,255,.07);font-size:13.5px;}
-.abs-item:last-child{border-bottom:none;}
-.grade-entry{padding:2px 0;border-bottom:1px solid rgba(255,255,255,.06);}
-.grade-entry:last-child{border-bottom:none;}
-.grade-note{margin-top:2px;font-size:12px;color:var(--muted);}
-.note-input{margin:6px 0 2px 0 !important;}
-.lvl-absent{background:var(--gray-pill);}
-#streamer-banner{background:rgba(255,191,94,.1);color:var(--amber);font-weight:700;letter-spacing:.2px;border:1px solid rgba(255,191,94,.28) !important;}
+.wrap{max-width:440px; margin:0 auto; padding:14px 14px calc(96px + var(--safe-b)); padding-top:calc(14px + var(--safe-t));}
+.wrap.no-tabbar{padding-bottom:calc(24px + var(--safe-b));}
 
-/* ---------- score hero: the delightful moment ---------- */
-.score-hero{text-align:center;padding:28px 18px 24px;overflow:visible;}
-.stu-big-name{font-size:22px;font-weight:800;color:#fff;margin-bottom:2px;}
-.rank-tiny{font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.3px;direction:ltr;display:inline-block;}
-.medal{position:relative;width:190px;height:190px;margin:16px auto 6px;display:flex;align-items:center;justify-content:center;--rc:var(--brand);}
-.wave{position:absolute;inset:0;border-radius:50%;border:1.5px solid var(--rc);opacity:.5;animation:ripple 3.6s ease-out infinite;}
-.wave.w2{animation-delay:1.2s;}
-.wave.w3{animation-delay:2.4s;}
-@keyframes ripple{0%{transform:scale(.66);opacity:.55;}100%{transform:scale(1.12);opacity:0;}}
-.medal-core{position:relative;width:150px;height:150px;border-radius:50%;
-  background:radial-gradient(120% 120% at 30% 20%, rgba(255,255,255,.35), transparent 55%), var(--rc);
-  box-shadow:inset 0 2px 0 rgba(255,255,255,.55), inset 0 -20px 30px -16px rgba(0,0,0,.55), 0 0 46px -6px var(--rc), 0 18px 36px rgba(0,0,0,.5);
-  display:flex;align-items:center;justify-content:center;}
-.score-num{font-size:54px;font-weight:900;letter-spacing:-1.5px;color:#fff;direction:ltr;
-  filter:drop-shadow(0 4px 14px rgba(0,0,0,.45));animation:pop .5s cubic-bezier(.34,1.56,.64,1);}
-@keyframes pop{0%{transform:scale(.7);opacity:0;}70%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;}}
-@media (prefers-reduced-motion: reduce){ .wave{animation:none;} .score-num{animation:none;} }
+.card{
+  background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.035));
+  border:1px solid var(--line); border-radius:22px; padding:16px; margin-bottom:14px;
+  box-shadow:0 22px 60px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);
+  backdrop-filter:blur(26px) saturate(160%); -webkit-backdrop-filter:blur(26px) saturate(160%);
+}
+input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px; border:1px solid var(--line); background:rgba(0,0,0,.22); color:#fff; font-family:inherit; font-size:15px;}
 
-.app-footer{text-align:center;font-size:9px;color:rgba(255,255,255,.22);letter-spacing:.4px;margin:22px 0 8px;position:relative;z-index:1;}
-.pick-pill{display:inline-block;background:rgba(40,227,154,.15);color:var(--brand);border:1px solid rgba(40,227,154,.35);padding:9px 16px;border-radius:14px;font-weight:800;font-size:15px;margin:10px 6px 0 0;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+/* ---------- connection screens ---------- */
+.conn-box{display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:12px; padding:60px 20px;}
+.conn-icon{font-size:50px; animation:pulseIcon 1.4s ease-in-out infinite;}
+@keyframes pulseIcon{0%,100%{transform:scale(1); opacity:1;}50%{transform:scale(1.15); opacity:.6;}}
+.conn-ring{width:48px; height:48px; border:4px solid rgba(154,114,255,.18); border-top-color:var(--purple); border-radius:50%; animation:spin .9s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.conn-title{font-size:17px; font-weight:800; margin:0;}
+.conn-sub{font-size:12.5px; color:var(--muted); margin:0;}
+#offline-overlay{position:fixed; inset:0; z-index:9999; background:rgba(4,3,10,.92); display:none; align-items:center; justify-content:center; backdrop-filter:blur(6px);}
+#offline-overlay .conn-box{max-width:320px;}
+
+/* ---------- login ---------- */
+.brand-block{display:flex; flex-direction:column; align-items:center; gap:10px; margin:40px 0 26px;}
+.brand-mark{width:56px; height:56px; border-radius:19px; display:flex; align-items:center; justify-content:center; font-size:27px;
+  background:linear-gradient(145deg,#a98aff,#6540df); box-shadow:0 14px 32px rgba(126,79,255,.45), inset 0 1px 0 rgba(255,255,255,.5);}
+.brand-block h1{font-size:20px; margin:0;}
+.brand-block p{font-size:12.5px; color:var(--muted); margin:0;}
+.pin-input{width:100%; text-align:center; letter-spacing:6px; font-size:20px; font-weight:800; height:56px; border-radius:16px; border:1px solid var(--line); background:rgba(0,0,0,.25); color:#fff; font-family:inherit; margin-bottom:14px;}
+.btn{display:block; width:100%; text-align:center; border:none; cursor:pointer; font-family:inherit; padding:14px; border-radius:16px; font-size:14.5px; font-weight:700; color:#fff;
+  background:linear-gradient(135deg,#8c68ff,#6540d5); box-shadow:0 12px 26px rgba(113,67,232,.35); position:relative; overflow:hidden;}
+.btn::before{content:""; position:absolute; top:-40%; left:8%; right:8%; height:60%; border-radius:50%;
+  background:radial-gradient(ellipse at center, rgba(255,255,255,.5), transparent 70%); filter:blur(2px); pointer-events:none;}
+.btn.ghost{background:rgba(255,255,255,.06); box-shadow:inset 0 0 0 1.4px rgba(154,114,255,.4);}
+.btn.ghost::before{display:none;}
+.btn.sm{width:auto; display:inline-block; padding:9px 15px; font-size:12.5px;}
+.btn+.btn{margin-top:10px;}
+.btn:active{transform:scale(.97);}
+.btn.danger{background:linear-gradient(135deg,#ff8fa8,#e0506b); box-shadow:0 12px 26px rgba(224,80,107,.35);}
+.msg{text-align:center; font-size:12.5px; color:var(--danger); min-height:16px; margin-top:8px; font-weight:600;}
+
+/* ---------- persistent top strip ---------- */
+.topstrip{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:14px;}
+.topstrip .who{display:flex; align-items:center; gap:9px;}
+.topstrip .mark{width:32px; height:32px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:15px; background:linear-gradient(145deg,#a98aff,#6540df); flex:none;}
+.topstrip b{font-size:13.5px;}
+.topstrip .actions{display:flex; gap:6px;}
+.iconbtn{width:34px; height:34px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.06); color:#fff; font-size:14px; display:flex; align-items:center; justify-content:center; cursor:pointer;}
+.iconbtn.on{background:rgba(255,217,138,.16); border-color:rgba(255,217,138,.4); color:var(--yellow);}
+.hidden-banner{display:flex; align-items:center; gap:8px; padding:12px 15px; margin-bottom:14px; font-weight:700; font-size:12.5px; color:var(--yellow); background:rgba(255,217,138,.08); border:1px solid rgba(255,217,138,.26) !important;}
+
+.topbar{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
+.search{flex:1; height:38px; background:rgba(0,0,0,.2); border:1px solid rgba(255,255,255,.08); border-radius:13px; display:flex; align-items:center; padding:0 12px; color:var(--muted); font-size:11.5px;}
+.search input{background:none; border:none; color:#fff; font-family:inherit; font-size:12.5px; flex:1; outline:none; padding:0; margin-right:6px;}
+.search input::placeholder{color:var(--muted);}
+
+.welcome{margin:2px 2px 16px;}
+.welcome h1{font-size:19px; margin:0 0 4px; letter-spacing:-.4px;}
+.welcome .date{color:#c5c0d5; font-size:10.5px;}
+
+.hero{min-height:60px; position:relative; overflow:hidden;
+  background:radial-gradient(70% 90% at 15% 15%,rgba(147,106,255,.32),transparent 55%), linear-gradient(145deg,rgba(35,29,75,.72),rgba(18,17,38,.62));}
+.hero::after{content:""; position:absolute; width:180px; height:180px; border-radius:50%; left:-90px; bottom:-120px; background:rgba(91,67,210,.35); filter:blur(35px);}
+.hero-row{display:flex; gap:8px; position:relative; z-index:1; flex-wrap:wrap;}
+.pill{padding:9px 12px; border-radius:12px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); font-size:11px; font-weight:600; display:flex; align-items:center; gap:5px; cursor:pointer; color:#fff; font-family:inherit;}
+
+/* ---------- lottery ---------- */
+.lottery-card{text-align:center;}
+.lottery-title{display:flex; align-items:center; justify-content:center; gap:7px; font-size:14px; font-weight:800; margin-bottom:12px;}
+.lottery-count{display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:14px;}
+.lottery-count label{font-size:11.5px; color:var(--muted); font-weight:700;}
+.lottery-count input{width:56px; height:38px; text-align:center; padding:0;}
+.lottery-stage{min-height:56px; display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px; margin-bottom:14px;}
+.lottery-name{font-size:18px; font-weight:800; color:var(--purple);}
+.winner-chip{padding:9px 16px; border-radius:14px; font-size:12.5px; font-weight:800; background:linear-gradient(135deg,#8c68ff,#6540d5); box-shadow:0 10px 24px rgba(113,67,232,.4); animation:winnerPop .4s cubic-bezier(.2,1.4,.4,1);}
+@keyframes winnerPop{from{transform:scale(.5); opacity:0;} to{transform:scale(1); opacity:1;}}
+.lottery-btn{background:linear-gradient(135deg,#8c68ff,#6540d5); border:none; color:#fff; font-family:inherit; font-weight:800; font-size:13px; padding:12px 22px; border-radius:14px; cursor:pointer; box-shadow:0 12px 26px rgba(113,67,232,.35);}
+.lottery-btn:active{transform:scale(.96);}
+.lottery-btn[disabled]{opacity:.6;}
+
+.stats-scroll{display:flex; gap:10px; overflow-x:auto; margin:0 -2px 14px; padding:2px 2px 4px; scrollbar-width:none;}
+.stats-scroll::-webkit-scrollbar{display:none;}
+.stat{flex:0 0 128px; margin:0;}
+.stat small{color:var(--muted); font-size:10px;}
+.stat b{font-size:23px; display:block; margin-top:8px; direction:ltr; text-align:right;}
+.stat .trend{font-size:9.5px; color:var(--green); margin-top:5px;}
+
+.section-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;}
+.section-head h3{font-size:14px; margin:0;}
+.section-head small{color:var(--muted); font-size:10px;}
+.badge{font-size:9.5px; padding:5px 9px; border-radius:999px; background:rgba(255,255,255,.08); color:#d7d1e5; font-weight:700;}
+
+.chart{height:110px; display:flex; align-items:flex-end; gap:8px; padding:10px 6px 4px; border-radius:15px; background:rgba(0,0,0,.15);}
+.chart-bar{flex:1; min-width:10px; border-radius:8px 8px 4px 4px; background:linear-gradient(180deg,#a482ff,#633de0); box-shadow:0 8px 18px rgba(112,68,235,.25); transition:height .5s cubic-bezier(.22,1,.36,1);}
+.labels{display:flex; justify-content:space-between; color:#77728b; font-size:8px; padding:5px 6px 0;}
+
+.ranking{display:grid; gap:8px;}
+.rank{display:grid; grid-template-columns:20px 28px 1fr auto; align-items:center; gap:7px; padding:8px; border-radius:13px; background:rgba(255,255,255,.035);}
+.rank>span:first-child{color:#8c879d; font-size:10px; text-align:center;}
+.rank .rava{width:28px; height:28px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:10px; flex:none; color:#0b0710; font-weight:800;}
+.rank strong{font-size:11px; display:block;}
+.rank b{font-size:11.5px; direction:ltr;}
+
+.filters{display:flex; gap:7px; overflow-x:auto; margin-bottom:12px; scrollbar-width:none;}
+.filters::-webkit-scrollbar{display:none;}
+.chip{flex:none; padding:7px 13px; border-radius:999px; font-size:11px; font-weight:700; color:var(--muted); background:rgba(255,255,255,.05); border:1px solid var(--line); cursor:pointer;}
+.chip.active{color:#fff; background:linear-gradient(90deg,rgba(142,102,255,.5),rgba(142,102,255,.25)); border-color:transparent;}
+
+.bulk{display:flex; align-items:center; gap:8px;}
+.bulk input{width:64px; height:38px; text-align:center; padding:0;}
+.bulk button{flex:1; height:38px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.05); color:#fff; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer;}
+.bulk button.plus{color:var(--green); border-color:rgba(86,224,176,.3);}
+.bulk button.minus{color:var(--danger); border-color:rgba(255,125,156,.3);}
+
+.student-row{display:grid; grid-template-columns:34px 1fr auto; align-items:center; gap:9px; padding:9px; border-radius:14px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.055); margin-bottom:7px;}
+.student-row .av{width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex:none; color:#0b0710;}
+.student-row strong{font-size:12.5px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:120px;}
+.student-row .code{display:block; color:var(--muted); font-size:9px; margin-top:1px;}
+.score-tag{font-size:12px; font-weight:800; direction:ltr; min-width:38px; text-align:center;}
+.pm{display:flex; align-items:center; gap:5px;}
+.pmbtn{width:28px; height:28px; border-radius:9px; border:1px solid var(--line); background:rgba(255,255,255,.06); color:#fff; font-size:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:800;}
+.pmbtn.plus{color:var(--green);} .pmbtn.minus{color:var(--danger);}
+.pmbtn:active{transform:scale(.88);}
+.empty-note{text-align:center; font-size:12px; color:var(--muted); padding:16px 6px;}
+
+.abs-row{display:grid; grid-template-columns:32px 1fr auto; align-items:center; gap:9px; padding:9px; border-radius:14px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.055); margin-bottom:7px;}
+.abs-row .av{width:30px; height:30px; border-radius:10px; background:linear-gradient(145deg,#9c7aff,#5434c1); display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:800; flex:none;}
+.abs-toggles{display:flex; gap:6px;}
+.abs-btn{padding:7px 10px; border-radius:10px; font-size:10.5px; font-weight:700; border:1px solid var(--line); background:rgba(255,255,255,.05); color:var(--muted); cursor:pointer; white-space:nowrap; font-family:inherit;}
+.abs-btn.on-absent{background:rgba(255,125,156,.18); color:var(--danger); border-color:rgba(255,125,156,.4);}
+.abs-btn.on-excused{background:rgba(255,217,138,.18); color:var(--yellow); border-color:rgba(255,217,138,.4);}
+
+.mgmt-add{display:flex; gap:8px; margin-bottom:14px;}
+.mgmt-add input{flex:1; height:42px;}
+.mgmt-add button{width:46px; height:42px; border-radius:13px; border:none; background:linear-gradient(135deg,#8c68ff,#6540d5); color:#fff; font-size:18px; cursor:pointer; flex:none;}
+.del-btn{width:30px; height:30px; border-radius:9px; border:1px solid rgba(255,125,156,.35); background:rgba(255,125,156,.1); color:var(--danger); font-size:13px; cursor:pointer; font-family:inherit;}
+
+.subj-list{display:grid; gap:8px;}
+.subj-row{padding:2px;}
+.subj-head{display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:13px; background:rgba(255,255,255,.035); cursor:pointer;}
+.dot{width:8px; height:8px; border-radius:50%; flex:none; box-shadow:0 0 12px currentColor;}
+.subj-head b{font-size:11.5px; flex:1; font-weight:700;}
+.subj-detail{display:none; padding:12px 6px 4px;}
+.subj-detail.open{display:block;}
+.lvl-choices{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
+.lvl-btn{padding:7px 12px; border-radius:10px; font-size:10.5px; font-weight:700; color:#0b0710; border:none; cursor:pointer; font-family:inherit;}
+.note-input{margin-bottom:8px !important; height:38px; font-size:12.5px !important;}
+.hist-line{display:flex; justify-content:space-between; align-items:center; padding:6px 4px; font-size:10.5px; border-top:1px solid rgba(255,255,255,.06); gap:6px;}
+.hist-line span:first-child{color:var(--muted); flex:none;}
+.hist-note{font-size:9.5px; color:var(--muted); padding:0 4px 6px; border-top:1px solid transparent;}
+.mini-x{background:none; border:none; color:var(--danger); font-size:11px; cursor:pointer; font-family:inherit; padding:2px 4px;}
+
+.month-group{margin-bottom:16px;}
+.month-title{font-size:12px; font-weight:800; color:var(--purple); margin:0 0 8px; padding:0 2px;}
+.abs-item{display:flex; justify-content:space-between; align-items:center; padding:9px 12px; border-radius:12px; background:rgba(255,255,255,.035); margin-bottom:6px; font-size:11.5px;}
+
+.backbtn{display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--muted); margin-bottom:12px; cursor:pointer; width:fit-content;}
+
+.tabsection{display:none;}
+.tabsection.active{display:block; animation:in .3s cubic-bezier(.22,1,.36,1);}
+@keyframes in{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+@media (prefers-reduced-motion: reduce){ .tabsection.active{animation:none;} }
+.sub{display:none;} .sub.active{display:block;}
+
+.tabbar{
+  position:fixed; left:0; right:0; bottom:0; z-index:50;
+  display:flex; justify-content:space-around; padding:9px 4px calc(9px + var(--safe-b));
+  background:rgba(15,13,28,.82); backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
+  border-top:1px solid var(--line); max-width:440px; margin:0 auto; right:0; left:0;
+}
+.tabbar button{background:none; border:none; color:var(--muted); font-family:inherit; font-size:9.6px; font-weight:700; display:flex; flex-direction:column; align-items:center; gap:2px; padding:4px 6px; border-radius:12px; cursor:pointer;}
+.tabbar button i{font-style:normal; font-size:16px;}
+.tabbar button.active{color:#fff; background:linear-gradient(180deg,rgba(142,102,255,.35),rgba(142,102,255,.1));}
+
+/* ---------- delightful student score hero ---------- */
+.score-hero{position:relative; text-align:center; padding:30px 16px 24px; overflow:hidden;}
+.score-halo{position:absolute; left:50%; top:38%; width:200px; height:200px; transform:translate(-50%,-50%);
+  background:radial-gradient(circle, rgba(154,114,255,.55), rgba(111,231,255,.25) 45%, transparent 72%);
+  filter:blur(18px); animation:haloPulse 3.2s ease-in-out infinite;}
+@keyframes haloPulse{0%,100%{opacity:.7; transform:translate(-50%,-50%) scale(1);}50%{opacity:1; transform:translate(-50%,-50%) scale(1.12);}}
+.sparkle{position:absolute; font-size:14px; animation:twinkle 2.4s ease-in-out infinite; color:#e4d8ff;}
+@keyframes twinkle{0%,100%{opacity:.2; transform:scale(.7) rotate(0deg);}50%{opacity:1; transform:scale(1.15) rotate(15deg);}}
+.score-hero .lbl{position:relative; z-index:2; font-size:13px; color:var(--muted); font-weight:700;}
+.score-num-big{position:relative; z-index:2; font-size:56px; font-weight:900; letter-spacing:-1.5px; margin:6px 0;
+  background:linear-gradient(160deg,#e4d8ff,var(--purple) 55%,var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 10px 24px rgba(154,114,255,.5));}
+.trophy-row{position:relative; z-index:2; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px;}
+.trophy-row .em{font-size:22px; animation:bounce 1.8s ease-in-out infinite; display:inline-block;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
+.rank-chip{position:relative; z-index:2; display:inline-block; font-size:12px; font-weight:800; color:#1b1030; background:linear-gradient(135deg,#ffe9a8,#ffb85e); padding:6px 15px; border-radius:999px; box-shadow:0 8px 20px rgba(255,184,94,.4);}
+.confetti{position:absolute; width:7px; height:7px; border-radius:2px; top:45%; left:50%; opacity:0; pointer-events:none;}
+.score-hero.burst .confetti{animation:confettiBurst 1s cubic-bezier(.2,.8,.3,1) forwards;}
+@keyframes confettiBurst{0%{opacity:1; transform:translate(-50%,-50%) rotate(0) scale(1);}100%{opacity:0; transform:translate(var(--tx),var(--ty)) rotate(var(--tr)) scale(.4);}}
+.streak-card{display:flex; align-items:center; gap:12px; padding:14px 16px;}
+.streak-card .em{font-size:26px;}
+.streak-card b{display:block; font-size:14px;}
+.streak-card span{display:block; font-size:11px; color:var(--muted); margin-top:1px;}
 </style>
 </head>
 <body>
-<div class="aurora"><span></span><span></span><span></span></div>
-<div class="wrap">
-  <div class="hero-brand"><div class="mark">🏅</div><h1>کلاس ما</h1></div>
 
-  <div id="view-loading">
+<div id="view-loading">
+  <div class="wrap no-tabbar">
     <div class="conn-box">
       <div class="conn-icon">🔌</div>
       <div class="conn-ring"></div>
@@ -167,128 +230,216 @@ input::placeholder{color:var(--muted);}
       <p class="conn-sub">به‌محض وصل شدن، خودش وارد پنل می‌شی</p>
     </div>
   </div>
+</div>
 
-  <div id="offline-overlay">
-    <div class="conn-box">
-      <div class="conn-icon">🔌</div>
-      <div class="conn-ring"></div>
-      <p class="conn-title">برای اتصال، فیلترشکن خود را روشن کنید</p>
-      <p class="conn-sub">تا وصل نشی هیچ تغییری ثبت نمی‌شه، نگران چیزی نباش</p>
-    </div>
+<div id="offline-overlay">
+  <div class="conn-box">
+    <div class="conn-icon">🔌</div>
+    <div class="conn-ring"></div>
+    <p class="conn-title">برای اتصال، فیلترشکن خود را روشن کنید</p>
+    <p class="conn-sub">تا وصل نشی هیچ تغییری ثبت نمی‌شه، نگران چیزی نباش</p>
   </div>
+</div>
 
-  <div id="view-landing" class="hidden">
-    <div class="card">
-      <button class="btn" id="btn-go-teacher">ورود معلم</button>
-      <button class="btn alt" id="btn-go-student">ورود دانش‌آموز</button>
+<div id="view-landing" class="hidden">
+  <div class="wrap no-tabbar">
+    <div class="brand-block">
+      <div class="brand-mark">🏅</div>
+      <h1>کلاس ما</h1>
+      <p>سامانه‌ی امتیاز و کارنامه‌ی کلاس</p>
     </div>
+    <button class="btn" id="btn-go-teacher">ورود معلم</button>
+    <button class="btn ghost" id="btn-go-student">ورود دانش‌آموز</button>
   </div>
+</div>
 
-  <div id="view-teacher-pin" class="hidden">
-    <div class="card">
-      <div class="muted">پین معلم را وارد کن</div>
-      <input type="text" id="pin-input" placeholder="پین" inputmode="numeric">
-      <button class="btn" id="btn-pin-submit">ورود</button>
-      <button class="btn ghost" id="btn-pin-back">بازگشت</button>
-      <div class="muted center" id="pin-msg" style="margin-top:8px;"></div>
+<div id="view-teacher-pin" class="hidden">
+  <div class="wrap no-tabbar">
+    <div class="brand-block" style="margin-top:24px;">
+      <div class="brand-mark">🔐</div>
+      <h1>ورود معلم</h1>
+      <p>پین خودت رو وارد کن</p>
     </div>
+    <input class="pin-input" id="pin-input" placeholder="••••••••" inputmode="numeric">
+    <button class="btn" id="btn-pin-submit">ورود</button>
+    <button class="btn ghost" id="btn-pin-back">بازگشت</button>
+    <div class="msg" id="pin-msg"></div>
   </div>
+</div>
 
-  <div id="view-teacher" class="hidden">
-    <div class="top-actions">
-      <button class="btn ghost sm" id="btn-streamer">حالت پنهان</button>
-      <button class="btn ghost sm" id="btn-teacher-exit">خروج</button>
+<div id="view-student-login" class="hidden">
+  <div class="wrap no-tabbar">
+    <div class="brand-block" style="margin-top:24px;">
+      <div class="brand-mark">🎓</div>
+      <h1>ورود دانش‌آموز</h1>
+      <p>کد ۴ رقمی خودت رو بزن</p>
     </div>
-    <div class="card center hidden" id="streamer-banner">حالت پنهان فعال — امتیاز و کد دانش‌آموزها مخفی است</div>
-    <div class="muted center" id="teacher-date" style="margin:-4px 0 10px;"></div>
-    <div class="card">
-      <div class="muted" style="margin-bottom:6px;">امتیاز گروهی به کل کلاس</div>
-      <div class="two-col">
-        <input type="number" id="bulk-amount" value="50" min="1">
-        <div></div>
+    <input class="pin-input" id="student-code-input" placeholder="••••" inputmode="numeric" style="letter-spacing:10px;">
+    <button class="btn" id="btn-student-submit">ورود</button>
+    <button class="btn ghost" id="btn-student-back">بازگشت</button>
+    <div class="msg" id="student-login-msg"></div>
+  </div>
+</div>
+
+<!-- =================== TEACHER APP =================== -->
+<div id="view-teacher" class="hidden">
+  <div class="wrap">
+    <div class="topstrip">
+      <div class="who"><div class="mark">🏅</div><b>کلاس ما</b></div>
+      <div class="actions">
+        <button class="iconbtn" id="btn-streamer" title="حالت پنهان">🙈</button>
+        <button class="iconbtn" id="btn-teacher-exit" title="خروج">🚪</button>
       </div>
-      <div class="two-col">
-        <button class="btn" id="btn-bulk-plus">افزودن به همه</button>
-        <button class="btn ghost" id="btn-bulk-minus">کاهش از همه</button>
+    </div>
+    <div class="hidden-banner hidden" id="streamer-banner">🙈 حالت پنهان فعال — امتیاز و کد دانش‌آموزها مخفی است</div>
+
+    <!-- DASHBOARD -->
+    <section class="tabsection active" id="tt-dashboard">
+      <div class="welcome">
+        <h1 id="teacher-welcome"></h1>
+        <div class="date" id="teacher-date"></div>
       </div>
-    </div>
-    <div class="card">
-      <div class="muted" style="margin-bottom:6px;">انتخاب تصادفی برای پرسیدن سوال</div>
-      <div class="two-col">
-        <input type="number" id="pick-count" value="1" min="1">
-        <button class="btn" id="btn-pick-random" style="margin:0;">قرعه‌کشی</button>
-      </div>
-      <div id="pick-result"></div>
-    </div>
-    <div class="card">
-      <input type="text" id="teacher-search" placeholder="جستجوی نام دانش‌آموز">
-    </div>
-    <div class="card">
-      <div class="muted" style="margin-bottom:6px;">گزارش غیبت هفتگی (شنبه تا چهارشنبه)</div>
-      <button class="btn ghost" id="btn-export-absences">📄 خروجی PDF غیبت‌های هفته</button>
-      <div class="muted" style="margin:14px 0 6px;">گزارش تغییرات امتیاز سه روز اخیر</div>
-      <button class="btn ghost" id="btn-export-daily">📄 خروجی PDF تغییرات امتیاز</button>
-    </div>
-    <div class="card list-card" id="teacher-list"></div>
-    <div class="card">
-      <div class="muted">افزودن دانش‌آموز</div>
-      <input type="text" id="new-student-name" placeholder="نام دانش‌آموز">
-      <button class="btn" id="btn-add-student">افزودن</button>
-    </div>
-  </div>
-
-  <div id="view-teacher-report" class="hidden">
-    <div class="top-actions"><button class="btn ghost sm" id="btn-report-back">بازگشت</button></div>
-    <div class="card center" id="report-student-name" style="font-weight:800;"></div>
-    <div class="card" id="report-subjects"></div>
-  </div>
-
-  <div id="view-student-login" class="hidden">
-    <div class="card">
-      <div class="muted">کد ورود خودت را بزن</div>
-      <input type="text" id="student-code-input" placeholder="کد ۴ رقمی" inputmode="numeric">
-      <button class="btn" id="btn-student-submit">ورود</button>
-      <button class="btn ghost" id="btn-student-back">بازگشت</button>
-      <div class="muted center" id="student-login-msg" style="margin-top:8px;"></div>
-    </div>
-  </div>
-
-  <div id="view-student" class="hidden">
-    <div class="top-actions"><button class="btn ghost sm" id="btn-student-exit">خروج</button></div>
-    <div class="tabs">
-      <div class="tab active" id="tab-score">امتیاز</div>
-      <div class="tab" id="tab-report">کارنامه</div>
-    </div>
-
-    <div id="student-score-view">
-      <div class="card score-hero">
-        <div class="stu-big-name" id="student-name-label"></div>
-        <span class="rank-tiny" id="student-rank-label"></span>
-        <div class="medal" id="student-medal">
-          <div class="wave w1"></div><div class="wave w2"></div><div class="wave w3"></div>
-          <div class="medal-core"><div class="score-num" id="student-total-label"></div></div>
+      <div class="card hero">
+        <div class="hero-row">
+          <button class="pill" id="btn-export-absences">📄 خروجی PDF غیبت هفتگی</button>
+          <button class="pill" id="btn-export-reports">📄 خروجی PDF کارنامه‌ها</button>
         </div>
       </div>
+      <div class="card lottery-card">
+        <div class="lottery-title">🎲 قرعه‌کشی دانش‌آموز</div>
+        <div class="lottery-count">
+          <label>تعداد نفرات:</label>
+          <input type="number" id="lotteryN" value="1" min="1">
+        </div>
+        <div class="lottery-stage" id="lotteryStage"><span style="font-size:11.5px; color:var(--muted);">برای شروع دکمه‌ی زیر رو بزن</span></div>
+        <button class="lottery-btn" id="lotteryBtn">🎲 شروع قرعه‌کشی</button>
+      </div>
+      <div class="stats-scroll">
+        <div class="card stat"><small>امتحان‌های این ماه</small><b id="stat-exams">۰</b><div class="trend" id="stat-exams-sub"></div></div>
+        <div class="card stat"><small>امتیاز ثبت‌شده</small><b id="stat-scores">۰</b><div class="trend">مجموع دفعات ثبت امتیاز</div></div>
+        <div class="card stat"><small>غیبت این هفته</small><b id="stat-abs">۰</b><div class="trend" style="color:#a6a1bb;">شنبه تا چهارشنبه</div></div>
+      </div>
       <div class="card">
-        <div class="muted" style="margin-bottom:6px;">روند امتیاز</div>
+        <div class="section-head"><div><h3>فعالیت امتیازدهی</h3><small>۷ روز اخیر</small></div></div>
+        <div class="chart" id="activityChart"></div>
+        <div class="labels" id="activityLabels"></div>
+      </div>
+      <div class="card">
+        <div class="section-head"><h3>رتبه‌های برتر</h3><small>امتیاز کل</small></div>
+        <div class="ranking" id="topRanking"></div>
+      </div>
+    </section>
+
+    <!-- SCORING -->
+    <section class="tabsection" id="tt-scoring">
+      <div class="topbar"><div class="search"><input type="text" id="scoring-search" placeholder="جستجوی دانش‌آموز..."></div></div>
+      <div class="filters" id="scoringFilters">
+        <div class="chip active" data-filter="all">همه</div>
+        <div class="chip" data-filter="active-today">امروز فعال</div>
+        <div class="chip" data-filter="absent-today">غایب امروز</div>
+        <div class="chip" data-filter="top">بیشترین امتیاز</div>
+      </div>
+      <div class="card" style="padding:12px 14px;">
+        <div class="section-head" style="margin-bottom:8px;"><h3 style="font-size:12.5px;">امتیاز گروهی به کل کلاس</h3></div>
+        <div class="bulk">
+          <input type="number" id="bulk-amount" value="50" min="1">
+          <button class="plus" id="btn-bulk-plus">+ به همه</button>
+          <button class="minus" id="btn-bulk-minus">− از همه</button>
+        </div>
+      </div>
+      <div class="card" id="scoringList" style="padding:10px;"></div>
+    </section>
+
+    <!-- ABSENCE -->
+    <section class="tabsection" id="tt-absence">
+      <div class="topbar"><div class="search"><input type="text" id="absence-search" placeholder="جستجوی دانش‌آموز..."></div></div>
+      <div class="card" style="padding:12px 14px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:12px; color:var(--muted); font-weight:700;">غیبت‌های امروز</span>
+        <span class="badge" style="color:var(--danger); background:rgba(255,125,156,.12);" id="todayAbsCount">۰ نفر</span>
+      </div>
+      <div class="card" id="absenceList" style="padding:10px;"></div>
+    </section>
+
+    <!-- REPORT -->
+    <section class="tabsection" id="tt-report">
+      <div class="sub active" id="tt-report-list">
+        <div class="topbar"><div class="search"><input type="text" id="report-search" placeholder="جستجوی دانش‌آموز برای کارنامه..."></div></div>
+        <div class="card" id="reportStudentList" style="padding:10px;"></div>
+      </div>
+      <div class="sub" id="tt-report-detail">
+        <div class="backbtn" id="btn-report-back">→ بازگشت به لیست</div>
+        <div class="card" style="text-align:center; font-weight:800; font-size:14px;" id="reportDetailName"></div>
+        <div class="card"><div class="subj-list" id="reportSubjects"></div></div>
+      </div>
+    </section>
+
+    <!-- MANAGEMENT -->
+    <section class="tabsection" id="tt-manage">
+      <div class="topbar"><h1 style="font-size:16px; margin:0;">مدیریت دانش‌آموزان</h1></div>
+      <div class="mgmt-add">
+        <input type="text" id="new-student-name" placeholder="نام دانش‌آموز جدید">
+        <button id="btn-add-student">＋</button>
+      </div>
+      <div class="card" id="manageList" style="padding:10px;"></div>
+    </section>
+  </div>
+
+  <nav class="tabbar" id="tabbar-teacher">
+    <button data-tab="dashboard" class="active"><i>⌂</i>داشبورد</button>
+    <button data-tab="scoring"><i>+</i>امتیازدهی</button>
+    <button data-tab="absence"><i>◔</i>غیبت</button>
+    <button data-tab="report"><i>▦</i>کارنامه</button>
+    <button data-tab="manage"><i>⚙</i>مدیریت</button>
+  </nav>
+</div>
+
+<!-- =================== STUDENT APP =================== -->
+<div id="view-student" class="hidden">
+  <div class="wrap">
+    <div class="topstrip">
+      <div class="who"><div class="mark">🏅</div><b>کلاس ما</b></div>
+      <div class="actions"><button class="iconbtn" id="btn-student-exit" title="خروج">🚪</button></div>
+    </div>
+
+    <section class="tabsection active" id="st-dashboard">
+      <div class="card score-hero" id="scoreHero">
+        <div class="score-halo"></div>
+        <span class="sparkle" style="top:14%; left:18%;">✦</span>
+        <span class="sparkle" style="top:22%; right:14%; animation-delay:.6s;">✧</span>
+        <span class="sparkle" style="bottom:18%; left:24%; animation-delay:1.1s;">✦</span>
+        <span class="sparkle" style="bottom:24%; right:20%; animation-delay:1.6s;">✧</span>
+        <div class="trophy-row" id="trophyRow"></div>
+        <div class="lbl" id="student-name-label"></div>
+        <div class="score-num-big" id="student-total-label">0</div>
+        <div class="rank-chip" id="student-rank-label"></div>
+      </div>
+      <div class="card streak-card" id="streakCard"></div>
+      <div class="card">
+        <div class="section-head"><h3>روند امتیاز</h3></div>
         <div id="student-chart"></div>
       </div>
       <div class="card">
-        <div class="muted" style="margin-bottom:6px;">تاریخچه امتیازها</div>
-        <div class="scroll-hist" id="student-history"></div>
+        <div class="section-head"><h3>تاریخچه امتیازها</h3></div>
+        <div id="student-history"></div>
       </div>
-      <div class="card">
-        <div class="muted" style="margin-bottom:6px;">غیبت‌ها</div>
-        <div id="student-absences"></div>
-      </div>
-    </div>
+    </section>
 
-    <div id="student-report-view" class="hidden">
-      <div class="card" id="student-subjects"></div>
-    </div>
+    <section class="tabsection" id="st-absence">
+      <div class="topbar"><h1 style="font-size:16px; margin:0;">غیبت‌های من</h1></div>
+      <div id="student-absences"></div>
+    </section>
+
+    <section class="tabsection" id="st-report">
+      <div class="topbar"><h1 style="font-size:16px; margin:0;">کارنامه من</h1></div>
+      <div class="card"><div class="subj-list" id="studentSubjects"></div></div>
+    </section>
   </div>
 
-  <div class="app-footer">design by Mehdizadeh</div>
+  <nav class="tabbar" id="tabbar-student">
+    <button data-tab="dashboard" class="active"><i>⌂</i>داشبورد</button>
+    <button data-tab="absence"><i>◔</i>غیبت‌ها</button>
+    <button data-tab="report"><i>▦</i>کارنامه</button>
+  </nav>
 </div>
 
 <!-- Firebase (compat SDK, loaded from Google's CDN) -->
@@ -309,35 +460,29 @@ const stateRef = db.collection('app').doc('classScoreboard');
 
 const SUBJECTS = ['فارسی','ریاضی','علوم','مطالعات اجتماعی','قرآن','املا','هدیه‌های آسمانی','کار و فناوری'];
 const LEVELS = [
-  {key:'great', label:'خیلی خوب', color:'var(--great)', cls:'lvl-great', value:4},
-  {key:'good',  label:'خوب',       color:'var(--good)',  cls:'lvl-good',  value:3},
-  {key:'ok',    label:'قابل قبول', color:'var(--ok)',    cls:'lvl-ok',    value:2},
-  {key:'weak',  label:'نیاز به تلاش', color:'var(--weak)', cls:'lvl-weak', value:1},
-  {key:'absent',label:'غایب',      color:'var(--muted)', cls:'lvl-absent', value:null}
+  {key:'great', label:'خیلی خوب', color:'#56e0b0', value:4},
+  {key:'good',  label:'خوب',       color:'#b5e05a', value:3},
+  {key:'ok',    label:'قابل قبول', color:'#ffd98a', value:2},
+  {key:'weak',  label:'نیاز به تلاش', color:'#ff7d9c', value:1},
+  {key:'absent',label:'غایب',      color:'#8c879d', value:null}
 ];
 function levelByKey(k){ return LEVELS.find(l=>l.key===k); }
-function avatarColorForRank(rank, count){
-  const base = (()=>{
-    if(count<=1) return 'hsl(140,78%,42%)';
-    const t=(rank-1)/(count-1);
-    const hue = 140 - t*140;
-    const sat = 78 - t*8;
-    const light = 40 + Math.sin(t*Math.PI)*6;
-    return `hsl(${hue},${sat}%,${light}%)`;
-  })();
-  return `radial-gradient(120% 120% at 30% 22%, rgba(255,255,255,.55), transparent 55%), ${base}`;
-}
-function escapeHtml(str){
-  return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+function escapeHtml(str){ return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function initials(name){ return (name||'').trim().charAt(0) || '?'; }
+function faNum(n){ return Number(n||0).toLocaleString('fa-IR'); }
 
 let state = null;
-let currentStudentId = null;
-let reportStudentId = null;
-let pendingDeleteId = null, pendingDeleteTimeout = null;
-let editingGrade = null;
-let currentView = 'view-loading';
+let booted = false;
 let suppressNextSnapshot = false;
+let currentView = 'view-loading';
+let currentTeacherTab = 'dashboard';
+let currentStudentTab = 'dashboard';
+let reportStudentId = null;
+let reportListMode = true;
+let editingGrade = null;
+let scoringFilter = 'all';
+let currentStudentId = null;
+let pendingDeleteId = null, pendingDeleteTimeout = null;
 function loadStreamerMode(){ try{ return localStorage.getItem('streamerMode')==='1'; }catch(e){ return false; } }
 let streamerMode = loadStreamerMode();
 
@@ -351,6 +496,7 @@ function normalize(){
     if(!s.grades) s.grades = {};
     SUBJECTS.forEach(sub=>{ if(!s.grades[sub]) s.grades[sub]=[]; });
     if(!s.absences) s.absences = [];
+    s.absences.forEach(a=>{ if(typeof a.excused !== 'boolean') a.excused = false; });
     if(!s.history) s.history = [];
     delete s.homework;
   });
@@ -360,7 +506,7 @@ function pad2(n){ return String(n).padStart(2,'0'); }
 function isoFromDate(d){ return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`; }
 function parseISOLocal(iso){ const [y,m,d] = iso.split('-').map(Number); return new Date(y, m-1, d); }
 function todayISO(){ return isoFromDate(new Date()); }
-function todayFa(){ return new Date().toLocaleDateString('fa-IR'); }
+function todayFa(){ return new Date().toLocaleDateString('fa-IR', {weekday:'long', day:'numeric', month:'long'}); }
 function faDate(iso){ return parseISOLocal(iso).toLocaleDateString('fa-IR'); }
 function total(s){ return s.history.reduce((a,h)=>a+h.delta,0); }
 function todayDelta(s){ return s.history.filter(h=>h.date===todayISO()).reduce((a,h)=>a+h.delta,0); }
@@ -371,9 +517,9 @@ function genCode(){
   return c;
 }
 function rankColor(rank, count){
-  if(count<=1) return 'hsl(140,70%,40%)';
+  if(count<=1) return 'hsl(150,72%,58%)';
   const t=(rank-1)/(count-1);
-  return `hsl(${140-t*140},75%,40%)`;
+  return `hsl(${150-t*150},78%,58%)`;
 }
 function sortedByScore(){ return [...state.students].sort((a,b)=>total(b)-total(a)); }
 function sortedByName(){ return [...state.students].sort((a,b)=>a.name.localeCompare(b.name,'fa')); }
@@ -381,211 +527,277 @@ function lastLevel(s, subject){
   const arr = s.grades[subject];
   return arr.length ? levelByKey(arr[arr.length-1].level) : null;
 }
+function rankColorOf(studentId){
+  const ranked = sortedByScore();
+  const idx = ranked.findIndex(x=>x.id===studentId);
+  return rankColor(idx+1, ranked.length || 1);
+}
 
 function show(id){
   currentView = id;
-  ['view-loading','view-landing','view-teacher-pin','view-teacher','view-teacher-report','view-student-login','view-student'].forEach(v=>{
+  ['view-loading','view-landing','view-teacher-pin','view-teacher','view-student-login','view-student'].forEach(v=>{
     document.getElementById(v).classList.toggle('hidden', v!==id);
   });
 }
 
 function rerenderCurrentView(){
-  if(currentView==='view-teacher') renderTeacher();
-  else if(currentView==='view-teacher-report') renderReport();
-  else if(currentView==='view-student') renderStudent();
+  if(currentView==='view-teacher') renderTeacherTab(currentTeacherTab, true);
+  else if(currentView==='view-student') renderStudentTab(currentStudentTab, true);
 }
 
-// ---------- TEACHER: student list ----------
-function renderTeacher(){
-  document.getElementById('teacher-date').textContent = 'امروز: ' + todayFa();
-  document.getElementById('bulk-amount').value = state.step;
-  const list = document.getElementById('teacher-list');
-  list.innerHTML='';
-  const q = (document.getElementById('teacher-search').value||'').trim();
-  const ranked = sortedByScore();
-  const rankMap = new Map(ranked.map((st,i)=>[st.id, i+1]));
-  sortedByName().filter(s=>!q || s.name.includes(q)).forEach(s=>{
-    const td = todayDelta(s);
-    const cls = td>0?'pos':(td<0?'neg':'neu');
-    const absentToday = s.absences.some(a=>a.date===todayISO());
-    const codeDisplay = streamerMode ? '••••' : s.code;
-    const totalDisplay = streamerMode ? '•••' : total(s);
-    const row = document.createElement('div');
-    row.className='row';
-    row.innerHTML = `
-      <div class="avatar" style="background:${avatarColorForRank(rankMap.get(s.id), ranked.length)}"></div>
-      <div class="name">${escapeHtml(s.name)}<div class="code">کد: ${codeDisplay}</div></div>
-      <div class="total ${cls}">${totalDisplay}</div>
-      <div class="actions">
-        <button class="btn sm ghost" data-act="minus" data-id="${s.id}">−</button>
-        <button class="btn sm" data-act="plus" data-id="${s.id}">+</button>
-        <button class="btn sm ${absentToday?'danger':'ghost'}" data-act="absent" data-id="${s.id}">${absentToday?'غایب ✓':'غیبت'}</button>
-        <button class="btn sm ghost" data-act="report" data-id="${s.id}">کارنامه</button>
-        <button class="btn sm danger" data-act="del" data-id="${s.id}">حذف</button>
-      </div>`;
-    list.appendChild(row);
+/* ============================================================
+   TEACHER APP
+   ============================================================ */
+function showTeacherTab(tab){
+  currentTeacherTab = tab;
+  document.querySelectorAll('#view-teacher .tabsection').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tt-'+tab).classList.add('active');
+  document.querySelectorAll('#tabbar-teacher button').forEach(b=> b.classList.toggle('active', b.dataset.tab===tab));
+  window.scrollTo({top:0, behavior:'instant'});
+  renderTeacherTab(tab, false);
+}
+
+function renderTeacherTab(tab, keepSubState){
+  if(tab==='dashboard') renderTeacherDashboard();
+  else if(tab==='scoring') renderScoring();
+  else if(tab==='absence') renderAbsenceTab();
+  else if(tab==='report'){
+    if(keepSubState && !reportListMode && reportStudentId){
+      const s = state.students.find(x=>x.id===reportStudentId);
+      if(s) renderReportDetail(s); else { reportListMode = true; renderReportList(); }
+    } else { renderReportList(); }
+  }
+  else if(tab==='manage') renderManage();
+}
+
+function applyStreamerMode(){
+  document.getElementById('streamer-banner').classList.toggle('hidden', !streamerMode);
+  const btn = document.getElementById('btn-streamer');
+  btn.classList.toggle('on', streamerMode);
+  btn.textContent = streamerMode ? '👁️' : '🙈';
+}
+
+/* ---------- DASHBOARD ---------- */
+function classActivityLast7(){
+  const days = [];
+  for(let i=6;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const iso = isoFromDate(d);
+    let count=0;
+    state.students.forEach(s=> s.history.forEach(h=>{ if(h.date===iso) count++; }));
+    days.push({date:d, count});
+  }
+  return days;
+}
+function examsThisMonth(){
+  const now = new Date(); const y=now.getFullYear(), m=now.getMonth();
+  let count=0;
+  state.students.forEach(s=> SUBJECTS.forEach(sub=> (s.grades[sub]||[]).forEach(g=>{
+    const d = parseISOLocal(g.date);
+    if(d.getFullYear()===y && d.getMonth()===m) count++;
+  })));
+  return count;
+}
+function totalScoreEntries(){ return state.students.reduce((a,s)=>a+s.history.length,0); }
+function absencesThisWeek(){
+  const {sat, wed} = getWeekRange();
+  const startIso = isoFromDate(sat), endIso = isoFromDate(wed);
+  let count=0;
+  state.students.forEach(s=> s.absences.forEach(a=>{ if(a.date>=startIso && a.date<=endIso) count++; }));
+  return count;
+}
+function countUp(el, target, duration){
+  if(target<=0){ el.textContent = faNum(0); return; }
+  const start = performance.now();
+  function step(now){
+    const p = Math.min(1, (now-start)/duration);
+    const eased = 1 - Math.pow(1-p, 3);
+    el.textContent = faNum(Math.round(eased*target));
+    if(p<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+function renderTeacherDashboard(){
+  document.getElementById('teacher-welcome').textContent = 'سلام 👋';
+  document.getElementById('teacher-date').textContent = 'امروز · ' + todayFa();
+
+  const exams = examsThisMonth(), scores = totalScoreEntries(), abs = absencesThisWeek();
+  countUp(document.getElementById('stat-exams'), exams, 900);
+  countUp(document.getElementById('stat-scores'), scores, 1100);
+  countUp(document.getElementById('stat-abs'), abs, 700);
+  document.getElementById('stat-exams-sub').textContent = new Date().toLocaleDateString('fa-IR', {month:'long', year:'numeric'});
+
+  const days = classActivityLast7();
+  const max = Math.max(1, ...days.map(d=>d.count));
+  const chartEl = document.getElementById('activityChart');
+  const labelsEl = document.getElementById('activityLabels');
+  chartEl.innerHTML = days.map(d=>{
+    const h = d.count ? Math.max(10, Math.round((d.count/max)*100)) : 4;
+    return `<div class="chart-bar" style="height:${h}%;"></div>`;
+  }).join('');
+  labelsEl.innerHTML = days.map((d,i)=> `<span>${i===days.length-1 ? 'امروز' : d.date.toLocaleDateString('fa-IR',{weekday:'short'})}</span>`).join('');
+
+  const ranked = sortedByScore().slice(0,3);
+  const rankingEl = document.getElementById('topRanking');
+  if(ranked.length===0){ rankingEl.innerHTML = '<div class="empty-note">هنوز دانش‌آموزی ثبت نشده</div>'; }
+  else{
+    rankingEl.innerHTML = ranked.map((s,i)=>`
+      <div class="rank">
+        <span>${faNum(i+1)}</span>
+        <div class="rava" style="background:${rankColor(i+1, sortedByScore().length)};">${initials(s.name)}</div>
+        <div><strong>${escapeHtml(streamerMode ? '•••' : s.name)}</strong></div>
+        <b>${streamerMode ? '•••' : faNum(total(s))}</b>
+      </div>`).join('');
+  }
+}
+
+/* ---------- LOTTERY ---------- */
+function initLottery(){
+  const btn = document.getElementById('lotteryBtn');
+  const stage = document.getElementById('lotteryStage');
+  btn.addEventListener('click', ()=>{
+    if(btn.disabled) return;
+    if(state.students.length===0){ stage.innerHTML = '<span style="font-size:11.5px;color:var(--muted);">دانش‌آموزی ثبت نشده</span>'; return; }
+    let n = parseInt(document.getElementById('lotteryN').value)||1;
+    n = Math.max(1, Math.min(n, state.students.length));
+    btn.disabled = true;
+    stage.innerHTML = '<span class="lottery-name" id="spinName">...</span>';
+    const spinEl = document.getElementById('spinName');
+    let ticks = 0;
+    const spin = setInterval(()=>{
+      const r = state.students[Math.floor(Math.random()*state.students.length)];
+      spinEl.textContent = r.name;
+      ticks++;
+      if(ticks>18){
+        clearInterval(spin);
+        const pool = [...state.students];
+        const winners = [];
+        for(let i=0;i<n && pool.length;i++){
+          const idx = Math.floor(Math.random()*pool.length);
+          winners.push(pool.splice(idx,1)[0]);
+        }
+        stage.innerHTML = winners.map(w=>`<span class="winner-chip">🎉 ${escapeHtml(w.name)}</span>`).join('');
+        btn.disabled = false;
+      }
+    }, 70);
   });
-  list.querySelectorAll('button').forEach(b=>{
+}
+
+/* ---------- SCORING ---------- */
+function scoringFilteredList(){
+  const q = (document.getElementById('scoring-search').value||'').trim();
+  let list = sortedByName().filter(s=>!q || s.name.includes(q));
+  if(scoringFilter==='active-today') list = list.filter(s=> todayDelta(s)!==0);
+  else if(scoringFilter==='absent-today') list = list.filter(s=> s.absences.some(a=>a.date===todayISO()));
+  else if(scoringFilter==='top') list = [...list].sort((a,b)=> total(b)-total(a));
+  return list;
+}
+function renderScoring(){
+  document.getElementById('bulk-amount').value = state.step;
+  const list = scoringFilteredList();
+  const listEl = document.getElementById('scoringList');
+  if(list.length===0){ listEl.innerHTML = '<div class="empty-note">دانش‌آموزی پیدا نشد</div>'; return; }
+  listEl.innerHTML = list.map(s=>{
+    const t = total(s);
+    const color = rankColorOf(s.id);
+    const codeDisplay = streamerMode ? '••••' : s.code;
+    const totalDisplay = streamerMode ? '•••' : faNum(t);
+    return `<div class="student-row">
+      <div class="av" style="background:${color};">${initials(s.name)}</div>
+      <div><strong>${escapeHtml(s.name)}</strong><span class="code">کد: ${codeDisplay}</span></div>
+      <div class="pm">
+        <button class="pmbtn minus" data-act="minus" data-id="${s.id}">−</button>
+        <span class="score-tag" style="color:${t>=0?'var(--green)':'var(--danger)'};">${totalDisplay}</span>
+        <button class="pmbtn plus" data-act="plus" data-id="${s.id}">+</button>
+      </div>
+    </div>`;
+  }).join('');
+  listEl.querySelectorAll('.pmbtn').forEach(b=>{
     b.addEventListener('click', ()=>{
-      const id = b.getAttribute('data-id');
-      const act = b.getAttribute('data-act');
-      if(act==='plus') addScore(id, state.step);
-      else if(act==='minus') addScore(id, -state.step);
-      else if(act==='absent') toggleAbsence(id);
-      else if(act==='report'){ reportStudentId=id; editingGrade=null; renderReport(); show('view-teacher-report'); }
-      else if(act==='del') handleDeleteClick(id, b);
+      const id = b.dataset.id, act = b.dataset.act;
+      addScore(id, act==='plus' ? state.step : -state.step);
     });
   });
 }
-
-function handleDeleteClick(id, btn){
-  if(pendingDeleteId===id){
-    clearTimeout(pendingDeleteTimeout);
-    state.students = state.students.filter(x=>x.id!==id);
-    pendingDeleteId=null;
-    renderTeacher(); persist();
-    return;
-  }
-  pendingDeleteId = id;
-  btn.textContent = 'مطمئنی؟ دوباره بزن';
-  pendingDeleteTimeout = setTimeout(()=>{ pendingDeleteId=null; renderTeacher(); }, 3000);
+function addScore(id, delta){
+  const s = state.students.find(x=>x.id===id);
+  if(!s) return;
+  s.history.push({date: todayISO(), delta});
+  renderScoring();
+  persist();
+}
+function bulkScore(delta){
+  const today = todayISO();
+  state.students.forEach(s=> s.history.push({date: today, delta}));
+  renderScoring();
+  persist();
 }
 
-function pickRandomStudents(){
-  const n = Math.max(1, parseInt(document.getElementById('pick-count').value)||1);
-  const pool = [...state.students];
-  const picked = [];
-  const count = Math.min(n, pool.length);
-  for(let i=0;i<count;i++){
-    const idx = Math.floor(Math.random()*pool.length);
-    picked.push(pool.splice(idx,1)[0]);
-  }
-  const box = document.getElementById('pick-result');
-  box.innerHTML = picked.length
-    ? picked.map(s=>`<span class="pick-pill">${escapeHtml(s.name)}</span>`).join('')
-    : '<div class="muted" style="margin-top:8px;">دانش‌آموزی ثبت نشده</div>';
+/* ---------- ABSENCE ---------- */
+function todayAbsenceState(s){
+  const e = s.absences.find(a=>a.date===todayISO());
+  if(!e) return null;
+  return e.excused ? 'excused' : 'absent';
 }
-
-function toggleAbsence(id){
+function setAbsence(id, kind){
   const s = state.students.find(x=>x.id===id);
   if(!s) return;
   const t = todayISO();
   const idx = s.absences.findIndex(a=>a.date===t);
-  if(idx>=0) s.absences.splice(idx,1);
-  else s.absences.push({date:t});
-  renderTeacher();
+  const current = idx>=0 ? (s.absences[idx].excused ? 'excused' : 'absent') : null;
+  if(current===kind){ s.absences.splice(idx,1); }
+  else if(idx>=0){ s.absences[idx].excused = (kind==='excused'); }
+  else { s.absences.push({date:t, excused:(kind==='excused')}); }
+  renderAbsenceTab();
   persist();
 }
-
-// ---------- TEACHER: report card editor ----------
-function renderReport(){
-  const s = state.students.find(x=>x.id===reportStudentId);
-  if(!s) return;
-  document.getElementById('report-student-name').textContent = s.name;
-  const box = document.getElementById('report-subjects');
-  box.innerHTML='';
-  SUBJECTS.forEach(sub=>{
-    const lv = lastLevel(s, sub);
-    const arr = s.grades[sub];
-    const historyHtml = arr.length ? [...arr].map((g,i)=>{
-      const l = levelByKey(g.level);
-      const isEditing = editingGrade && editingGrade.subject===sub && editingGrade.index===i;
-      return `<div class="grade-entry">
-        <div class="grade-item">
-          <span>${faDate(g.date)}</span>
-          <span class="badge" style="background:${l.color}">${l.label}</span>
-          <span>
-            <button class="btn xs ghost" data-editsub="${sub}" data-editidx="${i}">ویرایش</button>
-            <button class="btn xs danger" data-delsub="${sub}" data-delidx="${i}">حذف</button>
-          </span>
-        </div>
-        ${g.note?`<div class="grade-note">${escapeHtml(g.note)}</div>`:''}
-        ${isEditing?`<div>${LEVELS.map(l2=>`<button class="lvl-btn ${l2.cls}" data-editsetsub="${sub}" data-editsetidx="${i}" data-lvl="${l2.key}">${l2.label}</button>`).join('')}</div>`:''}
-      </div>`;
-    }).reverse().join('') : '<div class="muted">هنوز نمره‌ای ثبت نشده</div>';
-    const row = document.createElement('div');
-    row.className='subject-row';
-    row.innerHTML = `
-      <div class="subject-head" data-sub="${sub}">
-        <div class="subj-bar" style="background:${lv?lv.color:'var(--border)'}"></div>
-        <div class="subj-name">${sub}${arr.length?`<div class="subj-date">آخرین ثبت: ${faDate(arr[arr.length-1].date)}</div>`:''}</div>
-        <div class="subj-last">${lv?lv.label:'بدون نمره'}</div>
+function renderAbsenceTab(){
+  const q = (document.getElementById('absence-search').value||'').trim();
+  const list = sortedByName().filter(s=>!q || s.name.includes(q));
+  document.getElementById('todayAbsCount').textContent = faNum(state.students.filter(s=> !!todayAbsenceState(s)).length) + ' نفر';
+  const listEl = document.getElementById('absenceList');
+  if(list.length===0){ listEl.innerHTML = '<div class="empty-note">دانش‌آموزی پیدا نشد</div>'; return; }
+  listEl.innerHTML = list.map(s=>{
+    const st = todayAbsenceState(s);
+    return `<div class="abs-row">
+      <div class="av">${initials(s.name)}</div>
+      <strong>${escapeHtml(s.name)}</strong>
+      <div class="abs-toggles">
+        <button class="abs-btn ${st==='absent'?'on-absent':''}" data-id="${s.id}" data-k="absent">غیبت</button>
+        <button class="abs-btn ${st==='excused'?'on-excused':''}" data-id="${s.id}" data-k="excused">غیبت موجه</button>
       </div>
-      <div class="subject-detail hidden" data-detail="${sub}">
-        <div class="muted" style="margin-bottom:4px;">ثبت نمره جدید (توضیح اختیاری است):</div>
-        <input type="text" class="note-input" data-notesub="${sub}" placeholder="مثلاً: امتحان فصل ۲ - کسرها">
-        ${LEVELS.map(l=>`<button class="lvl-btn ${l.cls}" data-sub="${sub}" data-lvl="${l.key}">${l.label}</button>`).join('')}
-        <div style="margin-top:10px;">
-          <div class="muted" style="margin-bottom:4px;">روند نمرات:</div>
-          ${buildAcademicChart(arr)}
-        </div>
-        <div style="margin-top:10px;">${historyHtml}</div>
-      </div>`;
-    box.appendChild(row);
-  });
-  box.querySelectorAll('.subject-head').forEach(h=>{
-    h.addEventListener('click', ()=>{
-      const sub = h.getAttribute('data-sub');
-      box.querySelector(`[data-detail="${sub}"]`).classList.toggle('hidden');
-    });
-  });
-  box.querySelectorAll('[data-lvl][data-sub]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      const sub = b.getAttribute('data-sub');
-      const lvl = b.getAttribute('data-lvl');
-      const noteInput = box.querySelector(`[data-notesub="${sub}"]`);
-      const note = noteInput ? noteInput.value.trim() : '';
-      const entry = {date: todayISO(), level: lvl};
-      if(note) entry.note = note;
-      s.grades[sub].push(entry);
-      renderReport();
-      persist();
-    });
-  });
-  box.querySelectorAll('[data-editsub]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      editingGrade = {subject:b.getAttribute('data-editsub'), index:parseInt(b.getAttribute('data-editidx'))};
-      renderReport();
-    });
-  });
-  box.querySelectorAll('[data-delsub]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      const sub=b.getAttribute('data-delsub'), idx=parseInt(b.getAttribute('data-delidx'));
-      s.grades[sub].splice(idx,1);
-      renderReport();
-      persist();
-    });
-  });
-  box.querySelectorAll('[data-editsetsub]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      const sub=b.getAttribute('data-editsetsub'), idx=parseInt(b.getAttribute('data-editsetidx')), lvl=b.getAttribute('data-lvl');
-      s.grades[sub][idx].level = lvl;
-      editingGrade=null;
-      renderReport();
-      persist();
-    });
+    </div>`;
+  }).join('');
+  listEl.querySelectorAll('.abs-btn').forEach(b=>{
+    b.addEventListener('click', ()=> setAbsence(b.dataset.id, b.dataset.k));
   });
 }
 
-// ---------- shared charts ----------
-function buildLineChart(values, domainMin, domainMax){
-  if(values.length<2) return '<div class="muted">برای نمودار حداقل ۲ ثبت لازم است</div>';
-  const w=300,h=90,pad=10;
-  const min = domainMin!==undefined?domainMin:Math.min(...values,0);
-  const max = domainMax!==undefined?domainMax:Math.max(...values,0);
-  const range=(max-min)||1;
-  const stepX=(w-2*pad)/(values.length-1);
-  const coords=values.map((v,i)=>{
-    const x=pad+i*stepX;
-    const y = h-pad-((v-min)/range)*(h-2*pad);
-    return `${x.toFixed(1)},${y.toFixed(1)}`;
-  }).join(' ');
-  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:80px;"><polyline points="${coords}" fill="none" stroke="var(--brand)" stroke-width="3"/></svg>`;
+/* ---------- REPORT ---------- */
+function renderReportList(){
+  reportListMode = true;
+  document.getElementById('tt-report-detail').classList.remove('active');
+  document.getElementById('tt-report-list').classList.add('active');
+  const q = (document.getElementById('report-search').value||'').trim();
+  const list = sortedByName().filter(s=>!q || s.name.includes(q));
+  const listEl = document.getElementById('reportStudentList');
+  if(list.length===0){ listEl.innerHTML = '<div class="empty-note">دانش‌آموزی پیدا نشد</div>'; return; }
+  listEl.innerHTML = list.map(s=>`
+    <div class="student-row" data-open="${s.id}" style="cursor:pointer;">
+      <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${initials(s.name)}</div>
+      <div><strong>${escapeHtml(s.name)}</strong><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
+      <span style="color:var(--muted); font-size:13px;">›</span>
+    </div>`).join('');
+  listEl.querySelectorAll('[data-open]').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      reportStudentId = row.dataset.open;
+      const s = state.students.find(x=>x.id===reportStudentId);
+      if(s) renderReportDetail(s);
+    });
+  });
 }
-
-// ---------- academic chart (handles absent entries: interpolated, colorless) ----------
 function buildAcademicChart(arr){
-  if(arr.length<2) return '<div class="muted">برای نمودار حداقل ۲ ثبت لازم است</div>';
+  if(arr.length<2) return '<div style="font-size:10.5px;color:var(--muted);padding:6px 2px;">برای نمودار حداقل ۲ ثبت لازم است</div>';
   const raw = arr.map(g => g.level==='absent' ? null : levelByKey(g.level).value);
   const values = raw.slice();
   for(let i=0;i<values.length;i++){
@@ -600,113 +812,118 @@ function buildAcademicChart(arr){
       else values[i] = 2.5;
     }
   }
-  const w=300,h=90,pad=10,min=1,max=4,range=max-min;
+  const w=300,h=80,pad=10,min=1,max=4,range=max-min;
   const stepX=(w-2*pad)/(values.length-1);
   const coords = values.map((v,i)=>({x:+(pad+i*stepX).toFixed(1), y:+(h-pad-((v-min)/range)*(h-2*pad)).toFixed(1)}));
   const pointsAttr = coords.map(c=>`${c.x},${c.y}`).join(' ');
-  const dots = coords.map((c,i)=> raw[i]===null ? `<circle cx="${c.x}" cy="${c.y}" r="4" fill="var(--muted)"/>` : '').join('');
-  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:80px;"><polyline points="${pointsAttr}" fill="none" stroke="var(--brand)" stroke-width="3"/>${dots}</svg>`;
+  const dots = coords.map((c,i)=> raw[i]===null ? `<circle cx="${c.x}" cy="${c.y}" r="4" fill="#8c879d"/>` : '').join('');
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:70px;"><polyline points="${pointsAttr}" fill="none" stroke="#a482ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${dots}</svg>`;
 }
-
-// ---------- STUDENT ----------
-function renderStudent(){
-  const s = state.students.find(x=>x.id===currentStudentId);
-  if(!s) return;
-  const ranked = sortedByScore();
-  const rank = ranked.findIndex(x=>x.id===s.id)+1;
-  document.getElementById('student-name-label').textContent = s.name;
-  const totalEl = document.getElementById('student-total-label');
-  totalEl.textContent = total(s);
-  document.getElementById('student-medal').style.setProperty('--rc', rankColor(rank, ranked.length));
-  document.getElementById('student-rank-label').textContent = `${rank}/${ranked.length}`;
-
-  const sorted=[...s.history].sort((a,b)=>a.date.localeCompare(b.date));
-  let sum=0; const cum = sorted.map(h=>{sum+=h.delta; return sum;});
-  document.getElementById('student-chart').innerHTML = buildLineChart(cum);
-
-  const hist = document.getElementById('student-history');
-  hist.innerHTML='';
-  if(s.history.length===0){
-    hist.innerHTML = '<div class="muted">هنوز امتیازی ثبت نشده</div>';
-  } else {
-    [...s.history].reverse().forEach(h=>{
-      const cls = h.delta>0?'pos':'neg';
-      hist.insertAdjacentHTML('beforeend', `<div class="hist-item"><span>${faDate(h.date)}</span><span class="${cls}">${h.delta>0?'+':''}${h.delta}</span></div>`);
-    });
-  }
-
-  const absBox = document.getElementById('student-absences');
-  if(s.absences.length===0){
-    absBox.innerHTML = '<div class="muted">غیبتی ثبت نشده</div>';
-  } else {
-    absBox.innerHTML = [...s.absences].reverse().map(a=>`<div class="abs-item"><span>${faDate(a.date)}</span><span class="muted">غایب</span></div>`).join('');
-  }
-
-  renderStudentReport();
-}
-
-function renderStudentReport(){
-  const s = state.students.find(x=>x.id===currentStudentId);
-  if(!s) return;
-  const box = document.getElementById('student-subjects');
-  box.innerHTML='';
-  SUBJECTS.forEach(sub=>{
+function renderReportDetail(s){
+  reportListMode = false;
+  document.getElementById('tt-report-list').classList.remove('active');
+  document.getElementById('tt-report-detail').classList.add('active');
+  document.getElementById('reportDetailName').textContent = 'کارنامه — ' + s.name;
+  const box = document.getElementById('reportSubjects');
+  box.innerHTML = SUBJECTS.map(sub=>{
+    const lv = lastLevel(s, sub);
     const arr = s.grades[sub];
-    const lv = arr.length ? levelByKey(arr[arr.length-1].level) : null;
-    const row = document.createElement('div');
-    row.className='subject-row';
-    const historyHtml = arr.length ? [...arr].reverse().map(g=>{
+    const histHtml = arr.length ? [...arr].map((g,i)=>{
       const l = levelByKey(g.level);
-      return `<div class="grade-entry">
-        <div class="grade-item"><span>${faDate(g.date)}</span><span class="badge" style="background:${l.color}">${l.label}</span></div>
-        ${g.note?`<div class="grade-note">${escapeHtml(g.note)}</div>`:''}
+      const isEditing = editingGrade && editingGrade.subject===sub && editingGrade.index===i;
+      return `<div>
+        <div class="hist-line">
+          <span>${faDate(g.date)}</span>
+          <span class="badge" style="background:${l.color}22; color:${l.color};">${l.label}</span>
+          <span style="margin-right:auto; display:flex; gap:2px;">
+            <button class="mini-x" data-editsub="${sub}" data-editidx="${i}" style="color:var(--purple);">ویرایش</button>
+            <button class="mini-x" data-delsub="${sub}" data-delidx="${i}">حذف</button>
+          </span>
+        </div>
+        ${g.note?`<div class="hist-note">${escapeHtml(g.note)}</div>`:''}
+        ${isEditing?`<div class="lvl-choices" style="padding:0 4px 8px;">${LEVELS.map(l2=>`<button class="lvl-btn" style="background:${l2.color};" data-editsetsub="${sub}" data-editsetidx="${i}" data-lvl="${l2.key}">${l2.label}</button>`).join('')}</div>`:''}
       </div>`;
-    }).join('') : '<div class="muted">هنوز نمره‌ای ثبت نشده</div>';
-    row.innerHTML = `
-      <div class="subject-head" data-sub="${sub}">
-        <div class="subj-bar" style="background:${lv?lv.color:'var(--border)'}"></div>
-        <div class="subj-name">${sub}${arr.length?`<div class="subj-date">آخرین ثبت: ${faDate(arr[arr.length-1].date)}</div>`:''}</div>
-        <div class="subj-last">${lv?lv.label:'—'}</div>
+    }).reverse().join('') : '<div class="empty-note">هنوز نمره‌ای ثبت نشده</div>';
+    return `<div class="subj-row">
+      <div class="subj-head" data-toggle="rep-${sub}">
+        <span class="dot" style="background:${lv?lv.color:'#4a465c'}; color:${lv?lv.color:'#4a465c'};"></span>
+        <b>${sub}</b>
+        <span class="badge" style="${lv?`color:${lv.color}; background:${lv.color}22;`:'color:var(--muted);'}">${lv?lv.label:'بدون نمره'}</span>
       </div>
-      <div class="subject-detail hidden" data-detail="${sub}">
+      <div class="subj-detail" id="rep-${sub}">
+        <input type="text" class="note-input" data-notesub="${sub}" placeholder="توضیح اختیاری، مثلاً: امتحان فصل ۲">
+        <div class="lvl-choices">${LEVELS.map(l=>`<button class="lvl-btn" style="background:${l.color};" data-sub="${sub}" data-lvl="${l.key}">${l.label}</button>`).join('')}</div>
+        <div style="margin:10px 0 6px; font-size:10.5px; color:var(--muted); font-weight:700;">روند نمرات:</div>
         ${buildAcademicChart(arr)}
-        ${historyHtml}
-      </div>`;
-    box.appendChild(row);
+        ${histHtml}
+      </div>
+    </div>`;
+  }).join('');
+
+  box.querySelectorAll('[data-toggle]').forEach(h=>{
+    h.addEventListener('click', ()=> document.getElementById(h.dataset.toggle).classList.toggle('open'));
   });
-  box.querySelectorAll('.subject-head').forEach(h=>{
-    h.addEventListener('click', ()=>{
-      const sub = h.getAttribute('data-sub');
-      box.querySelector(`[data-detail="${sub}"]`).classList.toggle('hidden');
+  box.querySelectorAll('[data-lvl][data-sub]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const sub = b.dataset.sub, lvl = b.dataset.lvl;
+      const noteInput = box.querySelector(`[data-notesub="${sub}"]`);
+      const note = noteInput ? noteInput.value.trim() : '';
+      const entry = {date: todayISO(), level: lvl};
+      if(note) entry.note = note;
+      s.grades[sub].push(entry);
+      renderReportDetail(s);
+      persist();
+    });
+  });
+  box.querySelectorAll('[data-editsub]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      editingGrade = {subject:b.dataset.editsub, index:parseInt(b.dataset.editidx)};
+      renderReportDetail(s);
+    });
+  });
+  box.querySelectorAll('[data-delsub]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      s.grades[b.dataset.delsub].splice(parseInt(b.dataset.delidx),1);
+      renderReportDetail(s);
+      persist();
+    });
+  });
+  box.querySelectorAll('[data-editsetsub]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      s.grades[b.dataset.editsetsub][parseInt(b.dataset.editsetidx)].level = b.dataset.lvl;
+      editingGrade = null;
+      renderReportDetail(s);
+      persist();
     });
   });
 }
 
-// ---------- Firestore persistence ----------
-async function persist(){
-  try{
-    suppressNextSnapshot = true;
-    await stateRef.set(state);
-  } catch(e){
-    console.error('save failed', e);
+/* ---------- MANAGEMENT ---------- */
+function renderManage(){
+  const listEl = document.getElementById('manageList');
+  if(state.students.length===0){ listEl.innerHTML = '<div class="empty-note">هنوز دانش‌آموزی اضافه نشده</div>'; return; }
+  listEl.innerHTML = sortedByName().map(s=>`
+    <div class="student-row">
+      <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${initials(s.name)}</div>
+      <div><strong>${escapeHtml(s.name)}</strong><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
+      <button class="del-btn" data-del="${s.id}">حذف</button>
+    </div>`).join('');
+  listEl.querySelectorAll('[data-del]').forEach(b=>{
+    b.addEventListener('click', ()=> handleDeleteClick(b.dataset.del, b));
+  });
+}
+function handleDeleteClick(id, btn){
+  if(pendingDeleteId===id){
+    clearTimeout(pendingDeleteTimeout);
+    state.students = state.students.filter(x=>x.id!==id);
+    pendingDeleteId=null;
+    renderManage(); persist();
+    return;
   }
+  pendingDeleteId = id;
+  btn.textContent = 'مطمئنی؟';
+  pendingDeleteTimeout = setTimeout(()=>{ pendingDeleteId=null; renderManage(); }, 3000);
 }
-
-function addScore(id, delta){
-  const s = state.students.find(x=>x.id===id);
-  if(!s) return;
-  s.history.push({date: todayISO(), delta});
-  renderTeacher();
-  persist();
-}
-
-function bulkScore(delta){
-  const today = todayISO();
-  state.students.forEach(s=> s.history.push({date: today, delta}));
-  renderTeacher();
-  persist();
-}
-
 function addStudent(){
   const input = document.getElementById('new-student-name');
   const name = input.value.trim();
@@ -714,180 +931,275 @@ function addStudent(){
   const grades={}; SUBJECTS.forEach(sub=>grades[sub]=[]);
   state.students.push({id: 's'+Date.now()+Math.floor(Math.random()*99), name, code: genCode(), history: [], grades, absences:[]});
   input.value='';
-  renderTeacher();
+  renderManage();
   persist();
 }
 
+/* ---------- weekly absence export ---------- */
 function getWeekRange(){
   const now = new Date();
-  const dow = now.getDay(); // 0=Sun..6=Sat
+  const dow = now.getDay();
   const daysSinceSaturday = (dow - 6 + 7) % 7;
   const sat = new Date(now.getFullYear(), now.getMonth(), now.getDate() - daysSinceSaturday);
   const wed = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate() + 4);
   return {sat, wed};
 }
-
 function exportWeeklyAbsences(){
   const {sat, wed} = getWeekRange();
   const dayNames = ['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
-  const accents = ['#2f6f4f','#8a5a2b'];
-  let sections = '';
-  let totalAbsences = 0;
+  const accents = ['#6c43e8','#9a72ff'];
+  let sections = ''; let totalAbsences = 0;
   for(let i=0;i<5;i++){
     const d = new Date(sat.getFullYear(), sat.getMonth(), sat.getDate()+i);
     const iso = isoFromDate(d);
-    const names = state.students.filter(s=>s.absences.some(a=>a.date===iso)).sort((a,b)=>a.name.localeCompare(b.name,'fa')).map(s=>s.name);
-    totalAbsences += names.length;
+    const dayStudents = state.students.filter(s=>s.absences.some(a=>a.date===iso))
+      .sort((a,b)=>a.name.localeCompare(b.name,'fa'))
+      .map(s=>{ const e=s.absences.find(a=>a.date===iso); return e.excused ? `${s.name} (موجه)` : s.name; });
+    totalAbsences += dayStudents.length;
     const accent = accents[i%2];
-    const countLabel = names.length ? `${names.length} نفر` : 'بدون غیبت';
-    const body = names.length
-      ? `<div class="day-names">${names.map(n=>escapeHtml(n)).join('&nbsp;&nbsp;–&nbsp;&nbsp;')}</div>`
+    const countLabel = dayStudents.length ? `${dayStudents.length} نفر` : 'بدون غیبت';
+    const body = dayStudents.length
+      ? `<div class="day-names">${dayStudents.map(n=>escapeHtml(n)).join('&nbsp;&nbsp;–&nbsp;&nbsp;')}</div>`
       : `<div class="day-empty">✅ غایبی نداشتیم</div>`;
-    sections += `
-      <div class="day-block" style="border-right-color:${accent};">
+    sections += `<div class="day-block" style="border-right-color:${accent};">
         <div class="day-head">
-          <div class="day-head-right">
-            <span class="day-name">${dayNames[d.getDay()]}</span>
-            <span class="day-date">${d.toLocaleDateString('fa-IR')}</span>
-          </div>
-          <span class="day-count" style="background:${names.length?accent:'#e7e1d8'};color:${names.length?'#fff':'#8a8078'};">${countLabel}</span>
-        </div>
-        ${body}
-      </div>`;
+          <div class="day-head-right"><span class="day-name">${dayNames[d.getDay()]}</span><span class="day-date">${d.toLocaleDateString('fa-IR')}</span></div>
+          <span class="day-count" style="background:${dayStudents.length?accent:'#e7e1d8'};color:${dayStudents.length?'#fff':'#8a8078'};">${countLabel}</span>
+        </div>${body}</div>`;
   }
   const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8">
-    <title>غایبین این هفته</title>
+  win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>غایبین این هفته</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-      *{box-sizing:border-box;}
-      body{font-family:Vazirmatn,Tahoma,sans-serif;padding:44px;color:#241f1a;background:#fff;}
-      .header{text-align:center;margin-bottom:8px;}
-      .header-icon{font-size:34px;line-height:1;margin-bottom:6px;}
-      h1{font-size:28px;font-weight:800;margin:0 0 6px;letter-spacing:.3px;}
-      .subtitle{color:#8a8078;font-size:14px;font-weight:500;margin-bottom:6px;}
-      .meta-line{color:#241f1a;font-size:13.5px;font-weight:700;margin-bottom:10px;}
-      .summary{color:#8a5a2b;font-size:13px;font-weight:600;margin-bottom:30px;}
-      .divider{border:none;border-top:2px solid #e7e1d8;margin:0 0 30px;}
-      .day-block{margin-bottom:20px;border-right:5px solid #2f6f4f;padding:14px 18px;border-radius:0 10px 10px 0;background:#f6f4ef;page-break-inside:avoid;}
-      .day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-      .day-head-right{display:flex;align-items:baseline;gap:10px;}
-      .day-name{font-size:19px;font-weight:800;}
-      .day-date{font-size:12.5px;color:#8a8078;font-weight:400;}
-      .day-count{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;}
-      .day-names{font-size:15.5px;font-weight:600;line-height:2.1;}
-      .day-empty{font-size:14px;font-weight:600;color:#1e7a3d;}
-      .footer{margin-top:38px;text-align:center;color:#a89e92;font-size:11px;font-weight:400;border-top:1px solid #e7e1d8;padding-top:14px;}
-      @media print{
-        body{padding:14px;}
-        .day-block{background:#fafaf8 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-      }
+    <style>*{box-sizing:border-box;} body{font-family:Vazirmatn,Tahoma,sans-serif;padding:44px;color:#241f1a;background:#fff;}
+    .header{text-align:center;margin-bottom:8px;} .header-icon{font-size:34px;margin-bottom:6px;}
+    h1{font-size:28px;font-weight:800;margin:0 0 6px;} .subtitle{color:#8a8078;font-size:14px;margin-bottom:6px;}
+    .summary{color:#6c43e8;font-size:13px;font-weight:600;margin-bottom:30px;} .divider{border:none;border-top:2px solid #e7e1d8;margin:0 0 30px;}
+    .day-block{margin-bottom:20px;border-right:5px solid #6c43e8;padding:14px 18px;border-radius:0 10px 10px 0;background:#f7f5ff;page-break-inside:avoid;}
+    .day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+    .day-head-right{display:flex;align-items:baseline;gap:10px;} .day-name{font-size:19px;font-weight:800;} .day-date{font-size:12.5px;color:#8a8078;}
+    .day-count{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;}
+    .day-names{font-size:15.5px;font-weight:600;line-height:2.1;} .day-empty{font-size:14px;font-weight:600;color:#1e7a3d;}
+    .footer{margin-top:38px;text-align:center;color:#a89e92;font-size:11px;border-top:1px solid #e7e1d8;padding-top:14px;}
+    @media print{ body{padding:14px;} .day-block{background:#faf9ff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
     </style></head><body>
-    <div class="header">
-      <div class="header-icon">🏅</div>
-      <h1>غایبین این هفته</h1>
-      <div class="subtitle">${sat.toLocaleDateString('fa-IR')} تا ${wed.toLocaleDateString('fa-IR')}</div>
-      <div class="meta-line">آموزگار: آقای مهدیزاده &nbsp;|&nbsp; کلاس: 6/1</div>
-      <div class="summary">${totalAbsences ? `مجموع غیبت‌های هفته: ${totalAbsences} مورد` : 'این هفته هیچ غیبتی ثبت نشده است 🎉'}</div>
-    </div>
-    <hr class="divider">
-    ${sections}
-    <div class="footer">تهیه‌شده در ${new Date().toLocaleDateString('fa-IR')} — سامانه امتیاز کلاس</div>
-    </body></html>`);
+    <div class="header"><div class="header-icon">🏅</div><h1>غایبین این هفته</h1>
+    <div class="subtitle">${sat.toLocaleDateString('fa-IR')} تا ${wed.toLocaleDateString('fa-IR')}</div>
+    <div class="summary">${totalAbsences ? `مجموع غیبت‌های هفته: ${totalAbsences} مورد` : 'این هفته هیچ غیبتی ثبت نشده است 🎉'}</div></div>
+    <hr class="divider">${sections}
+    <div class="footer">تهیه‌شده در ${new Date().toLocaleDateString('fa-IR')} — کلاس ما</div></body></html>`);
   win.document.close();
   setTimeout(()=>win.print(), 400);
 }
 
-function exportDailyScoreReport(){
-  const dayNames = ['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
-  const accents = ['#2f6f4f','#8a5a2b','#2f6f4f'];
-  const days = [];
-  for(let i=2;i>=0;i--){
-    const d = new Date();
-    d.setDate(d.getDate()-i);
-    days.push(new Date(d.getFullYear(), d.getMonth(), d.getDate()));
+function exportReportCardsPDF(){
+  const rows = sortedByName().map(s=>{
+    const badges = SUBJECTS.map(sub=>{
+      const arr = s.grades[sub]||[];
+      const lv = arr.length ? levelByKey(arr[arr.length-1].level) : null;
+      return `<span class="s-badge" style="background:${lv?lv.color:'#e7e1d8'};color:${lv?'#20320f':'#8a8078'};">${sub}: ${lv?lv.label:'—'}</span>`;
+    }).join('');
+    return `<div class="stu-block"><div class="stu-name">${escapeHtml(s.name)}</div><div class="stu-badges">${badges}</div></div>`;
+  }).join('');
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>کارنامه کلاس</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>*{box-sizing:border-box;} body{font-family:Vazirmatn,Tahoma,sans-serif;padding:44px;color:#241f1a;background:#fff;}
+    .header{text-align:center;margin-bottom:26px;} .header-icon{font-size:34px;margin-bottom:6px;}
+    h1{font-size:28px;font-weight:800;margin:0 0 6px;} .subtitle{color:#8a8078;font-size:13px;}
+    .stu-block{margin-bottom:18px;border:1px solid #e7e1d8;border-radius:14px;padding:14px 16px;page-break-inside:avoid;}
+    .stu-name{font-weight:800;font-size:14.5px;margin-bottom:10px;}
+    .stu-badges{display:flex;flex-wrap:wrap;gap:7px;}
+    .s-badge{font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;}
+    .footer{margin-top:30px;text-align:center;color:#a89e92;font-size:11px;border-top:1px solid #e7e1d8;padding-top:14px;}
+    @media print{ body{padding:14px;} .s-badge{-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
+    </style></head><body>
+    <div class="header"><div class="header-icon">🏅</div><h1>کارنامه کلاس</h1><div class="subtitle">تهیه‌شده در ${new Date().toLocaleDateString('fa-IR')} — آخرین نمره‌ی هر درس</div></div>
+    ${rows || '<div class="subtitle" style="text-align:center;">هنوز دانش‌آموزی ثبت نشده</div>'}
+    <div class="footer">کلاس ما</div></body></html>`);
+  win.document.close();
+  setTimeout(()=>win.print(), 400);
+}
+
+/* ============================================================
+   STUDENT APP
+   ============================================================ */
+function showStudentTab(tab){
+  currentStudentTab = tab;
+  document.querySelectorAll('#view-student .tabsection').forEach(s=>s.classList.remove('active'));
+  document.getElementById('st-'+tab).classList.add('active');
+  document.querySelectorAll('#tabbar-student button').forEach(b=> b.classList.toggle('active', b.dataset.tab===tab));
+  window.scrollTo({top:0, behavior:'instant'});
+  renderStudentTab(tab, false);
+}
+function renderStudentTab(tab){
+  if(tab==='dashboard') renderStudentDashboard();
+  else if(tab==='absence') renderStudentAbsences();
+  else if(tab==='report') renderStudentReport();
+}
+function buildLineChart(values){
+  if(values.length<2) return '<div style="font-size:10.5px;color:var(--muted);padding:6px 2px;">برای نمودار حداقل ۲ ثبت لازم است</div>';
+  const w=300,h=90,pad=10;
+  const min = Math.min(...values,0), max = Math.max(...values,0);
+  const range=(max-min)||1;
+  const stepX=(w-2*pad)/(values.length-1);
+  const coords=values.map((v,i)=>{
+    const x=pad+i*stepX;
+    const y = h-pad-((v-min)/range)*(h-2*pad);
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+  return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:90px;"><defs><linearGradient id="stuGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9a72ff" stop-opacity="0.35"/><stop offset="100%" stop-color="#9a72ff" stop-opacity="0"/></linearGradient></defs><polyline points="${coords}" fill="none" stroke="#a482ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function burstConfetti(container){
+  const colors = ['#9a72ff','#6fe7ff','#56e0b0','#ffd98a','#ff7d9c'];
+  container.querySelectorAll('.confetti').forEach(c=>c.remove());
+  for(let i=0;i<16;i++){
+    const c = document.createElement('span');
+    c.className='confetti';
+    const angle = Math.random()*Math.PI*2, dist = 60+Math.random()*70;
+    c.style.setProperty('--tx', (Math.cos(angle)*dist)+'px');
+    c.style.setProperty('--ty', (Math.sin(angle)*dist)+'px');
+    c.style.setProperty('--tr', (Math.random()*360)+'deg');
+    c.style.background = colors[i%colors.length];
+    c.style.animationDelay = (Math.random()*.15)+'s';
+    container.appendChild(c);
   }
-  let sections = '';
-  let totalChanges = 0;
-  days.forEach((d,i)=>{
+  container.classList.add('burst');
+  setTimeout(()=>{ container.querySelectorAll('.confetti').forEach(c=>c.remove()); container.classList.remove('burst'); }, 1300);
+}
+function positiveStreak(s){
+  const byDate = {};
+  s.history.forEach(h=>{ byDate[h.date] = (byDate[h.date]||0) + h.delta; });
+  let streak = 0;
+  for(let i=0;i<60;i++){
+    const d = new Date(); d.setDate(d.getDate()-i);
     const iso = isoFromDate(d);
-    const entries = [];
-    state.students.forEach(s=>{
-      s.history.filter(h=>h.date===iso).forEach(h=> entries.push({name:s.name, delta:h.delta}));
-    });
-    totalChanges += entries.length;
-    const accent = accents[i%accents.length];
-    const countLabel = entries.length ? `${entries.length} مورد` : 'بدون تغییر';
-    const body = entries.length
-      ? `<div class="change-list">${entries.map(e=>`<span class="change-tag" style="background:${e.delta>0?'#e6f4ea':'#fbe9e7'};color:${e.delta>0?'#1e7a3d':'#c0392b'};">${escapeHtml(e.name)}&nbsp;${e.delta>0?'+':''}${e.delta}</span>`).join('')}</div>`
-      : `<div class="day-empty">تغییری ثبت نشده</div>`;
-    sections += `
-      <div class="day-block" style="border-right-color:${accent};">
-        <div class="day-head">
-          <div class="day-head-right">
-            <span class="day-name">${dayNames[d.getDay()]}</span>
-            <span class="day-date">${d.toLocaleDateString('fa-IR')}</span>
-          </div>
-          <span class="day-count" style="background:${entries.length?accent:'#e7e1d8'};color:${entries.length?'#fff':'#8a8078'};">${countLabel}</span>
-        </div>
-        ${body}
-      </div>`;
+    if(byDate[iso] === undefined) { if(i===0) continue; else break; }
+    if(byDate[iso] > 0) streak++;
+    else break;
+  }
+  return streak;
+}
+function renderStudentDashboard(){
+  const s = state.students.find(x=>x.id===currentStudentId);
+  if(!s) return;
+  const ranked = sortedByScore();
+  const rank = ranked.findIndex(x=>x.id===s.id)+1;
+  const t = total(s);
+
+  document.getElementById('student-name-label').textContent = s.name;
+  const numEl = document.getElementById('student-total-label');
+  countUp(numEl, t, 1100);
+  document.getElementById('student-rank-label').textContent = (rank<=3?'👑 ':'') + `رتبه ${rank.toLocaleString('fa-IR')} از ${ranked.length.toLocaleString('fa-IR')} نفر کلاس`;
+  document.getElementById('trophyRow').innerHTML = rank===1 ? '<span class="em">🏆</span>' : (rank<=3 ? '<span class="em">⭐</span>' : '');
+
+  const hero = document.getElementById('scoreHero');
+  setTimeout(()=> burstConfetti(hero), 250);
+
+  const streak = positiveStreak(s);
+  const streakEl = document.getElementById('streakCard');
+  if(streak>=2){
+    streakEl.innerHTML = `<span class="em">🔥</span><div><b>${streak.toLocaleString('fa-IR')} روز متوالی امتیاز مثبت!</b><span>همینطوری ادامه بده</span></div>`;
+    streakEl.style.display='flex';
+  } else {
+    streakEl.innerHTML = `<span class="em">💪</span><div><b>هر روز یه قدم جلوتر</b><span>امروز امتیاز بگیر و روندت رو شروع کن</span></div>`;
+    streakEl.style.display='flex';
+  }
+
+  const sorted=[...s.history].sort((a,b)=>a.date.localeCompare(b.date));
+  let sum=0; const cum = sorted.map(h=>{sum+=h.delta; return sum;});
+  document.getElementById('student-chart').innerHTML = buildLineChart(cum);
+
+  const hist = document.getElementById('student-history');
+  if(s.history.length===0){ hist.innerHTML = '<div class="empty-note">هنوز امتیازی ثبت نشده</div>'; }
+  else {
+    hist.innerHTML = [...s.history].reverse().slice(0,30).map(h=>{
+      const cls = h.delta>0?'var(--green)':'var(--danger)';
+      return `<div class="hist-line" style="border-top:1px solid rgba(255,255,255,.06);"><span>${faDate(h.date)}</span><span style="color:${cls}; font-weight:800;">${h.delta>0?'+':''}${faNum(h.delta)}</span></div>`;
+    }).join('');
+  }
+}
+function renderStudentAbsences(){
+  const s = state.students.find(x=>x.id===currentStudentId);
+  if(!s) return;
+  const box = document.getElementById('student-absences');
+  if(s.absences.length===0){ box.innerHTML = '<div class="card"><div class="empty-note">غیبتی ثبت نشده 🎉</div></div>'; return; }
+  const groups = {};
+  [...s.absences].sort((a,b)=> b.date.localeCompare(a.date)).forEach(a=>{
+    const d = parseISOLocal(a.date);
+    const key = d.getFullYear()+'-'+pad2(d.getMonth()+1);
+    const label = d.toLocaleDateString('fa-IR', {month:'long', year:'numeric'});
+    if(!groups[key]) groups[key] = {label, items:[]};
+    groups[key].items.push(a);
   });
-  const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8">
-    <title>گزارش تغییرات امتیاز</title>
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-      *{box-sizing:border-box;}
-      body{font-family:Vazirmatn,Tahoma,sans-serif;padding:44px;color:#241f1a;background:#fff;}
-      .header{text-align:center;margin-bottom:8px;}
-      .header-icon{font-size:34px;line-height:1;margin-bottom:6px;}
-      h1{font-size:28px;font-weight:800;margin:0 0 6px;letter-spacing:.3px;}
-      .subtitle{color:#8a8078;font-size:14px;font-weight:500;margin-bottom:6px;}
-      .meta-line{color:#241f1a;font-size:13.5px;font-weight:700;margin-bottom:10px;}
-      .summary{color:#8a5a2b;font-size:13px;font-weight:600;margin-bottom:30px;}
-      .divider{border:none;border-top:2px solid #e7e1d8;margin:0 0 30px;}
-      .day-block{margin-bottom:20px;border-right:5px solid #2f6f4f;padding:14px 18px;border-radius:0 10px 10px 0;background:#f6f4ef;page-break-inside:avoid;}
-      .day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-      .day-head-right{display:flex;align-items:baseline;gap:10px;}
-      .day-name{font-size:19px;font-weight:800;}
-      .day-date{font-size:12.5px;color:#8a8078;font-weight:400;}
-      .day-count{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;}
-      .change-list{display:flex;flex-wrap:wrap;gap:8px;}
-      .change-tag{font-size:13.5px;font-weight:700;padding:5px 12px;border-radius:10px;}
-      .day-empty{font-size:14px;font-weight:600;color:#1e7a3d;}
-      .footer{margin-top:38px;text-align:center;color:#a89e92;font-size:11px;font-weight:400;border-top:1px solid #e7e1d8;padding-top:14px;}
-      @media print{
-        body{padding:14px;}
-        .day-block{background:#fafaf8 !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-      }
-    </style></head><body>
-    <div class="header">
-      <div class="header-icon">🏅</div>
-      <h1>گزارش تغییرات امتیاز</h1>
-      <div class="subtitle">${days[0].toLocaleDateString('fa-IR')} تا ${days[2].toLocaleDateString('fa-IR')}</div>
-      <div class="meta-line">آموزگار: آقای مهدیزاده &nbsp;|&nbsp; کلاس: 6/1</div>
-      <div class="summary">${totalChanges ? `مجموع تغییرات این سه روز: ${totalChanges} مورد` : 'در این سه روز تغییری ثبت نشده است'}</div>
-    </div>
-    <hr class="divider">
-    ${sections}
-    <div class="footer">تهیه‌شده در ${new Date().toLocaleDateString('fa-IR')} — سامانه امتیاز کلاس</div>
-    </body></html>`);
-  win.document.close();
-  setTimeout(()=>win.print(), 400);
+  box.innerHTML = Object.values(groups).map(g=>`
+    <div class="card month-group" style="margin-bottom:14px;">
+      <div class="month-title">${g.label}</div>
+      ${g.items.map(a=>`<div class="abs-item"><span>${faDate(a.date)}</span><span class="badge" style="color:${a.excused?'var(--yellow)':'var(--danger)'}; background:${a.excused?'rgba(255,217,138,.12)':'rgba(255,125,156,.12)'};">${a.excused?'غیبت موجه':'غیبت'}</span></div>`).join('')}
+    </div>`).join('');
+}
+function renderStudentReport(){
+  const s = state.students.find(x=>x.id===currentStudentId);
+  if(!s) return;
+  const box = document.getElementById('studentSubjects');
+  box.innerHTML = SUBJECTS.map(sub=>{
+    const arr = s.grades[sub];
+    const lv = arr.length ? levelByKey(arr[arr.length-1].level) : null;
+    const histHtml = arr.length ? [...arr].reverse().map(g=>{
+      const l = levelByKey(g.level);
+      return `<div><div class="hist-line"><span>${faDate(g.date)}</span><span class="badge" style="background:${l.color}22; color:${l.color};">${l.label}</span></div>${g.note?`<div class="hist-note">${escapeHtml(g.note)}</div>`:''}</div>`;
+    }).join('') : '<div class="empty-note">هنوز نمره‌ای ثبت نشده</div>';
+    return `<div class="subj-row">
+      <div class="subj-head" data-toggle="stu-${sub}">
+        <span class="dot" style="background:${lv?lv.color:'#4a465c'}; color:${lv?lv.color:'#4a465c'};"></span>
+        <b>${sub}</b>
+        <span class="badge" style="${lv?`color:${lv.color}; background:${lv.color}22;`:'color:var(--muted);'}">${lv?lv.label:'—'}</span>
+      </div>
+      <div class="subj-detail" id="stu-${sub}">${buildAcademicChart(arr)}${histHtml}</div>
+    </div>`;
+  }).join('');
+  box.querySelectorAll('[data-toggle]').forEach(h=>{
+    h.addEventListener('click', ()=> document.getElementById(h.dataset.toggle).classList.toggle('open'));
+  });
 }
 
-function applyStreamerMode(){
-  document.body.classList.toggle('streamer-mode', streamerMode);
-  document.getElementById('btn-streamer').textContent = streamerMode ? 'نمایش عادی' : 'حالت پنهان';
-  document.getElementById('streamer-banner').classList.toggle('hidden', !streamerMode);
+/* ============================================================
+   PERSISTENCE
+   ============================================================ */
+async function persist(){
+  try{
+    suppressNextSnapshot = true;
+    await stateRef.set(state);
+  } catch(e){ console.error('save failed', e); }
 }
-applyStreamerMode();
 
+/* ============================================================
+   EVENT WIRING
+   ============================================================ */
 document.getElementById('btn-go-teacher').addEventListener('click', ()=> show('view-teacher-pin'));
 document.getElementById('btn-go-student').addEventListener('click', ()=> show('view-student-login'));
 document.getElementById('btn-pin-back').addEventListener('click', ()=> show('view-landing'));
 document.getElementById('btn-student-back').addEventListener('click', ()=> show('view-landing'));
+
+document.getElementById('btn-pin-submit').addEventListener('click', ()=>{
+  const v = document.getElementById('pin-input').value.trim();
+  if(v === state.pin){
+    try{ localStorage.setItem('teacherUnlocked','yes'); }catch(e){}
+    showTeacherTab('dashboard');
+    applyStreamerMode();
+    show('view-teacher');
+  } else document.getElementById('pin-msg').textContent = 'پین اشتباه است';
+});
+document.getElementById('btn-student-submit').addEventListener('click', ()=>{
+  const v = document.getElementById('student-code-input').value.trim();
+  const s = state.students.find(x=>x.code===v);
+  if(s){
+    currentStudentId = s.id;
+    try{ localStorage.setItem('studentCode', v); }catch(e){}
+    showStudentTab('dashboard');
+    show('view-student');
+  } else document.getElementById('student-login-msg').textContent = 'کد اشتباه است';
+});
+
 document.getElementById('btn-teacher-exit').addEventListener('click', ()=>{
   try{ localStorage.removeItem('teacherUnlocked'); }catch(e){}
   streamerMode = false;
@@ -899,19 +1211,30 @@ document.getElementById('btn-streamer').addEventListener('click', ()=>{
   streamerMode = !streamerMode;
   try{ if(streamerMode) localStorage.setItem('streamerMode','1'); else localStorage.removeItem('streamerMode'); }catch(e){}
   applyStreamerMode();
-  renderTeacher();
+  renderTeacherTab(currentTeacherTab, true);
 });
-document.getElementById('btn-report-back').addEventListener('click', ()=>{ renderTeacher(); show('view-teacher'); });
 document.getElementById('btn-student-exit').addEventListener('click', ()=>{
-  currentStudentId=null;
+  currentStudentId = null;
   try{ localStorage.removeItem('studentCode'); }catch(e){}
   show('view-landing');
 });
-document.getElementById('btn-add-student').addEventListener('click', addStudent);
+
+document.querySelectorAll('#tabbar-teacher button').forEach(b=> b.addEventListener('click', ()=> showTeacherTab(b.dataset.tab)));
+document.querySelectorAll('#tabbar-student button').forEach(b=> b.addEventListener('click', ()=> showStudentTab(b.dataset.tab)));
+
 document.getElementById('btn-export-absences').addEventListener('click', exportWeeklyAbsences);
-document.getElementById('btn-export-daily').addEventListener('click', exportDailyScoreReport);
-document.getElementById('btn-pick-random').addEventListener('click', pickRandomStudents);
-document.getElementById('teacher-search').addEventListener('input', renderTeacher);
+document.getElementById('btn-export-reports').addEventListener('click', exportReportCardsPDF);
+initLottery();
+
+document.getElementById('scoring-search').addEventListener('input', renderScoring);
+document.querySelectorAll('#scoringFilters .chip').forEach(c=>{
+  c.addEventListener('click', ()=>{
+    document.querySelectorAll('#scoringFilters .chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active');
+    scoringFilter = c.dataset.filter;
+    renderScoring();
+  });
+});
 document.getElementById('btn-bulk-plus').addEventListener('click', ()=>{
   const v = parseInt(document.getElementById('bulk-amount').value)||0;
   state.step = v;
@@ -923,65 +1246,34 @@ document.getElementById('btn-bulk-minus').addEventListener('click', ()=>{
   if(v>0) bulkScore(-v);
 });
 
-document.getElementById('btn-pin-submit').addEventListener('click', ()=>{
-  const v = document.getElementById('pin-input').value.trim();
-  if(v === state.pin){
-    try{ localStorage.setItem('teacherUnlocked','yes'); }catch(e){}
-    renderTeacher(); show('view-teacher');
-  } else document.getElementById('pin-msg').textContent = 'پین اشتباه است';
-});
+document.getElementById('absence-search').addEventListener('input', renderAbsenceTab);
+document.getElementById('report-search').addEventListener('input', renderReportList);
+document.getElementById('btn-report-back').addEventListener('click', renderReportList);
+document.getElementById('btn-add-student').addEventListener('click', addStudent);
 
-document.getElementById('btn-student-submit').addEventListener('click', ()=>{
-  const v = document.getElementById('student-code-input').value.trim();
-  const s = state.students.find(x=>x.code===v);
-  if(s){
-    currentStudentId = s.id;
-    try{ localStorage.setItem('studentCode', v); }catch(e){}
-    document.getElementById('tab-score').classList.add('active');
-    document.getElementById('tab-report').classList.remove('active');
-    document.getElementById('student-score-view').classList.remove('hidden');
-    document.getElementById('student-report-view').classList.add('hidden');
-    renderStudent(); show('view-student');
-  } else document.getElementById('student-login-msg').textContent = 'کد اشتباه است';
-});
-
-document.getElementById('tab-score').addEventListener('click', ()=>{
-  document.getElementById('tab-score').classList.add('active');
-  document.getElementById('tab-report').classList.remove('active');
-  document.getElementById('student-score-view').classList.remove('hidden');
-  document.getElementById('student-report-view').classList.add('hidden');
-});
-document.getElementById('tab-report').addEventListener('click', ()=>{
-  document.getElementById('tab-report').classList.add('active');
-  document.getElementById('tab-score').classList.remove('active');
-  document.getElementById('student-report-view').classList.remove('hidden');
-  document.getElementById('student-score-view').classList.add('hidden');
-});
+/* ============================================================
+   BOOT: load from Firestore, then listen for realtime changes
+   ============================================================ */
+let isOnline = false;
+let offlineShowTimer = null;
+function showOfflineOverlay(){ document.getElementById('offline-overlay').style.display = 'flex'; }
+function hideOfflineOverlay(){ document.getElementById('offline-overlay').style.display = 'none'; }
 
 function decideInitialView(){
   try{
     if(localStorage.getItem('teacherUnlocked')==='yes'){
-      renderTeacher(); show('view-teacher'); return;
+      showTeacherTab('dashboard');
+      applyStreamerMode();
+      show('view-teacher');
+      return;
     }
     const savedCode = localStorage.getItem('studentCode');
     if(savedCode){
       const s = state.students.find(x=>x.code===savedCode);
-      if(s){ currentStudentId=s.id; renderStudent(); show('view-student'); return; }
+      if(s){ currentStudentId=s.id; showStudentTab('dashboard'); show('view-student'); return; }
     }
   }catch(e){}
   show('view-landing');
-}
-
-// ---------- boot: load from Firestore, then listen for realtime changes ----------
-let booted = false;
-let isOnline = false;
-let offlineShowTimer = null;
-
-function showOfflineOverlay(){
-  document.getElementById('offline-overlay').style.display = 'flex';
-}
-function hideOfflineOverlay(){
-  document.getElementById('offline-overlay').style.display = 'none';
 }
 
 stateRef.onSnapshot({includeMetadataChanges:true}, (snap)=>{
@@ -1000,9 +1292,7 @@ stateRef.onSnapshot({includeMetadataChanges:true}, (snap)=>{
 
   if(suppressNextSnapshot){ suppressNextSnapshot = false; if(booted) return; }
 
-  if(fromCache && !snap.exists && !booted){
-    return;
-  }
+  if(fromCache && !snap.exists && !booted){ return; }
 
   if(snap.exists){
     state = snap.data();
