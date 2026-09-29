@@ -217,13 +217,13 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .sparkle{position:absolute; font-size:14px; animation:twinkle 2.4s ease-in-out infinite; color:#e4d8ff;}
 @keyframes twinkle{0%,100%{opacity:.2; transform:scale(.7) rotate(0deg);}50%{opacity:1; transform:scale(1.15) rotate(15deg);}}
 .score-hero .lbl{position:relative; z-index:2; font-size:18px; color:#fff; font-weight:800; letter-spacing:-.2px;}
-.score-num-big{position:relative; z-index:2; font-size:56px; font-weight:900; letter-spacing:-1.5px; margin:6px 0;
+.score-num-big{position:relative; z-index:2; font-size:56px; font-weight:900; letter-spacing:-1.5px; margin:6px 0; direction:ltr;
   background:linear-gradient(160deg,#e4d8ff,var(--purple) 55%,var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent;
   filter:drop-shadow(0 10px 24px rgba(154,114,255,.5));}
 .trophy-row{position:relative; z-index:2; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px;}
 .trophy-row .em{font-size:22px; animation:bounce 1.8s ease-in-out infinite; display:inline-block;}
 @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
-.rank-chip{position:relative; z-index:2; display:inline-block; font-size:10px; font-weight:600; color:var(--muted); background:rgba(255,255,255,.06); padding:4px 11px; border-radius:999px; margin-top:2px;}
+.rank-chip{position:relative; z-index:2; display:inline-block; font-size:10px; font-weight:600; color:var(--muted); background:rgba(255,255,255,.06); padding:4px 11px; border-radius:999px; margin-top:2px; direction:ltr;}
 .confetti{position:absolute; width:7px; height:7px; border-radius:2px; top:45%; left:50%; opacity:0; pointer-events:none;}
 .score-hero.burst .confetti{animation:confettiBurst 1s cubic-bezier(.2,.8,.3,1) forwards;}
 @keyframes confettiBurst{0%{opacity:1; transform:translate(-50%,-50%) rotate(0) scale(1);}100%{opacity:0; transform:translate(var(--tx),var(--ty)) rotate(var(--tr)) scale(.4);}}
@@ -306,8 +306,8 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
     <div class="topstrip">
       <div class="who"><div class="mark">🏅</div><b>کلاس ما</b></div>
       <div class="actions">
-        <button class="top-action-btn streamer" id="btn-streamer" title="حالت پنهان"><span class="ic">🙈</span><span class="lbl-txt">پنهان</span></button>
-        <button class="top-action-btn exit" id="btn-teacher-exit" title="خروج"><span class="ic">🚪</span><span class="lbl-txt">خروج</span></button>
+        <button class="top-action-btn streamer" id="btn-streamer" title="حالت پنهان"><span class="lbl-txt">پنهان</span></button>
+        <button class="top-action-btn exit" id="btn-teacher-exit" title="خروج"><span class="lbl-txt">خروج</span></button>
       </div>
     </div>
     <div class="hidden-banner hidden" id="streamer-banner">🙈 حالت پنهان فعال — امتیاز و کد دانش‌آموزها مخفی است</div>
@@ -336,7 +336,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
       </div>
       <div class="stats-scroll">
         <div class="card stat"><small>امتحان‌های این ماه</small><b id="stat-exams">۰</b><div class="trend" id="stat-exams-sub"></div></div>
-        <div class="card stat"><small>امتیاز ثبت‌شده</small><b id="stat-scores">۰</b><div class="trend">مجموع دفعات ثبت امتیاز</div></div>
+        <div class="card stat"><small>امتیاز ثبت‌شده</small><b id="stat-scores">۰</b><div class="trend">مجموع امتیاز فعلی همه‌ی دانش‌آموزها</div></div>
         <div class="card stat"><small>غیبت این هفته</small><b id="stat-abs">۰</b><div class="trend" style="color:#a6a1bb;">شنبه تا چهارشنبه</div></div>
       </div>
       <div class="card">
@@ -419,7 +419,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
   <div class="wrap">
     <div class="topstrip">
       <div class="who"><div class="mark">🏅</div><b>کلاس ما</b></div>
-      <div class="actions"><button class="top-action-btn exit" id="btn-student-exit" title="خروج"><span class="ic">🚪</span><span class="lbl-txt">خروج</span></button></div>
+      <div class="actions"><button class="top-action-btn exit" id="btn-student-exit" title="خروج"><span class="lbl-txt">خروج</span></button></div>
     </div>
 
     <section class="tabsection active" id="st-dashboard">
@@ -601,7 +601,6 @@ function applyStreamerMode(){
   document.getElementById('streamer-banner').classList.toggle('hidden', !streamerMode);
   const btn = document.getElementById('btn-streamer');
   btn.classList.toggle('on', streamerMode);
-  btn.querySelector('.ic').textContent = streamerMode ? '👁️' : '🙈';
   btn.querySelector('.lbl-txt').textContent = streamerMode ? 'نمایش' : 'پنهان';
 }
 
@@ -611,22 +610,24 @@ function classActivityLast7(){
   for(let i=6;i>=0;i--){
     const d = new Date(); d.setDate(d.getDate()-i);
     const iso = isoFromDate(d);
-    let count=0;
-    state.students.forEach(s=> s.history.forEach(h=>{ if(h.date===iso) count++; }));
-    days.push({date:d, count});
+    let sum=0;
+    state.students.forEach(s=> s.history.forEach(h=>{ if(h.date===iso) sum+=h.delta; }));
+    days.push({date:d, count:sum});
   }
   return days;
 }
 function examsThisMonth(){
+  if(!state.students.length) return 0;
+  const s = sortedByName()[0];
   const now = new Date(); const y=now.getFullYear(), m=now.getMonth();
   let count=0;
-  state.students.forEach(s=> SUBJECTS.forEach(sub=> (s.grades[sub]||[]).forEach(g=>{
+  SUBJECTS.forEach(sub=> (s.grades[sub]||[]).forEach(g=>{
     const d = parseISOLocal(g.date);
     if(d.getFullYear()===y && d.getMonth()===m) count++;
-  })));
+  }));
   return count;
 }
-function totalScoreEntries(){ return state.students.reduce((a,s)=>a+s.history.length,0); }
+function totalScoreEntries(){ return state.students.reduce((a,s)=>a+total(s),0); }
 function absencesThisWeek(){
   const {sat, wed} = getWeekRange();
   const startIso = isoFromDate(sat), endIso = isoFromDate(wed);
@@ -635,12 +636,11 @@ function absencesThisWeek(){
   return count;
 }
 function countUp(el, target, duration){
-  if(target<=0){ el.textContent = faNum(0); return; }
   const start = performance.now();
   function step(now){
     const p = Math.min(1, (now-start)/duration);
     const eased = 1 - Math.pow(1-p, 3);
-    el.textContent = faNum(Math.round(eased*target));
+    el.textContent = faNum(Math.round(target*eased));
     if(p<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
@@ -656,12 +656,13 @@ function renderTeacherDashboard(){
   document.getElementById('stat-exams-sub').textContent = new Date().toLocaleDateString('fa-IR', {month:'long', year:'numeric'});
 
   const days = classActivityLast7();
-  const max = Math.max(1, ...days.map(d=>d.count));
+  const max = Math.max(1, ...days.map(d=>Math.abs(d.count)));
   const chartEl = document.getElementById('activityChart');
   const labelsEl = document.getElementById('activityLabels');
   chartEl.innerHTML = days.map(d=>{
-    const h = d.count ? Math.max(10, Math.round((d.count/max)*100)) : 4;
-    return `<div class="chart-bar" style="height:${h}%;"></div>`;
+    const h = d.count ? Math.max(10, Math.round((Math.abs(d.count)/max)*100)) : 4;
+    const bg = d.count < 0 ? 'linear-gradient(180deg,#ff9fb5,#e0506b)' : 'linear-gradient(180deg,#a482ff,#633de0)';
+    return `<div class="chart-bar" style="height:${h}%; background:${bg};"></div>`;
   }).join('');
   labelsEl.innerHTML = days.map((d,i)=> `<span>${i===days.length-1 ? 'امروز' : d.date.toLocaleDateString('fa-IR',{weekday:'short'})}</span>`).join('');
 
@@ -1158,7 +1159,7 @@ function renderStudentDashboard(){
   document.getElementById('student-name-label').textContent = s.name;
   const numEl = document.getElementById('student-total-label');
   countUp(numEl, t, 1100);
-  document.getElementById('student-rank-label').textContent = (rank<=3?'👑 ':'') + `رتبه ${rank.toLocaleString('fa-IR')} از ${ranked.length.toLocaleString('fa-IR')} نفر کلاس`;
+  document.getElementById('student-rank-label').textContent = `${rank.toLocaleString('fa-IR')}/${ranked.length.toLocaleString('fa-IR')}`;
   document.getElementById('trophyRow').innerHTML = rank===1 ? '<span class="em">🏆</span>' : (rank<=3 ? '<span class="em">⭐</span>' : '');
 
   const hero = document.getElementById('scoreHero');
