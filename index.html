@@ -66,9 +66,23 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .topstrip .who{display:flex; align-items:center; gap:9px;}
 .topstrip .mark{width:32px; height:32px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:15px; background:linear-gradient(145deg,#a98aff,#6540df); flex:none;}
 .topstrip b{font-size:13.5px;}
-.topstrip .actions{display:flex; gap:6px;}
-.iconbtn{width:34px; height:34px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.06); color:#fff; font-size:14px; display:flex; align-items:center; justify-content:center; cursor:pointer;}
-.iconbtn.on{background:rgba(255,217,138,.16); border-color:rgba(255,217,138,.4); color:var(--yellow);}
+.topstrip .actions{display:flex; gap:7px;}
+.top-action-btn{
+  display:flex; align-items:center; gap:5px; height:34px; padding:0 13px; border-radius:13px;
+  font-family:inherit; font-size:11px; font-weight:700; color:var(--muted); cursor:pointer;
+  background:linear-gradient(150deg, rgba(255,255,255,.09), rgba(255,255,255,.02));
+  border:1px solid var(--line); box-shadow:inset 0 1px 0 rgba(255,255,255,.1);
+}
+.top-action-btn .ic{font-size:13px; line-height:1;}
+.top-action-btn:active{transform:scale(.94);}
+.top-action-btn.streamer.on{
+  color:#1b1030; background:linear-gradient(150deg,#ffe9a8,#ffb85e);
+  border-color:transparent; box-shadow:0 6px 16px rgba(255,184,94,.4), inset 0 1px 0 rgba(255,255,255,.5);
+}
+.top-action-btn.exit{
+  color:#ffc2ce; background:linear-gradient(150deg, rgba(255,125,156,.16), rgba(224,80,107,.08));
+  border-color:rgba(255,125,156,.3);
+}
 .hidden-banner{display:flex; align-items:center; gap:8px; padding:12px 15px; margin-bottom:14px; font-weight:700; font-size:12.5px; color:var(--yellow); background:rgba(255,217,138,.08); border:1px solid rgba(255,217,138,.26) !important;}
 
 .topbar{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
@@ -155,7 +169,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .mgmt-add{display:flex; gap:8px; margin-bottom:14px;}
 .mgmt-add input{flex:1; height:42px;}
 .mgmt-add button{width:46px; height:42px; border-radius:13px; border:none; background:linear-gradient(135deg,#8c68ff,#6540d5); color:#fff; font-size:18px; cursor:pointer; flex:none;}
-.del-btn{width:30px; height:30px; border-radius:9px; border:1px solid rgba(255,125,156,.35); background:rgba(255,125,156,.1); color:var(--danger); font-size:13px; cursor:pointer; font-family:inherit;}
+.del-btn{width:auto; height:auto; white-space:nowrap; padding:8px 14px; border-radius:11px; border:1px solid rgba(255,125,156,.35); background:rgba(255,125,156,.1); color:var(--danger); font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit;}
 
 .subj-list{display:grid; gap:8px;}
 .subj-row{padding:2px;}
@@ -202,14 +216,14 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 @keyframes haloPulse{0%,100%{opacity:.7; transform:translate(-50%,-50%) scale(1);}50%{opacity:1; transform:translate(-50%,-50%) scale(1.12);}}
 .sparkle{position:absolute; font-size:14px; animation:twinkle 2.4s ease-in-out infinite; color:#e4d8ff;}
 @keyframes twinkle{0%,100%{opacity:.2; transform:scale(.7) rotate(0deg);}50%{opacity:1; transform:scale(1.15) rotate(15deg);}}
-.score-hero .lbl{position:relative; z-index:2; font-size:13px; color:var(--muted); font-weight:700;}
+.score-hero .lbl{position:relative; z-index:2; font-size:18px; color:#fff; font-weight:800; letter-spacing:-.2px;}
 .score-num-big{position:relative; z-index:2; font-size:56px; font-weight:900; letter-spacing:-1.5px; margin:6px 0;
   background:linear-gradient(160deg,#e4d8ff,var(--purple) 55%,var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent;
   filter:drop-shadow(0 10px 24px rgba(154,114,255,.5));}
 .trophy-row{position:relative; z-index:2; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px;}
 .trophy-row .em{font-size:22px; animation:bounce 1.8s ease-in-out infinite; display:inline-block;}
 @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
-.rank-chip{position:relative; z-index:2; display:inline-block; font-size:12px; font-weight:800; color:#1b1030; background:linear-gradient(135deg,#ffe9a8,#ffb85e); padding:6px 15px; border-radius:999px; box-shadow:0 8px 20px rgba(255,184,94,.4);}
+.rank-chip{position:relative; z-index:2; display:inline-block; font-size:10px; font-weight:600; color:var(--muted); background:rgba(255,255,255,.06); padding:4px 11px; border-radius:999px; margin-top:2px;}
 .confetti{position:absolute; width:7px; height:7px; border-radius:2px; top:45%; left:50%; opacity:0; pointer-events:none;}
 .score-hero.burst .confetti{animation:confettiBurst 1s cubic-bezier(.2,.8,.3,1) forwards;}
 @keyframes confettiBurst{0%{opacity:1; transform:translate(-50%,-50%) rotate(0) scale(1);}100%{opacity:0; transform:translate(var(--tx),var(--ty)) rotate(var(--tr)) scale(.4);}}
@@ -217,6 +231,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .streak-card .em{font-size:26px;}
 .streak-card b{display:block; font-size:14px;}
 .streak-card span{display:block; font-size:11px; color:var(--muted); margin-top:1px;}
+.tiny-footer{text-align:center; font-size:9px; color:rgba(255,255,255,.22); margin-top:10px; padding:2px 0 2px; letter-spacing:.2px;}
 </style>
 </head>
 <body>
@@ -229,6 +244,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
       <p class="conn-title">برای اتصال، فیلترشکن خود را روشن کنید</p>
       <p class="conn-sub">به‌محض وصل شدن، خودش وارد پنل می‌شی</p>
     </div>
+    <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
 </div>
 
@@ -250,6 +266,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
     </div>
     <button class="btn" id="btn-go-teacher">ورود معلم</button>
     <button class="btn ghost" id="btn-go-student">ورود دانش‌آموز</button>
+    <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
 </div>
 
@@ -264,6 +281,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
     <button class="btn" id="btn-pin-submit">ورود</button>
     <button class="btn ghost" id="btn-pin-back">بازگشت</button>
     <div class="msg" id="pin-msg"></div>
+    <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
 </div>
 
@@ -278,6 +296,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
     <button class="btn" id="btn-student-submit">ورود</button>
     <button class="btn ghost" id="btn-student-back">بازگشت</button>
     <div class="msg" id="student-login-msg"></div>
+    <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
 </div>
 
@@ -287,8 +306,8 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
     <div class="topstrip">
       <div class="who"><div class="mark">🏅</div><b>کلاس ما</b></div>
       <div class="actions">
-        <button class="iconbtn" id="btn-streamer" title="حالت پنهان">🙈</button>
-        <button class="iconbtn" id="btn-teacher-exit" title="خروج">🚪</button>
+        <button class="top-action-btn streamer" id="btn-streamer" title="حالت پنهان"><span class="ic">🙈</span><span class="lbl-txt">پنهان</span></button>
+        <button class="top-action-btn exit" id="btn-teacher-exit" title="خروج"><span class="ic">🚪</span><span class="lbl-txt">خروج</span></button>
       </div>
     </div>
     <div class="hidden-banner hidden" id="streamer-banner">🙈 حالت پنهان فعال — امتیاز و کد دانش‌آموزها مخفی است</div>
@@ -301,8 +320,9 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
       </div>
       <div class="card hero">
         <div class="hero-row">
-          <button class="pill" id="btn-export-absences">📄 خروجی PDF غیبت هفتگی</button>
-          <button class="pill" id="btn-export-reports">📄 خروجی PDF کارنامه‌ها</button>
+          <button class="pill" id="btn-export-absences">📄 غیبت هفتگی</button>
+          <button class="pill" id="btn-export-reports">📄 کارنامه‌ها</button>
+          <button class="pill" id="btn-export-scores">📄 امتیازها</button>
         </div>
       </div>
       <div class="card lottery-card">
@@ -382,6 +402,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
       </div>
       <div class="card" id="manageList" style="padding:10px;"></div>
     </section>
+    <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
 
   <nav class="tabbar" id="tabbar-teacher">
@@ -398,7 +419,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
   <div class="wrap">
     <div class="topstrip">
       <div class="who"><div class="mark">🏅</div><b>کلاس ما</b></div>
-      <div class="actions"><button class="iconbtn" id="btn-student-exit" title="خروج">🚪</button></div>
+      <div class="actions"><button class="top-action-btn exit" id="btn-student-exit" title="خروج"><span class="ic">🚪</span><span class="lbl-txt">خروج</span></button></div>
     </div>
 
     <section class="tabsection active" id="st-dashboard">
@@ -433,6 +454,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
       <div class="topbar"><h1 style="font-size:16px; margin:0;">کارنامه من</h1></div>
       <div class="card"><div class="subj-list" id="studentSubjects"></div></div>
     </section>
+    <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
 
   <nav class="tabbar" id="tabbar-student">
@@ -509,6 +531,11 @@ function todayISO(){ return isoFromDate(new Date()); }
 function todayFa(){ return new Date().toLocaleDateString('fa-IR', {weekday:'long', day:'numeric', month:'long'}); }
 function faDate(iso){ return parseISOLocal(iso).toLocaleDateString('fa-IR'); }
 function total(s){ return s.history.reduce((a,h)=>a+h.delta,0); }
+function dailyNetMap(history){
+  const byDate = {};
+  history.forEach(h=>{ byDate[h.date] = (byDate[h.date]||0) + h.delta; });
+  return byDate;
+}
 function todayDelta(s){ return s.history.filter(h=>h.date===todayISO()).reduce((a,h)=>a+h.delta,0); }
 function genCode(){
   let c;
@@ -574,7 +601,8 @@ function applyStreamerMode(){
   document.getElementById('streamer-banner').classList.toggle('hidden', !streamerMode);
   const btn = document.getElementById('btn-streamer');
   btn.classList.toggle('on', streamerMode);
-  btn.textContent = streamerMode ? '👁️' : '🙈';
+  btn.querySelector('.ic').textContent = streamerMode ? '👁️' : '🙈';
+  btn.querySelector('.lbl-txt').textContent = streamerMode ? 'نمایش' : 'پنهان';
 }
 
 /* ---------- DASHBOARD ---------- */
@@ -1020,6 +1048,47 @@ function exportReportCardsPDF(){
   setTimeout(()=>win.print(), 400);
 }
 
+function exportScoresPDF(){
+  const dayNames = ['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+  let sections = '';
+  for(let i=2;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const iso = isoFromDate(d);
+    const entries = state.students.map(s=>{
+      const map = dailyNetMap(s.history);
+      return {name: s.name, net: map[iso]||0};
+    }).filter(e=> e.net!==0).sort((a,b)=>a.name.localeCompare(b.name,'fa'));
+    const body = entries.length
+      ? `<div class="score-lines">${entries.map(e=>`<div class="score-line"><span>${escapeHtml(e.name)}</span><span style="color:${e.net>0?'#1e7a3d':'#c0392b'};">${e.net>0?'+':''}${faNum(e.net)}</span></div>`).join('')}</div>`
+      : `<div class="day-empty">— تغییری ثبت نشده —</div>`;
+    sections += `<div class="day-block" style="border-right-color:${i%2?'#9a72ff':'#6c43e8'};">
+        <div class="day-head">
+          <div class="day-head-right"><span class="day-name">${i===0?'امروز':dayNames[d.getDay()]}</span><span class="day-date">${d.toLocaleDateString('fa-IR')}</span></div>
+        </div>${body}</div>`;
+  }
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>امتیازهای سه روز اخیر</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>*{box-sizing:border-box;} body{font-family:Vazirmatn,Tahoma,sans-serif;padding:44px;color:#241f1a;background:#fff;}
+    .header{text-align:center;margin-bottom:26px;} .header-icon{font-size:34px;margin-bottom:6px;}
+    h1{font-size:26px;font-weight:800;margin:0 0 6px;} .subtitle{color:#8a8078;font-size:13px;margin-bottom:6px;}
+    .summary{color:#6c43e8;font-size:12.5px;font-weight:600;}
+    .day-block{margin-bottom:20px;border-right:5px solid #6c43e8;padding:14px 18px;border-radius:0 10px 10px 0;background:#f7f5ff;page-break-inside:avoid;}
+    .day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+    .day-head-right{display:flex;align-items:baseline;gap:10px;} .day-name{font-size:19px;font-weight:800;} .day-date{font-size:12.5px;color:#8a8078;}
+    .score-lines{display:grid; gap:6px;} .score-line{display:flex;justify-content:space-between;font-size:14px;font-weight:600;padding:6px 2px;border-bottom:1px solid #e7e1d8;}
+    .score-line:last-child{border-bottom:none;} .day-empty{font-size:13px;color:#8a8078;text-align:center;padding:8px 0;}
+    .footer{margin-top:30px;text-align:center;color:#a89e92;font-size:11px;border-top:1px solid #e7e1d8;padding-top:14px;}
+    @media print{ body{padding:14px;} .day-block{background:#faf9ff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
+    </style></head><body>
+    <div class="header"><div class="header-icon">🏅</div><h1>امتیازهای سه روز اخیر</h1>
+    <div class="subtitle">فقط دانش‌آموزانی که در آن روز مجموع امتیازشان صفر نشده</div></div>
+    ${sections}
+    <div class="footer">تهیه‌شده در ${new Date().toLocaleDateString('fa-IR')} — کلاس ما</div></body></html>`);
+  win.document.close();
+  setTimeout(()=>win.print(), 400);
+}
+
 /* ============================================================
    STUDENT APP
    ============================================================ */
@@ -1110,11 +1179,14 @@ function renderStudentDashboard(){
   document.getElementById('student-chart').innerHTML = buildLineChart(cum);
 
   const hist = document.getElementById('student-history');
-  if(s.history.length===0){ hist.innerHTML = '<div class="empty-note">هنوز امتیازی ثبت نشده</div>'; }
+  const dayMap = dailyNetMap(s.history);
+  const days = Object.keys(dayMap).filter(d=>dayMap[d]!==0).sort((a,b)=>b.localeCompare(a));
+  if(days.length===0){ hist.innerHTML = '<div class="empty-note">هنوز امتیازی ثبت نشده</div>'; }
   else {
-    hist.innerHTML = [...s.history].reverse().slice(0,30).map(h=>{
-      const cls = h.delta>0?'var(--green)':'var(--danger)';
-      return `<div class="hist-line" style="border-top:1px solid rgba(255,255,255,.06);"><span>${faDate(h.date)}</span><span style="color:${cls}; font-weight:800;">${h.delta>0?'+':''}${faNum(h.delta)}</span></div>`;
+    hist.innerHTML = days.slice(0,30).map(d=>{
+      const net = dayMap[d];
+      const cls = net>0?'var(--green)':'var(--danger)';
+      return `<div class="hist-line"><span>${faDate(d)}</span><span style="color:${cls}; font-weight:800;">${net>0?'+':''}${faNum(net)}</span></div>`;
     }).join('');
   }
 }
@@ -1224,6 +1296,7 @@ document.querySelectorAll('#tabbar-student button').forEach(b=> b.addEventListen
 
 document.getElementById('btn-export-absences').addEventListener('click', exportWeeklyAbsences);
 document.getElementById('btn-export-reports').addEventListener('click', exportReportCardsPDF);
+document.getElementById('btn-export-scores').addEventListener('click', exportScoresPDF);
 initLottery();
 
 document.getElementById('scoring-search').addEventListener('input', renderScoring);
