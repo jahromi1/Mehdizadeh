@@ -83,6 +83,25 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
   color:#ffc2ce; background:linear-gradient(150deg, rgba(255,125,156,.16), rgba(224,80,107,.08));
   border-color:rgba(255,125,156,.3);
 }
+.top-action-btn.select.on{
+  color:#fff; background:linear-gradient(150deg,#8c68ff,#6540d5);
+  border-color:transparent; box-shadow:0 6px 16px rgba(113,67,232,.4), inset 0 1px 0 rgba(255,255,255,.3);
+}
+.row-check{width:18px; height:18px; flex:none; accent-color:var(--purple); cursor:pointer;}
+.amt-box{width:46px; height:28px; text-align:center; padding:0 2px; font-size:11.5px; border-radius:9px; flex:none;}
+.bulk-bar{display:flex; align-items:center; gap:8px; padding:10px 12px; margin-bottom:10px; border-radius:14px;
+  background:linear-gradient(150deg, rgba(142,102,255,.16), rgba(142,102,255,.05)); border:1px solid rgba(154,114,255,.3);}
+.bulk-bar .count{font-size:11px; font-weight:700; color:var(--purple); flex:1;}
+.bulk-bar .amt-box{width:52px;}
+.bulk-bar button{border:none; border-radius:10px; padding:7px 11px; font-family:inherit; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap;}
+.bulk-bar .bplus{background:rgba(86,224,176,.18); color:var(--green);}
+.bulk-bar .bminus{background:rgba(255,125,156,.18); color:var(--danger);}
+.bulk-bar .babsent{background:rgba(255,125,156,.18); color:var(--danger);}
+.bulk-bar .bexcused{background:rgba(255,217,138,.18); color:var(--yellow);}
+.bulk-bar .bdel{background:rgba(255,125,156,.22); color:var(--danger);}
+.today-dot{width:8px; height:8px; border-radius:50%; flex:none; display:inline-block; margin-left:6px; box-shadow:0 0 8px currentColor;}
+.today-dot.on{background:var(--green); color:var(--green);}
+.today-dot.off{background:rgba(255,255,255,.14); color:transparent;}
 .hidden-banner{display:flex; align-items:center; gap:8px; padding:12px 15px; margin-bottom:14px; font-weight:700; font-size:12.5px; color:var(--yellow); background:rgba(255,217,138,.08); border:1px solid rgba(255,217,138,.26) !important;}
 
 .topbar{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
@@ -99,6 +118,9 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .hero::after{content:""; position:absolute; width:180px; height:180px; border-radius:50%; left:-90px; bottom:-120px; background:rgba(91,67,210,.35); filter:blur(35px);}
 .hero-row{display:flex; gap:8px; position:relative; z-index:1; flex-wrap:wrap;}
 .pill{padding:9px 12px; border-radius:12px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1); font-size:11px; font-weight:600; display:flex; align-items:center; gap:5px; cursor:pointer; color:#fff; font-family:inherit;}
+.pdf-row{display:flex; gap:7px; position:relative; z-index:1;}
+.pdf-btn{flex:1; min-width:0; padding:13px 6px; border-radius:14px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); color:#fff; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; text-align:center;}
+.pdf-btn:active{transform:scale(.96);}
 
 /* ---------- lottery ---------- */
 .lottery-card{text-align:center;}
@@ -148,12 +170,13 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .bulk button.plus{color:var(--green); border-color:rgba(86,224,176,.3);}
 .bulk button.minus{color:var(--danger); border-color:rgba(255,125,156,.3);}
 
-.student-row{display:grid; grid-template-columns:34px 1fr auto; align-items:center; gap:9px; padding:9px; border-radius:14px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.055); margin-bottom:7px;}
+.student-row{display:flex; align-items:center; gap:8px; padding:9px; border-radius:14px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.055); margin-bottom:7px;}
+.student-row .info{flex:1; min-width:0;}
 .student-row .av{width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:800; flex:none; color:#0b0710;}
-.student-row strong{font-size:12.5px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:120px;}
+.student-row strong{font-size:12.5px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;}
 .student-row .code{display:block; color:var(--muted); font-size:9px; margin-top:1px;}
 .score-tag{font-size:12px; font-weight:800; direction:ltr; min-width:38px; text-align:center;}
-.pm{display:flex; align-items:center; gap:5px;}
+.pm{display:flex; align-items:center; gap:5px; flex:none;}
 .pmbtn{width:28px; height:28px; border-radius:9px; border:1px solid var(--line); background:rgba(255,255,255,.06); color:#fff; font-size:14px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-weight:800;}
 .pmbtn.plus{color:var(--green);} .pmbtn.minus{color:var(--danger);}
 .pmbtn:active{transform:scale(.88);}
@@ -217,13 +240,13 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .sparkle{position:absolute; font-size:14px; animation:twinkle 2.4s ease-in-out infinite; color:#e4d8ff;}
 @keyframes twinkle{0%,100%{opacity:.2; transform:scale(.7) rotate(0deg);}50%{opacity:1; transform:scale(1.15) rotate(15deg);}}
 .score-hero .lbl{position:relative; z-index:2; font-size:18px; color:#fff; font-weight:800; letter-spacing:-.2px;}
-.score-num-big{position:relative; z-index:2; font-size:56px; font-weight:900; letter-spacing:-1.5px; margin:6px 0; direction:ltr;
+.score-num-big{position:relative; z-index:2; font-size:56px; font-weight:900; letter-spacing:-1.5px; margin:6px 0;
   background:linear-gradient(160deg,#e4d8ff,var(--purple) 55%,var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent;
   filter:drop-shadow(0 10px 24px rgba(154,114,255,.5));}
 .trophy-row{position:relative; z-index:2; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px;}
 .trophy-row .em{font-size:22px; animation:bounce 1.8s ease-in-out infinite; display:inline-block;}
 @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
-.rank-chip{position:relative; z-index:2; display:inline-block; font-size:10px; font-weight:600; color:var(--muted); background:rgba(255,255,255,.06); padding:4px 11px; border-radius:999px; margin-top:2px; direction:ltr;}
+.rank-chip{position:relative; z-index:2; display:inline-block; font-size:10px; font-weight:600; color:var(--muted); background:rgba(255,255,255,.06); padding:4px 11px; border-radius:999px; margin-top:2px;}
 .confetti{position:absolute; width:7px; height:7px; border-radius:2px; top:45%; left:50%; opacity:0; pointer-events:none;}
 .score-hero.burst .confetti{animation:confettiBurst 1s cubic-bezier(.2,.8,.3,1) forwards;}
 @keyframes confettiBurst{0%{opacity:1; transform:translate(-50%,-50%) rotate(0) scale(1);}100%{opacity:0; transform:translate(var(--tx),var(--ty)) rotate(var(--tr)) scale(.4);}}
@@ -306,8 +329,9 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
     <div class="topstrip">
       <div class="who"><div class="mark">🏅</div><b>کلاس ما</b></div>
       <div class="actions">
-        <button class="top-action-btn streamer" id="btn-streamer" title="حالت پنهان"><span class="lbl-txt">پنهان</span></button>
-        <button class="top-action-btn exit" id="btn-teacher-exit" title="خروج"><span class="lbl-txt">خروج</span></button>
+        <button class="top-action-btn select" id="btn-select-mode" title="انتخاب چندتایی"><span class="ic">☑️</span><span class="lbl-txt">انتخاب</span></button>
+        <button class="top-action-btn streamer" id="btn-streamer" title="حالت پنهان"><span class="ic">🙈</span><span class="lbl-txt">پنهان</span></button>
+        <button class="top-action-btn exit" id="btn-teacher-exit" title="خروج"><span class="ic">🚪</span><span class="lbl-txt">خروج</span></button>
       </div>
     </div>
     <div class="hidden-banner hidden" id="streamer-banner">🙈 حالت پنهان فعال — امتیاز و کد دانش‌آموزها مخفی است</div>
@@ -319,10 +343,10 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
         <div class="date" id="teacher-date"></div>
       </div>
       <div class="card hero">
-        <div class="hero-row">
-          <button class="pill" id="btn-export-absences">📄 غیبت هفتگی</button>
-          <button class="pill" id="btn-export-reports">📄 کارنامه‌ها</button>
-          <button class="pill" id="btn-export-scores">📄 امتیازها</button>
+        <div class="pdf-row">
+          <button class="pdf-btn" id="btn-export-absences">غیبت هفتگی</button>
+          <button class="pdf-btn" id="btn-export-reports">کارنامه‌ها</button>
+          <button class="pdf-btn" id="btn-export-scores">امتیازها</button>
         </div>
       </div>
       <div class="card lottery-card">
@@ -334,9 +358,18 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
         <div class="lottery-stage" id="lotteryStage"><span style="font-size:11.5px; color:var(--muted);">برای شروع دکمه‌ی زیر رو بزن</span></div>
         <button class="lottery-btn" id="lotteryBtn">🎲 شروع قرعه‌کشی</button>
       </div>
+      <div class="card lottery-card">
+        <div class="lottery-title">⚽ قرعه‌کشی تیم فوتبال</div>
+        <div class="lottery-count">
+          <label>تعداد تیم‌ها:</label>
+          <input type="number" id="teamCount" value="4" min="2">
+        </div>
+        <div style="font-size:11px; color:var(--muted); margin-bottom:12px;">دانش‌آموزها رو شانسی بین تیم‌ها پخش می‌کنه و یه PDF می‌سازه</div>
+        <button class="lottery-btn" id="teamLotteryBtn">⚽ ساخت تیم‌ها (PDF)</button>
+      </div>
       <div class="stats-scroll">
         <div class="card stat"><small>امتحان‌های این ماه</small><b id="stat-exams">۰</b><div class="trend" id="stat-exams-sub"></div></div>
-        <div class="card stat"><small>امتیاز ثبت‌شده</small><b id="stat-scores">۰</b><div class="trend">مجموع امتیاز فعلی همه‌ی دانش‌آموزها</div></div>
+        <div class="card stat"><small>امتیاز ثبت‌شده</small><b id="stat-scores">۰</b><div class="trend">مجموع دفعات ثبت امتیاز</div></div>
         <div class="card stat"><small>غیبت این هفته</small><b id="stat-abs">۰</b><div class="trend" style="color:#a6a1bb;">شنبه تا چهارشنبه</div></div>
       </div>
       <div class="card">
@@ -419,7 +452,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
   <div class="wrap">
     <div class="topstrip">
       <div class="who"><div class="mark">🏅</div><b>کلاس ما</b></div>
-      <div class="actions"><button class="top-action-btn exit" id="btn-student-exit" title="خروج"><span class="lbl-txt">خروج</span></button></div>
+      <div class="actions"><button class="top-action-btn exit" id="btn-student-exit" title="خروج"><span class="ic">🚪</span><span class="lbl-txt">خروج</span></button></div>
     </div>
 
     <section class="tabsection active" id="st-dashboard">
@@ -481,6 +514,8 @@ const db = firebase.firestore();
 const stateRef = db.collection('app').doc('classScoreboard');
 
 const SUBJECTS = ['فارسی','ریاضی','علوم','مطالعات اجتماعی','قرآن','املا','هدیه‌های آسمانی','کار و فناوری'];
+const TEACHER_NAME = 'آقای مهدی‌زاده';
+const CLASS_NAME = '۶/۱';
 const LEVELS = [
   {key:'great', label:'خیلی خوب', color:'#56e0b0', value:4},
   {key:'good',  label:'خوب',       color:'#b5e05a', value:3},
@@ -505,6 +540,8 @@ let editingGrade = null;
 let scoringFilter = 'all';
 let currentStudentId = null;
 let pendingDeleteId = null, pendingDeleteTimeout = null;
+let selectMode = false;
+let selectedIds = new Set();
 function loadStreamerMode(){ try{ return localStorage.getItem('streamerMode')==='1'; }catch(e){ return false; } }
 let streamerMode = loadStreamerMode();
 
@@ -597,10 +634,19 @@ function renderTeacherTab(tab, keepSubState){
   else if(tab==='manage') renderManage();
 }
 
+function toggleSelectMode(){
+  selectMode = !selectMode;
+  selectedIds.clear();
+  document.getElementById('btn-select-mode').classList.toggle('on', selectMode);
+  if(currentTeacherTab==='scoring' || currentTeacherTab==='absence' || currentTeacherTab==='manage'){
+    renderTeacherTab(currentTeacherTab, true);
+  }
+}
 function applyStreamerMode(){
   document.getElementById('streamer-banner').classList.toggle('hidden', !streamerMode);
   const btn = document.getElementById('btn-streamer');
   btn.classList.toggle('on', streamerMode);
+  btn.querySelector('.ic').textContent = streamerMode ? '👁️' : '🙈';
   btn.querySelector('.lbl-txt').textContent = streamerMode ? 'نمایش' : 'پنهان';
 }
 
@@ -610,24 +656,22 @@ function classActivityLast7(){
   for(let i=6;i>=0;i--){
     const d = new Date(); d.setDate(d.getDate()-i);
     const iso = isoFromDate(d);
-    let sum=0;
-    state.students.forEach(s=> s.history.forEach(h=>{ if(h.date===iso) sum+=h.delta; }));
-    days.push({date:d, count:sum});
+    let count=0;
+    state.students.forEach(s=> s.history.forEach(h=>{ if(h.date===iso) count++; }));
+    days.push({date:d, count});
   }
   return days;
 }
 function examsThisMonth(){
-  if(!state.students.length) return 0;
-  const s = sortedByName()[0];
   const now = new Date(); const y=now.getFullYear(), m=now.getMonth();
   let count=0;
-  SUBJECTS.forEach(sub=> (s.grades[sub]||[]).forEach(g=>{
+  state.students.forEach(s=> SUBJECTS.forEach(sub=> (s.grades[sub]||[]).forEach(g=>{
     const d = parseISOLocal(g.date);
     if(d.getFullYear()===y && d.getMonth()===m) count++;
-  }));
+  })));
   return count;
 }
-function totalScoreEntries(){ return state.students.reduce((a,s)=>a+total(s),0); }
+function totalScoreEntries(){ return state.students.reduce((a,s)=>a+s.history.length,0); }
 function absencesThisWeek(){
   const {sat, wed} = getWeekRange();
   const startIso = isoFromDate(sat), endIso = isoFromDate(wed);
@@ -636,11 +680,12 @@ function absencesThisWeek(){
   return count;
 }
 function countUp(el, target, duration){
+  if(target<=0){ el.textContent = faNum(0); return; }
   const start = performance.now();
   function step(now){
     const p = Math.min(1, (now-start)/duration);
     const eased = 1 - Math.pow(1-p, 3);
-    el.textContent = faNum(Math.round(target*eased));
+    el.textContent = faNum(Math.round(eased*target));
     if(p<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
@@ -656,13 +701,12 @@ function renderTeacherDashboard(){
   document.getElementById('stat-exams-sub').textContent = new Date().toLocaleDateString('fa-IR', {month:'long', year:'numeric'});
 
   const days = classActivityLast7();
-  const max = Math.max(1, ...days.map(d=>Math.abs(d.count)));
+  const max = Math.max(1, ...days.map(d=>d.count));
   const chartEl = document.getElementById('activityChart');
   const labelsEl = document.getElementById('activityLabels');
   chartEl.innerHTML = days.map(d=>{
-    const h = d.count ? Math.max(10, Math.round((Math.abs(d.count)/max)*100)) : 4;
-    const bg = d.count < 0 ? 'linear-gradient(180deg,#ff9fb5,#e0506b)' : 'linear-gradient(180deg,#a482ff,#633de0)';
-    return `<div class="chart-bar" style="height:${h}%; background:${bg};"></div>`;
+    const h = d.count ? Math.max(10, Math.round((d.count/max)*100)) : 4;
+    return `<div class="chart-bar" style="height:${h}%;"></div>`;
   }).join('');
   labelsEl.innerHTML = days.map((d,i)=> `<span>${i===days.length-1 ? 'امروز' : d.date.toLocaleDateString('fa-IR',{weekday:'short'})}</span>`).join('');
 
@@ -725,28 +769,68 @@ function renderScoring(){
   document.getElementById('bulk-amount').value = state.step;
   const list = scoringFilteredList();
   const listEl = document.getElementById('scoringList');
-  if(list.length===0){ listEl.innerHTML = '<div class="empty-note">دانش‌آموزی پیدا نشد</div>'; return; }
-  listEl.innerHTML = list.map(s=>{
-    const t = total(s);
-    const color = rankColorOf(s.id);
-    const codeDisplay = streamerMode ? '••••' : s.code;
-    const totalDisplay = streamerMode ? '•••' : faNum(t);
-    return `<div class="student-row">
-      <div class="av" style="background:${color};">${initials(s.name)}</div>
-      <div><strong>${escapeHtml(s.name)}</strong><span class="code">کد: ${codeDisplay}</span></div>
-      <div class="pm">
-        <button class="pmbtn minus" data-act="minus" data-id="${s.id}">−</button>
-        <span class="score-tag" style="color:${t>=0?'var(--green)':'var(--danger)'};">${totalDisplay}</span>
-        <button class="pmbtn plus" data-act="plus" data-id="${s.id}">+</button>
-      </div>
+  let bar = '';
+  if(selectMode){
+    bar = `<div class="bulk-bar">
+      <span class="count">${faNum(selectedIds.size)} نفر انتخاب شده</span>
+      <input type="number" id="scoringBulkAmt" class="amt-box" value="50" min="1">
+      <button class="bminus" id="btnBulkScoreMinus">−</button>
+      <button class="bplus" id="btnBulkScorePlus">+</button>
     </div>`;
-  }).join('');
+  }
+  if(list.length===0){ listEl.innerHTML = bar + '<div class="empty-note">دانش‌آموزی پیدا نشد</div>'; }
+  else{
+    listEl.innerHTML = bar + list.map(s=>{
+      const t = total(s);
+      const color = rankColorOf(s.id);
+      const codeDisplay = streamerMode ? '••••' : s.code;
+      const totalDisplay = streamerMode ? '•••' : faNum(t);
+      const checked = selectedIds.has(s.id) ? 'checked' : '';
+      return `<div class="student-row">
+        ${selectMode?`<input type="checkbox" class="row-check" data-id="${s.id}" ${checked}>`:''}
+        <div class="av" style="background:${color};">${initials(s.name)}</div>
+        <div class="info"><strong>${escapeHtml(s.name)}</strong><span class="code">کد: ${codeDisplay}</span></div>
+        <span class="score-tag" style="color:${t>=0?'var(--green)':'var(--danger)'};">${totalDisplay}</span>
+        <div class="pm">
+          <button class="pmbtn minus" data-act="minus" data-id="${s.id}">−</button>
+          <input type="number" class="amt-box" data-amt="${s.id}" value="50" min="1">
+          <button class="pmbtn plus" data-act="plus" data-id="${s.id}">+</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
   listEl.querySelectorAll('.pmbtn').forEach(b=>{
     b.addEventListener('click', ()=>{
       const id = b.dataset.id, act = b.dataset.act;
-      addScore(id, act==='plus' ? state.step : -state.step);
+      const amtInput = listEl.querySelector(`.amt-box[data-amt="${id}"]`);
+      const amt = Math.max(1, parseInt(amtInput.value)||50);
+      addScore(id, act==='plus' ? amt : -amt);
     });
   });
+  listEl.querySelectorAll('.row-check').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      if(cb.checked) selectedIds.add(cb.dataset.id); else selectedIds.delete(cb.dataset.id);
+      const countEl = listEl.querySelector('.bulk-bar .count');
+      if(countEl) countEl.textContent = faNum(selectedIds.size) + ' نفر انتخاب شده';
+    });
+  });
+  const bMinus = document.getElementById('btnBulkScoreMinus');
+  const bPlus = document.getElementById('btnBulkScorePlus');
+  if(bMinus) bMinus.addEventListener('click', ()=>{
+    const amt = Math.max(1, parseInt(document.getElementById('scoringBulkAmt').value)||50);
+    applyBulkScore(-amt);
+  });
+  if(bPlus) bPlus.addEventListener('click', ()=>{
+    const amt = Math.max(1, parseInt(document.getElementById('scoringBulkAmt').value)||50);
+    applyBulkScore(amt);
+  });
+}
+function applyBulkScore(delta){
+  if(selectedIds.size===0) return;
+  const today = todayISO();
+  state.students.forEach(s=>{ if(selectedIds.has(s.id)) s.history.push({date:today, delta}); });
+  renderScoring();
+  persist();
 }
 function addScore(id, delta){
   const s = state.students.find(x=>x.id===id);
@@ -780,29 +864,70 @@ function setAbsence(id, kind){
   renderAbsenceTab();
   persist();
 }
+function setAbsenceForce(id, kind){
+  const s = state.students.find(x=>x.id===id);
+  if(!s) return;
+  const t = todayISO();
+  const idx = s.absences.findIndex(a=>a.date===t);
+  if(idx>=0) s.absences[idx].excused = (kind==='excused');
+  else s.absences.push({date:t, excused:(kind==='excused')});
+}
+function applyBulkAbsence(kind){
+  if(selectedIds.size===0) return;
+  selectedIds.forEach(id=> setAbsenceForce(id, kind));
+  renderAbsenceTab();
+  persist();
+}
 function renderAbsenceTab(){
   const q = (document.getElementById('absence-search').value||'').trim();
   const list = sortedByName().filter(s=>!q || s.name.includes(q));
   document.getElementById('todayAbsCount').textContent = faNum(state.students.filter(s=> !!todayAbsenceState(s)).length) + ' نفر';
   const listEl = document.getElementById('absenceList');
-  if(list.length===0){ listEl.innerHTML = '<div class="empty-note">دانش‌آموزی پیدا نشد</div>'; return; }
-  listEl.innerHTML = list.map(s=>{
-    const st = todayAbsenceState(s);
-    return `<div class="abs-row">
-      <div class="av">${initials(s.name)}</div>
-      <strong>${escapeHtml(s.name)}</strong>
-      <div class="abs-toggles">
-        <button class="abs-btn ${st==='absent'?'on-absent':''}" data-id="${s.id}" data-k="absent">غیبت</button>
-        <button class="abs-btn ${st==='excused'?'on-excused':''}" data-id="${s.id}" data-k="excused">غیبت موجه</button>
-      </div>
+  let bar = '';
+  if(selectMode){
+    bar = `<div class="bulk-bar">
+      <span class="count">${faNum(selectedIds.size)} نفر انتخاب شده</span>
+      <button class="babsent" id="btnBulkAbsent">غیبت</button>
+      <button class="bexcused" id="btnBulkExcused">غیبت موجه</button>
     </div>`;
-  }).join('');
+  }
+  if(list.length===0){ listEl.innerHTML = bar + '<div class="empty-note">دانش‌آموزی پیدا نشد</div>'; }
+  else{
+    listEl.innerHTML = bar + list.map(s=>{
+      const st = todayAbsenceState(s);
+      const checked = selectedIds.has(s.id) ? 'checked' : '';
+      return `<div class="abs-row">
+        ${selectMode?`<input type="checkbox" class="row-check" data-id="${s.id}" ${checked}>`:''}
+        <div class="av">${initials(s.name)}</div>
+        <strong>${escapeHtml(s.name)}</strong>
+        <div class="abs-toggles">
+          <button class="abs-btn ${st==='absent'?'on-absent':''}" data-id="${s.id}" data-k="absent">غیبت</button>
+          <button class="abs-btn ${st==='excused'?'on-excused':''}" data-id="${s.id}" data-k="excused">غیبت موجه</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
   listEl.querySelectorAll('.abs-btn').forEach(b=>{
     b.addEventListener('click', ()=> setAbsence(b.dataset.id, b.dataset.k));
   });
+  listEl.querySelectorAll('.row-check').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      if(cb.checked) selectedIds.add(cb.dataset.id); else selectedIds.delete(cb.dataset.id);
+      const countEl = listEl.querySelector('.bulk-bar .count');
+      if(countEl) countEl.textContent = faNum(selectedIds.size) + ' نفر انتخاب شده';
+    });
+  });
+  const bAbsent = document.getElementById('btnBulkAbsent');
+  const bExcused = document.getElementById('btnBulkExcused');
+  if(bAbsent) bAbsent.addEventListener('click', ()=> applyBulkAbsence('absent'));
+  if(bExcused) bExcused.addEventListener('click', ()=> applyBulkAbsence('excused'));
 }
 
 /* ---------- REPORT ---------- */
+function gradedToday(s){
+  const t = todayISO();
+  return SUBJECTS.some(sub => (s.grades[sub]||[]).some(g=>g.date===t));
+}
 function renderReportList(){
   reportListMode = true;
   document.getElementById('tt-report-detail').classList.remove('active');
@@ -811,12 +936,14 @@ function renderReportList(){
   const list = sortedByName().filter(s=>!q || s.name.includes(q));
   const listEl = document.getElementById('reportStudentList');
   if(list.length===0){ listEl.innerHTML = '<div class="empty-note">دانش‌آموزی پیدا نشد</div>'; return; }
-  listEl.innerHTML = list.map(s=>`
-    <div class="student-row" data-open="${s.id}" style="cursor:pointer;">
+  listEl.innerHTML = list.map(s=>{
+    const graded = gradedToday(s);
+    return `<div class="student-row" data-open="${s.id}" style="cursor:pointer;">
       <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${initials(s.name)}</div>
-      <div><strong>${escapeHtml(s.name)}</strong><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
+      <div class="info"><strong>${escapeHtml(s.name)}<span class="today-dot ${graded?'on':'off'}" title="${graded?'امروز نمره گرفته':'امروز نمره نگرفته'}"></span></strong><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
       <span style="color:var(--muted); font-size:13px;">›</span>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   listEl.querySelectorAll('[data-open]').forEach(row=>{
     row.addEventListener('click', ()=>{
       reportStudentId = row.dataset.open;
@@ -928,18 +1055,46 @@ function renderReportDetail(s){
 }
 
 /* ---------- MANAGEMENT ---------- */
+function applyBulkDelete(){
+  if(selectedIds.size===0) return;
+  state.students = state.students.filter(s=> !selectedIds.has(s.id));
+  selectedIds.clear();
+  renderManage();
+  persist();
+}
 function renderManage(){
   const listEl = document.getElementById('manageList');
-  if(state.students.length===0){ listEl.innerHTML = '<div class="empty-note">هنوز دانش‌آموزی اضافه نشده</div>'; return; }
-  listEl.innerHTML = sortedByName().map(s=>`
-    <div class="student-row">
-      <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${initials(s.name)}</div>
-      <div><strong>${escapeHtml(s.name)}</strong><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
-      <button class="del-btn" data-del="${s.id}">حذف</button>
-    </div>`).join('');
+  let bar = '';
+  if(selectMode){
+    bar = `<div class="bulk-bar">
+      <span class="count">${faNum(selectedIds.size)} نفر انتخاب شده</span>
+      <button class="bdel" id="btnBulkDelete">حذف انتخاب‌شده‌ها</button>
+    </div>`;
+  }
+  if(state.students.length===0){ listEl.innerHTML = bar + '<div class="empty-note">هنوز دانش‌آموزی اضافه نشده</div>'; }
+  else{
+    listEl.innerHTML = bar + sortedByName().map(s=>{
+      const checked = selectedIds.has(s.id) ? 'checked' : '';
+      return `<div class="student-row">
+        ${selectMode?`<input type="checkbox" class="row-check" data-id="${s.id}" ${checked}>`:''}
+        <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${initials(s.name)}</div>
+        <div class="info"><strong>${escapeHtml(s.name)}</strong><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
+        <button class="del-btn" data-del="${s.id}">حذف</button>
+      </div>`;
+    }).join('');
+  }
   listEl.querySelectorAll('[data-del]').forEach(b=>{
     b.addEventListener('click', ()=> handleDeleteClick(b.dataset.del, b));
   });
+  listEl.querySelectorAll('.row-check').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      if(cb.checked) selectedIds.add(cb.dataset.id); else selectedIds.delete(cb.dataset.id);
+      const countEl = listEl.querySelector('.bulk-bar .count');
+      if(countEl) countEl.textContent = faNum(selectedIds.size) + ' نفر انتخاب شده';
+    });
+  });
+  const bDel = document.getElementById('btnBulkDelete');
+  if(bDel) bDel.addEventListener('click', applyBulkDelete);
 }
 function handleDeleteClick(id, btn){
   if(pendingDeleteId===id){
@@ -965,6 +1120,11 @@ function addStudent(){
 }
 
 /* ---------- weekly absence export ---------- */
+function pdfMetaLine(){
+  return `<div class="meta-line">آموزگار: ${TEACHER_NAME} &nbsp;|&nbsp; کلاس: ${CLASS_NAME}</div>`;
+}
+const PDF_META_CSS = `.meta-line{color:#6c43e8;font-size:12.5px;font-weight:700;margin-bottom:14px;}`;
+
 function getWeekRange(){
   const now = new Date();
   const dow = now.getDay();
@@ -1003,6 +1163,7 @@ function exportWeeklyAbsences(){
     .header{text-align:center;margin-bottom:8px;} .header-icon{font-size:34px;margin-bottom:6px;}
     h1{font-size:28px;font-weight:800;margin:0 0 6px;} .subtitle{color:#8a8078;font-size:14px;margin-bottom:6px;}
     .summary{color:#6c43e8;font-size:13px;font-weight:600;margin-bottom:30px;} .divider{border:none;border-top:2px solid #e7e1d8;margin:0 0 30px;}
+    ${PDF_META_CSS}
     .day-block{margin-bottom:20px;border-right:5px solid #6c43e8;padding:14px 18px;border-radius:0 10px 10px 0;background:#f7f5ff;page-break-inside:avoid;}
     .day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
     .day-head-right{display:flex;align-items:baseline;gap:10px;} .day-name{font-size:19px;font-weight:800;} .day-date{font-size:12.5px;color:#8a8078;}
@@ -1012,6 +1173,7 @@ function exportWeeklyAbsences(){
     @media print{ body{padding:14px;} .day-block{background:#faf9ff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
     </style></head><body>
     <div class="header"><div class="header-icon">🏅</div><h1>غایبین این هفته</h1>
+    ${pdfMetaLine()}
     <div class="subtitle">${sat.toLocaleDateString('fa-IR')} تا ${wed.toLocaleDateString('fa-IR')}</div>
     <div class="summary">${totalAbsences ? `مجموع غیبت‌های هفته: ${totalAbsences} مورد` : 'این هفته هیچ غیبتی ثبت نشده است 🎉'}</div></div>
     <hr class="divider">${sections}
@@ -1021,29 +1183,40 @@ function exportWeeklyAbsences(){
 }
 
 function exportReportCardsPDF(){
+  const now = new Date(); const y = now.getFullYear(), m = now.getMonth();
   const rows = sortedByName().map(s=>{
-    const badges = SUBJECTS.map(sub=>{
-      const arr = s.grades[sub]||[];
-      const lv = arr.length ? levelByKey(arr[arr.length-1].level) : null;
-      return `<span class="s-badge" style="background:${lv?lv.color:'#e7e1d8'};color:${lv?'#20320f':'#8a8078'};">${sub}: ${lv?lv.label:'—'}</span>`;
-    }).join('');
-    return `<div class="stu-block"><div class="stu-name">${escapeHtml(s.name)}</div><div class="stu-badges">${badges}</div></div>`;
-  }).join('');
+    const subjBlocks = SUBJECTS.map(sub=>{
+      const arr = (s.grades[sub]||[]).filter(g=>{ const d = parseISOLocal(g.date); return d.getFullYear()===y && d.getMonth()===m; });
+      if(arr.length===0) return '';
+      const entries = arr.map(g=>{
+        const l = levelByKey(g.level);
+        return `<span class="s-badge" style="background:${l.color};color:${l.key==='weak'||l.key==='absent'?'#fff':'#20320f'};">${faDate(g.date)} — ${l.label}</span>`;
+      }).join('');
+      return `<div class="subj-block"><b>${escapeHtml(sub)}</b><div class="stu-badges">${entries}</div></div>`;
+    }).filter(Boolean).join('');
+    if(!subjBlocks) return '';
+    return `<div class="stu-block"><div class="stu-name">${escapeHtml(s.name)}</div>${subjBlocks}</div>`;
+  }).filter(Boolean).join('');
   const win = window.open('', '_blank');
   win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>کارنامه کلاس</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>*{box-sizing:border-box;} body{font-family:Vazirmatn,Tahoma,sans-serif;padding:44px;color:#241f1a;background:#fff;}
-    .header{text-align:center;margin-bottom:26px;} .header-icon{font-size:34px;margin-bottom:6px;}
-    h1{font-size:28px;font-weight:800;margin:0 0 6px;} .subtitle{color:#8a8078;font-size:13px;}
+    .header{text-align:center;margin-bottom:12px;} .header-icon{font-size:34px;margin-bottom:6px;}
+    h1{font-size:28px;font-weight:800;margin:0 0 6px;} .subtitle{color:#8a8078;font-size:13px;margin-bottom:14px;}
+    ${PDF_META_CSS}
     .stu-block{margin-bottom:18px;border:1px solid #e7e1d8;border-radius:14px;padding:14px 16px;page-break-inside:avoid;}
     .stu-name{font-weight:800;font-size:14.5px;margin-bottom:10px;}
+    .subj-block{margin-bottom:10px;} .subj-block:last-child{margin-bottom:0;}
+    .subj-block>b{display:block;font-size:12px;color:#6c43e8;margin-bottom:6px;}
     .stu-badges{display:flex;flex-wrap:wrap;gap:7px;}
     .s-badge{font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;}
     .footer{margin-top:30px;text-align:center;color:#a89e92;font-size:11px;border-top:1px solid #e7e1d8;padding-top:14px;}
     @media print{ body{padding:14px;} .s-badge{-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
     </style></head><body>
-    <div class="header"><div class="header-icon">🏅</div><h1>کارنامه کلاس</h1><div class="subtitle">تهیه‌شده در ${new Date().toLocaleDateString('fa-IR')} — آخرین نمره‌ی هر درس</div></div>
-    ${rows || '<div class="subtitle" style="text-align:center;">هنوز دانش‌آموزی ثبت نشده</div>'}
+    <div class="header"><div class="header-icon">🏅</div><h1>کارنامه کلاس</h1>
+    ${pdfMetaLine()}
+    <div class="subtitle">نمره‌های ${now.toLocaleDateString('fa-IR',{month:'long',year:'numeric'})} — فقط درس‌هایی که امتحان گرفته شده</div></div>
+    ${rows || '<div class="subtitle" style="text-align:center;">این ماه هنوز امتحانی ثبت نشده</div>'}
     <div class="footer">کلاس ما</div></body></html>`);
   win.document.close();
   setTimeout(()=>win.print(), 400);
@@ -1074,6 +1247,7 @@ function exportScoresPDF(){
     .header{text-align:center;margin-bottom:26px;} .header-icon{font-size:34px;margin-bottom:6px;}
     h1{font-size:26px;font-weight:800;margin:0 0 6px;} .subtitle{color:#8a8078;font-size:13px;margin-bottom:6px;}
     .summary{color:#6c43e8;font-size:12.5px;font-weight:600;}
+    ${PDF_META_CSS}
     .day-block{margin-bottom:20px;border-right:5px solid #6c43e8;padding:14px 18px;border-radius:0 10px 10px 0;background:#f7f5ff;page-break-inside:avoid;}
     .day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
     .day-head-right{display:flex;align-items:baseline;gap:10px;} .day-name{font-size:19px;font-weight:800;} .day-date{font-size:12.5px;color:#8a8078;}
@@ -1083,11 +1257,60 @@ function exportScoresPDF(){
     @media print{ body{padding:14px;} .day-block{background:#faf9ff !important;-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
     </style></head><body>
     <div class="header"><div class="header-icon">🏅</div><h1>امتیازهای سه روز اخیر</h1>
+    ${pdfMetaLine()}
     <div class="subtitle">فقط دانش‌آموزانی که در آن روز مجموع امتیازشان صفر نشده</div></div>
     ${sections}
     <div class="footer">تهیه‌شده در ${new Date().toLocaleDateString('fa-IR')} — کلاس ما</div></body></html>`);
   win.document.close();
   setTimeout(()=>win.print(), 400);
+}
+
+function shuffleArray(arr){
+  for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
+  return arr;
+}
+function exportTeamsPDF(teams){
+  const teamColors = ['#6c43e8','#9a72ff','#1e7a3d','#c0392b','#b8860b','#0e7490'];
+  const blocks = teams.map((team,i)=>{
+    const names = team.length
+      ? team.map(s=>`<div class="t-name">${escapeHtml(s.name)}</div>`).join('')
+      : `<div class="t-empty">— بدون عضو —</div>`;
+    return `<div class="team-block" style="border-top-color:${teamColors[i%teamColors.length]};">
+      <div class="team-head" style="background:${teamColors[i%teamColors.length]};">تیم ${faNum(i+1)}</div>
+      <div class="t-names">${names}</div>
+    </div>`;
+  }).join('');
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>تیم‌های فوتبال</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>*{box-sizing:border-box;} body{font-family:Vazirmatn,Tahoma,sans-serif;padding:44px;color:#241f1a;background:#fff;}
+    .header{text-align:center;margin-bottom:12px;} .header-icon{font-size:34px;margin-bottom:6px;}
+    h1{font-size:28px;font-weight:800;margin:0 0 6px;} .subtitle{color:#8a8078;font-size:13px;margin-bottom:14px;}
+    ${PDF_META_CSS}
+    .teams-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-top:10px;}
+    .team-block{border:2px solid #e7e1d8; border-top:5px solid #6c43e8; border-radius:14px; overflow:hidden; page-break-inside:avoid;}
+    .team-head{color:#fff; font-weight:800; font-size:14px; padding:9px 14px;}
+    .t-names{padding:12px 14px;} .t-name{font-size:13px; font-weight:600; padding:6px 2px; border-bottom:1px solid #f0ecff;}
+    .t-name:last-child{border-bottom:none;} .t-empty{font-size:12px; color:#8a8078;}
+    .footer{margin-top:30px;text-align:center;color:#a89e92;font-size:11px;border-top:1px solid #e7e1d8;padding-top:14px;}
+    @media print{ body{padding:14px;} .team-head{-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
+    </style></head><body>
+    <div class="header"><div class="header-icon">⚽</div><h1>تیم‌های فوتبال</h1>
+    ${pdfMetaLine()}
+    <div class="subtitle">تقسیم شانسی به ${faNum(teams.length)} تیم — ${new Date().toLocaleDateString('fa-IR')}</div></div>
+    <div class="teams-grid">${blocks}</div>
+    <div class="footer">کلاس ما</div></body></html>`);
+  win.document.close();
+  setTimeout(()=>win.print(), 400);
+}
+function runTeamLottery(){
+  if(state.students.length===0) return;
+  let n = parseInt(document.getElementById('teamCount').value)||4;
+  n = Math.max(2, Math.min(n, state.students.length));
+  const pool = shuffleArray([...state.students]);
+  const teams = Array.from({length:n}, ()=>[]);
+  pool.forEach((s,i)=> teams[i%n].push(s));
+  exportTeamsPDF(teams);
 }
 
 /* ============================================================
@@ -1159,7 +1382,7 @@ function renderStudentDashboard(){
   document.getElementById('student-name-label').textContent = s.name;
   const numEl = document.getElementById('student-total-label');
   countUp(numEl, t, 1100);
-  document.getElementById('student-rank-label').textContent = `${rank.toLocaleString('fa-IR')}/${ranked.length.toLocaleString('fa-IR')}`;
+  document.getElementById('student-rank-label').textContent = (rank<=3?'👑 ':'') + `رتبه ${rank.toLocaleString('fa-IR')} از ${ranked.length.toLocaleString('fa-IR')} نفر کلاس`;
   document.getElementById('trophyRow').innerHTML = rank===1 ? '<span class="em">🏆</span>' : (rank<=3 ? '<span class="em">⭐</span>' : '');
 
   const hero = document.getElementById('scoreHero');
@@ -1210,6 +1433,13 @@ function renderStudentAbsences(){
       ${g.items.map(a=>`<div class="abs-item"><span>${faDate(a.date)}</span><span class="badge" style="color:${a.excused?'var(--yellow)':'var(--danger)'}; background:${a.excused?'rgba(255,217,138,.12)':'rgba(255,125,156,.12)'};">${a.excused?'غیبت موجه':'غیبت'}</span></div>`).join('')}
     </div>`).join('');
 }
+function subjectAverageColor(arr){
+  const vals = arr.map(g=> g.level==='absent' ? null : levelByKey(g.level).value).filter(v=>v!==null);
+  if(vals.length===0) return null;
+  const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+  const t = Math.max(0, Math.min(1, (avg-1)/3));
+  return `hsl(${Math.round(t*140)},70%,55%)`;
+}
 function renderStudentReport(){
   const s = state.students.find(x=>x.id===currentStudentId);
   if(!s) return;
@@ -1217,13 +1447,14 @@ function renderStudentReport(){
   box.innerHTML = SUBJECTS.map(sub=>{
     const arr = s.grades[sub];
     const lv = arr.length ? levelByKey(arr[arr.length-1].level) : null;
+    const dotColor = arr.length>3 ? (subjectAverageColor(arr) || '#4a465c') : (lv?lv.color:'#4a465c');
     const histHtml = arr.length ? [...arr].reverse().map(g=>{
       const l = levelByKey(g.level);
       return `<div><div class="hist-line"><span>${faDate(g.date)}</span><span class="badge" style="background:${l.color}22; color:${l.color};">${l.label}</span></div>${g.note?`<div class="hist-note">${escapeHtml(g.note)}</div>`:''}</div>`;
     }).join('') : '<div class="empty-note">هنوز نمره‌ای ثبت نشده</div>';
     return `<div class="subj-row">
       <div class="subj-head" data-toggle="stu-${sub}">
-        <span class="dot" style="background:${lv?lv.color:'#4a465c'}; color:${lv?lv.color:'#4a465c'};"></span>
+        <span class="dot" style="background:${dotColor}; color:${dotColor};"></span>
         <b>${sub}</b>
         <span class="badge" style="${lv?`color:${lv.color}; background:${lv.color}22;`:'color:var(--muted);'}">${lv?lv.label:'—'}</span>
       </div>
@@ -1280,6 +1511,7 @@ document.getElementById('btn-teacher-exit').addEventListener('click', ()=>{
   applyStreamerMode();
   show('view-landing');
 });
+document.getElementById('btn-select-mode').addEventListener('click', toggleSelectMode);
 document.getElementById('btn-streamer').addEventListener('click', ()=>{
   streamerMode = !streamerMode;
   try{ if(streamerMode) localStorage.setItem('streamerMode','1'); else localStorage.removeItem('streamerMode'); }catch(e){}
@@ -1299,6 +1531,7 @@ document.getElementById('btn-export-absences').addEventListener('click', exportW
 document.getElementById('btn-export-reports').addEventListener('click', exportReportCardsPDF);
 document.getElementById('btn-export-scores').addEventListener('click', exportScoresPDF);
 initLottery();
+document.getElementById('teamLotteryBtn').addEventListener('click', runTeamLottery);
 
 document.getElementById('scoring-search').addEventListener('input', renderScoring);
 document.querySelectorAll('#scoringFilters .chip').forEach(c=>{
