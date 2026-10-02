@@ -87,19 +87,34 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
   color:#fff; background:linear-gradient(150deg,#8c68ff,#6540d5);
   border-color:transparent; box-shadow:0 6px 16px rgba(113,67,232,.4), inset 0 1px 0 rgba(255,255,255,.3);
 }
-.row-check{width:18px; height:18px; flex:none; accent-color:var(--purple); cursor:pointer;}
-.amt-box{width:46px; height:28px; text-align:center; padding:0 2px; font-size:11.5px; border-radius:9px; flex:none;}
+.row-check{
+  appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  width:23px; height:23px; flex:none; cursor:pointer; margin:0; position:relative;
+  border-radius:8px; border:1px solid var(--line);
+  background:linear-gradient(145deg,rgba(255,255,255,.1),rgba(255,255,255,.03));
+  backdrop-filter:blur(10px); box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+  transition:background .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.row-check:checked{
+  background:linear-gradient(135deg,#8c68ff,#6540d5); border-color:transparent;
+  box-shadow:0 0 0 4px rgba(142,102,255,.22), 0 6px 16px rgba(113,67,232,.55), inset 0 1px 0 rgba(255,255,255,.4);
+}
+.row-check:checked::after{
+  content:"✓"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:13px; font-weight:800; line-height:1;
+}
+.row-check:active{transform:scale(.9);}
 .bulk-bar{display:flex; align-items:center; gap:8px; padding:10px 12px; margin-bottom:10px; border-radius:14px;
-  background:linear-gradient(150deg, rgba(142,102,255,.16), rgba(142,102,255,.05)); border:1px solid rgba(154,114,255,.3);}
-.bulk-bar .count{font-size:11px; font-weight:700; color:var(--purple); flex:1;}
-.bulk-bar .amt-box{width:52px;}
+  background:linear-gradient(150deg, rgba(142,102,255,.16), rgba(142,102,255,.05)); border:1px solid rgba(154,114,255,.3); flex-wrap:wrap;}
+.bulk-bar .count{font-size:11px; font-weight:700; color:var(--purple); flex:1 1 100%;}
+.bulk-bar input.amt-box{width:68px; height:38px; text-align:center; padding:0 4px; font-size:15px; font-weight:800; border-radius:11px; flex:none; background:rgba(0,0,0,.3); border:1px solid rgba(154,114,255,.4); color:#fff;}
 .bulk-bar button{border:none; border-radius:10px; padding:7px 11px; font-family:inherit; font-size:11px; font-weight:700; cursor:pointer; white-space:nowrap;}
 .bulk-bar .bplus{background:rgba(86,224,176,.18); color:var(--green);}
 .bulk-bar .bminus{background:rgba(255,125,156,.18); color:var(--danger);}
 .bulk-bar .babsent{background:rgba(255,125,156,.18); color:var(--danger);}
 .bulk-bar .bexcused{background:rgba(255,217,138,.18); color:var(--yellow);}
 .bulk-bar .bdel{background:rgba(255,125,156,.22); color:var(--danger);}
-.today-dot{width:8px; height:8px; border-radius:50%; flex:none; display:inline-block; margin-left:6px; box-shadow:0 0 8px currentColor;}
+.today-dot{width:8px; height:8px; border-radius:50%; flex:none; display:inline-block; margin-right:7px; box-shadow:0 0 8px currentColor;}
 .today-dot.on{background:var(--green); color:var(--green);}
 .today-dot.off{background:rgba(255,255,255,.14); color:transparent;}
 .hidden-banner{display:flex; align-items:center; gap:8px; padding:12px 15px; margin-bottom:14px; font-weight:700; font-size:12.5px; color:var(--yellow); background:rgba(255,217,138,.08); border:1px solid rgba(255,217,138,.26) !important;}
@@ -183,6 +198,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .empty-note{text-align:center; font-size:12px; color:var(--muted); padding:16px 6px;}
 
 .abs-row{display:grid; grid-template-columns:32px 1fr auto; align-items:center; gap:9px; padding:9px; border-radius:14px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.055); margin-bottom:7px;}
+.abs-row.selectable{grid-template-columns:23px 32px 1fr auto;}
 .abs-row .av{width:30px; height:30px; border-radius:10px; background:linear-gradient(145deg,#9c7aff,#5434c1); display:flex; align-items:center; justify-content:center; font-size:10.5px; font-weight:800; flex:none;}
 .abs-toggles{display:flex; gap:6px;}
 .abs-btn{padding:7px 10px; border-radius:10px; font-size:10.5px; font-weight:700; border:1px solid var(--line); background:rgba(255,255,255,.05); color:var(--muted); cursor:pointer; white-space:nowrap; font-family:inherit;}
@@ -329,9 +345,9 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
     <div class="topstrip">
       <div class="who"><div class="mark">🏅</div><b>کلاس ما</b></div>
       <div class="actions">
-        <button class="top-action-btn select" id="btn-select-mode" title="انتخاب چندتایی"><span class="ic">☑️</span><span class="lbl-txt">انتخاب</span></button>
-        <button class="top-action-btn streamer" id="btn-streamer" title="حالت پنهان"><span class="ic">🙈</span><span class="lbl-txt">پنهان</span></button>
-        <button class="top-action-btn exit" id="btn-teacher-exit" title="خروج"><span class="ic">🚪</span><span class="lbl-txt">خروج</span></button>
+        <button class="top-action-btn select" id="btn-select-mode" title="انتخاب چندتایی"><span class="lbl-txt">انتخاب</span></button>
+        <button class="top-action-btn streamer" id="btn-streamer" title="حالت پنهان"><span class="lbl-txt">پنهان</span></button>
+        <button class="top-action-btn exit" id="btn-teacher-exit" title="خروج"><span class="lbl-txt">خروج</span></button>
       </div>
     </div>
     <div class="hidden-banner hidden" id="streamer-banner">🙈 حالت پنهان فعال — امتیاز و کد دانش‌آموزها مخفی است</div>
@@ -452,7 +468,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
   <div class="wrap">
     <div class="topstrip">
       <div class="who"><div class="mark">🏅</div><b>کلاس ما</b></div>
-      <div class="actions"><button class="top-action-btn exit" id="btn-student-exit" title="خروج"><span class="ic">🚪</span><span class="lbl-txt">خروج</span></button></div>
+      <div class="actions"><button class="top-action-btn exit" id="btn-student-exit" title="خروج"><span class="lbl-txt">خروج</span></button></div>
     </div>
 
     <section class="tabsection active" id="st-dashboard">
@@ -646,7 +662,6 @@ function applyStreamerMode(){
   document.getElementById('streamer-banner').classList.toggle('hidden', !streamerMode);
   const btn = document.getElementById('btn-streamer');
   btn.classList.toggle('on', streamerMode);
-  btn.querySelector('.ic').textContent = streamerMode ? '👁️' : '🙈';
   btn.querySelector('.lbl-txt').textContent = streamerMode ? 'نمایش' : 'پنهان';
 }
 
@@ -790,10 +805,9 @@ function renderScoring(){
         ${selectMode?`<input type="checkbox" class="row-check" data-id="${s.id}" ${checked}>`:''}
         <div class="av" style="background:${color};">${initials(s.name)}</div>
         <div class="info"><strong>${escapeHtml(s.name)}</strong><span class="code">کد: ${codeDisplay}</span></div>
-        <span class="score-tag" style="color:${t>=0?'var(--green)':'var(--danger)'};">${totalDisplay}</span>
         <div class="pm">
           <button class="pmbtn minus" data-act="minus" data-id="${s.id}">−</button>
-          <input type="number" class="amt-box" data-amt="${s.id}" value="50" min="1">
+          <span class="score-tag" style="color:${t>=0?'var(--green)':'var(--danger)'};">${totalDisplay}</span>
           <button class="pmbtn plus" data-act="plus" data-id="${s.id}">+</button>
         </div>
       </div>`;
@@ -802,8 +816,7 @@ function renderScoring(){
   listEl.querySelectorAll('.pmbtn').forEach(b=>{
     b.addEventListener('click', ()=>{
       const id = b.dataset.id, act = b.dataset.act;
-      const amtInput = listEl.querySelector(`.amt-box[data-amt="${id}"]`);
-      const amt = Math.max(1, parseInt(amtInput.value)||50);
+      const amt = state.step || 50;
       addScore(id, act==='plus' ? amt : -amt);
     });
   });
@@ -896,7 +909,7 @@ function renderAbsenceTab(){
     listEl.innerHTML = bar + list.map(s=>{
       const st = todayAbsenceState(s);
       const checked = selectedIds.has(s.id) ? 'checked' : '';
-      return `<div class="abs-row">
+      return `<div class="abs-row${selectMode?' selectable':''}">
         ${selectMode?`<input type="checkbox" class="row-check" data-id="${s.id}" ${checked}>`:''}
         <div class="av">${initials(s.name)}</div>
         <strong>${escapeHtml(s.name)}</strong>
@@ -1119,6 +1132,25 @@ function addStudent(){
   persist();
 }
 
+/* ---------- shared, crash-proof print-window opener ---------- */
+function openPrintWindow(html){
+  try{
+    const blob = new Blob([html], {type:'text/html'});
+    const url = URL.createObjectURL(blob);
+    const win = window.open(url, '_blank');
+    if(!win){
+      URL.revokeObjectURL(url);
+      alert('مرورگر پنجره‌ی جدید رو مسدود کرد. لطفاً popup blocker رو برای این سایت غیرفعال کن و دوباره امتحان کن.');
+      return;
+    }
+    win.addEventListener('load', ()=>{ try{ win.print(); }catch(e){} });
+    setTimeout(()=>{ try{ URL.revokeObjectURL(url); }catch(e){} }, 60000);
+  }catch(err){
+    console.error('PDF export failed:', err);
+    alert('ساخت فایل خروجی با خطا مواجه شد. دوباره امتحان کن.');
+  }
+}
+
 /* ---------- weekly absence export ---------- */
 function pdfMetaLine(){
   return `<div class="meta-line">آموزگار: ${TEACHER_NAME} &nbsp;|&nbsp; کلاس: ${CLASS_NAME}</div>`;
@@ -1156,8 +1188,7 @@ function exportWeeklyAbsences(){
           <span class="day-count" style="background:${dayStudents.length?accent:'#e7e1d8'};color:${dayStudents.length?'#fff':'#8a8078'};">${countLabel}</span>
         </div>${body}</div>`;
   }
-  const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>غایبین این هفته</title>
+  const html = `<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>غایبین این هفته</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>*{box-sizing:border-box;} body{font-family:Vazirmatn,Tahoma,sans-serif;padding:44px;color:#241f1a;background:#fff;}
     .header{text-align:center;margin-bottom:8px;} .header-icon{font-size:34px;margin-bottom:6px;}
@@ -1177,9 +1208,8 @@ function exportWeeklyAbsences(){
     <div class="subtitle">${sat.toLocaleDateString('fa-IR')} تا ${wed.toLocaleDateString('fa-IR')}</div>
     <div class="summary">${totalAbsences ? `مجموع غیبت‌های هفته: ${totalAbsences} مورد` : 'این هفته هیچ غیبتی ثبت نشده است 🎉'}</div></div>
     <hr class="divider">${sections}
-    <div class="footer">تهیه‌شده در ${new Date().toLocaleDateString('fa-IR')} — کلاس ما</div></body></html>`);
-  win.document.close();
-  setTimeout(()=>win.print(), 400);
+    <div class="footer">تهیه‌شده در ${new Date().toLocaleDateString('fa-IR')} — کلاس ما</div></body></html>`;
+  openPrintWindow(html);
 }
 
 function exportReportCardsPDF(){
@@ -1197,8 +1227,7 @@ function exportReportCardsPDF(){
     if(!subjBlocks) return '';
     return `<div class="stu-block"><div class="stu-name">${escapeHtml(s.name)}</div>${subjBlocks}</div>`;
   }).filter(Boolean).join('');
-  const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>کارنامه کلاس</title>
+  const html = `<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>کارنامه کلاس</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>*{box-sizing:border-box;} body{font-family:Vazirmatn,Tahoma,sans-serif;padding:44px;color:#241f1a;background:#fff;}
     .header{text-align:center;margin-bottom:12px;} .header-icon{font-size:34px;margin-bottom:6px;}
@@ -1217,9 +1246,8 @@ function exportReportCardsPDF(){
     ${pdfMetaLine()}
     <div class="subtitle">نمره‌های ${now.toLocaleDateString('fa-IR',{month:'long',year:'numeric'})} — فقط درس‌هایی که امتحان گرفته شده</div></div>
     ${rows || '<div class="subtitle" style="text-align:center;">این ماه هنوز امتحانی ثبت نشده</div>'}
-    <div class="footer">کلاس ما</div></body></html>`);
-  win.document.close();
-  setTimeout(()=>win.print(), 400);
+    <div class="footer">کلاس ما</div></body></html>`;
+  openPrintWindow(html);
 }
 
 function exportScoresPDF(){
@@ -1240,8 +1268,7 @@ function exportScoresPDF(){
           <div class="day-head-right"><span class="day-name">${i===0?'امروز':dayNames[d.getDay()]}</span><span class="day-date">${d.toLocaleDateString('fa-IR')}</span></div>
         </div>${body}</div>`;
   }
-  const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>امتیازهای سه روز اخیر</title>
+  const html = `<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>امتیازهای سه روز اخیر</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>*{box-sizing:border-box;} body{font-family:Vazirmatn,Tahoma,sans-serif;padding:44px;color:#241f1a;background:#fff;}
     .header{text-align:center;margin-bottom:26px;} .header-icon{font-size:34px;margin-bottom:6px;}
@@ -1260,9 +1287,8 @@ function exportScoresPDF(){
     ${pdfMetaLine()}
     <div class="subtitle">فقط دانش‌آموزانی که در آن روز مجموع امتیازشان صفر نشده</div></div>
     ${sections}
-    <div class="footer">تهیه‌شده در ${new Date().toLocaleDateString('fa-IR')} — کلاس ما</div></body></html>`);
-  win.document.close();
-  setTimeout(()=>win.print(), 400);
+    <div class="footer">تهیه‌شده در ${new Date().toLocaleDateString('fa-IR')} — کلاس ما</div></body></html>`;
+  openPrintWindow(html);
 }
 
 function shuffleArray(arr){
@@ -1280,8 +1306,7 @@ function exportTeamsPDF(teams){
       <div class="t-names">${names}</div>
     </div>`;
   }).join('');
-  const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>تیم‌های فوتبال</title>
+  const html = `<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>تیم‌های فوتبال</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>*{box-sizing:border-box;} body{font-family:Vazirmatn,Tahoma,sans-serif;padding:44px;color:#241f1a;background:#fff;}
     .header{text-align:center;margin-bottom:12px;} .header-icon{font-size:34px;margin-bottom:6px;}
@@ -1299,9 +1324,8 @@ function exportTeamsPDF(teams){
     ${pdfMetaLine()}
     <div class="subtitle">تقسیم شانسی به ${faNum(teams.length)} تیم — ${new Date().toLocaleDateString('fa-IR')}</div></div>
     <div class="teams-grid">${blocks}</div>
-    <div class="footer">کلاس ما</div></body></html>`);
-  win.document.close();
-  setTimeout(()=>win.print(), 400);
+    <div class="footer">کلاس ما</div></body></html>`;
+  openPrintWindow(html);
 }
 function runTeamLottery(){
   if(state.students.length===0) return;
