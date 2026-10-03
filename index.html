@@ -366,26 +366,26 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
         </div>
       </div>
       <div class="card lottery-card">
-        <div class="lottery-title">🎲 قرعه‌کشی دانش‌آموز</div>
+        <div class="lottery-title">قرعه‌کشی دانش‌آموز</div>
         <div class="lottery-count">
           <label>تعداد نفرات:</label>
           <input type="number" id="lotteryN" value="1" min="1">
         </div>
         <div class="lottery-stage" id="lotteryStage"><span style="font-size:11.5px; color:var(--muted);">برای شروع دکمه‌ی زیر رو بزن</span></div>
-        <button class="lottery-btn" id="lotteryBtn">🎲 شروع قرعه‌کشی</button>
+        <button class="lottery-btn" id="lotteryBtn">شروع قرعه‌کشی</button>
       </div>
       <div class="card lottery-card">
-        <div class="lottery-title">⚽ قرعه‌کشی تیم فوتبال</div>
+        <div class="lottery-title">قرعه‌کشی تیم فوتبال</div>
         <div class="lottery-count">
           <label>تعداد تیم‌ها:</label>
           <input type="number" id="teamCount" value="4" min="2">
         </div>
         <div style="font-size:11px; color:var(--muted); margin-bottom:12px;">دانش‌آموزها رو شانسی بین تیم‌ها پخش می‌کنه و یه PDF می‌سازه</div>
-        <button class="lottery-btn" id="teamLotteryBtn">⚽ ساخت تیم‌ها (PDF)</button>
+        <button class="lottery-btn" id="teamLotteryBtn">ساخت تیم‌ها (PDF)</button>
       </div>
       <div class="stats-scroll">
         <div class="card stat"><small>امتحان‌های این ماه</small><b id="stat-exams">۰</b><div class="trend" id="stat-exams-sub"></div></div>
-        <div class="card stat"><small>امتیاز ثبت‌شده</small><b id="stat-scores">۰</b><div class="trend">مجموع دفعات ثبت امتیاز</div></div>
+        <div class="card stat"><small>امتیاز ثبت‌شده</small><b id="stat-scores">۰</b><div class="trend">مجموع امتیاز داده‌شده</div></div>
         <div class="card stat"><small>غیبت این هفته</small><b id="stat-abs">۰</b><div class="trend" style="color:#a6a1bb;">شنبه تا چهارشنبه</div></div>
       </div>
       <div class="card">
@@ -686,7 +686,7 @@ function examsThisMonth(){
   })));
   return count;
 }
-function totalScoreEntries(){ return state.students.reduce((a,s)=>a+s.history.length,0); }
+function totalScoreSum(){ return state.students.reduce((a,s)=>a+total(s),0); }
 function absencesThisWeek(){
   const {sat, wed} = getWeekRange();
   const startIso = isoFromDate(sat), endIso = isoFromDate(wed);
@@ -695,7 +695,7 @@ function absencesThisWeek(){
   return count;
 }
 function countUp(el, target, duration){
-  if(target<=0){ el.textContent = faNum(0); return; }
+  if(target===0){ el.textContent = faNum(0); return; }
   const start = performance.now();
   function step(now){
     const p = Math.min(1, (now-start)/duration);
@@ -709,7 +709,7 @@ function renderTeacherDashboard(){
   document.getElementById('teacher-welcome').textContent = 'سلام 👋';
   document.getElementById('teacher-date').textContent = 'امروز · ' + todayFa();
 
-  const exams = examsThisMonth(), scores = totalScoreEntries(), abs = absencesThisWeek();
+  const exams = examsThisMonth(), scores = totalScoreSum(), abs = absencesThisWeek();
   countUp(document.getElementById('stat-exams'), exams, 900);
   countUp(document.getElementById('stat-scores'), scores, 1100);
   countUp(document.getElementById('stat-abs'), abs, 700);
@@ -764,7 +764,7 @@ function initLottery(){
           const idx = Math.floor(Math.random()*pool.length);
           winners.push(pool.splice(idx,1)[0]);
         }
-        stage.innerHTML = winners.map(w=>`<span class="winner-chip">🎉 ${escapeHtml(w.name)}</span>`).join('');
+        stage.innerHTML = winners.map(w=>`<span class="winner-chip">${escapeHtml(w.name)}</span>`).join('');
         btn.disabled = false;
       }
     }, 70);
@@ -1320,7 +1320,7 @@ function exportTeamsPDF(teams){
     .footer{margin-top:30px;text-align:center;color:#a89e92;font-size:11px;border-top:1px solid #e7e1d8;padding-top:14px;}
     @media print{ body{padding:14px;} .team-head{-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
     </style></head><body>
-    <div class="header"><div class="header-icon">⚽</div><h1>تیم‌های فوتبال</h1>
+    <div class="header"><h1>تیم‌های فوتبال</h1>
     ${pdfMetaLine()}
     <div class="subtitle">تقسیم شانسی به ${faNum(teams.length)} تیم — ${new Date().toLocaleDateString('fa-IR')}</div></div>
     <div class="teams-grid">${blocks}</div>
