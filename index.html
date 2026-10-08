@@ -256,13 +256,13 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .sparkle{position:absolute; font-size:14px; animation:twinkle 2.4s ease-in-out infinite; color:#e4d8ff;}
 @keyframes twinkle{0%,100%{opacity:.2; transform:scale(.7) rotate(0deg);}50%{opacity:1; transform:scale(1.15) rotate(15deg);}}
 .score-hero .lbl{position:relative; z-index:2; font-size:18px; color:#fff; font-weight:800; letter-spacing:-.2px;}
-.score-num-big{position:relative; z-index:2; font-size:56px; font-weight:900; letter-spacing:-1.5px; margin:6px 0;
+.score-num-big{position:relative; z-index:2; font-size:56px; font-weight:900; letter-spacing:-1.5px; margin:6px 0; direction:ltr;
   background:linear-gradient(160deg,#e4d8ff,var(--purple) 55%,var(--cyan)); -webkit-background-clip:text; background-clip:text; color:transparent;
   filter:drop-shadow(0 10px 24px rgba(154,114,255,.5));}
 .trophy-row{position:relative; z-index:2; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px;}
 .trophy-row .em{font-size:22px; animation:bounce 1.8s ease-in-out infinite; display:inline-block;}
 @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-5px);}}
-.rank-chip{position:relative; z-index:2; display:inline-block; font-size:10px; font-weight:600; color:var(--muted); background:rgba(255,255,255,.06); padding:4px 11px; border-radius:999px; margin-top:2px;}
+.rank-chip{position:relative; z-index:2; display:inline-block; font-size:10px; font-weight:600; color:var(--muted); background:rgba(255,255,255,.06); padding:4px 11px; border-radius:999px; margin-top:2px; direction:ltr;}
 .confetti{position:absolute; width:7px; height:7px; border-radius:2px; top:45%; left:50%; opacity:0; pointer-events:none;}
 .score-hero.burst .confetti{animation:confettiBurst 1s cubic-bezier(.2,.8,.3,1) forwards;}
 @keyframes confettiBurst{0%{opacity:1; transform:translate(-50%,-50%) rotate(0) scale(1);}100%{opacity:0; transform:translate(var(--tx),var(--ty)) rotate(var(--tr)) scale(.4);}}
@@ -271,6 +271,51 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .streak-card b{display:block; font-size:14px;}
 .streak-card span{display:block; font-size:11px; color:var(--muted); margin-top:1px;}
 .tiny-footer{text-align:center; font-size:9px; color:rgba(255,255,255,.22); margin-top:10px; padding:2px 0 2px; letter-spacing:.2px;}
+
+/* ---------- talent: teacher editor ---------- */
+.talent-edit-row{padding:14px 4px; border-bottom:1px solid rgba(255,255,255,.07);}
+.talent-edit-row:last-child{border-bottom:none;}
+.talent-edit-head{display:flex; align-items:center; gap:8px; margin-bottom:10px;}
+.talent-edit-head .t-icon{width:30px; height:30px; border-radius:10px; flex:none; display:flex; align-items:center; justify-content:center;
+  background:linear-gradient(150deg, rgba(154,114,255,.18), rgba(154,114,255,.05)); border:1px solid rgba(154,114,255,.22); color:#c6b6ff;}
+.talent-edit-head b{font-size:14px; font-weight:700; color:var(--ink);}
+.slider-line{display:flex; align-items:center; gap:10px; margin-bottom:8px;}
+.slider-line:last-child{margin-bottom:0;}
+.slider-lbl{font-size:11px; font-weight:700; width:68px; flex:none; color:var(--muted);}
+.slider-lbl.interest{color:var(--green);}
+.slider-lbl.ability{color:#4e9eff;}
+.slider-val{width:22px; flex:none; text-align:center; font-size:12px; font-weight:800; direction:ltr;}
+.slider-val.interest{color:var(--green);}
+.slider-val.ability{color:#4e9eff;}
+input.slider{-webkit-appearance:none; appearance:none; flex:1; height:6px; border-radius:99px; background:rgba(255,255,255,.1); outline:none; cursor:pointer;}
+input.slider.interest{background:linear-gradient(90deg, rgba(86,224,176,.35), rgba(86,224,176,.1));}
+input.slider.ability{background:linear-gradient(90deg, rgba(78,158,255,.35), rgba(78,158,255,.1));}
+input.slider::-webkit-slider-thumb{-webkit-appearance:none; width:19px; height:19px; border-radius:50%; cursor:pointer; border:3px solid #15131c; box-shadow:0 2px 8px rgba(0,0,0,.5);}
+input.slider.interest::-webkit-slider-thumb{background:var(--green);}
+input.slider.ability::-webkit-slider-thumb{background:#4e9eff;}
+input.slider::-moz-range-thumb{width:19px; height:19px; border-radius:50%; cursor:pointer; border:3px solid #15131c; box-shadow:0 2px 8px rgba(0,0,0,.5);}
+input.slider.interest::-moz-range-thumb{background:var(--green);}
+input.slider.ability::-moz-range-thumb{background:#4e9eff;}
+
+/* ---------- talent: student view ---------- */
+.talent-legend{display:flex; gap:18px; justify-content:center; padding:4px 0 16px; font-size:11.5px; color:var(--muted); font-weight:600;}
+.dot-legend{display:inline-block; width:8px; height:8px; border-radius:50%; margin-left:5px; vertical-align:middle;}
+.talent-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:12px;}
+.talent-card{position:relative; background:linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.015)); border:1px solid rgba(255,255,255,.08); border-radius:20px; padding:16px 8px 15px; text-align:center;}
+.ring-wrap{position:relative; width:88px; height:88px; margin:0 auto;}
+.ring-wrap > svg{width:100%; height:100%; transform:rotate(-90deg); display:block; overflow:visible;}
+.talent-icon svg{width:22px; height:22px; display:block;}
+.ring-wrap circle{fill:none;}
+.ring-bg-outer{stroke:rgba(255,255,255,.05);}
+.ring-fg-outer{stroke:url(#tgAbility); stroke-linecap:round; transition:stroke-dashoffset .7s cubic-bezier(.22,.9,.3,1);
+  filter:drop-shadow(0 0 3px rgba(80,150,255,.9)) drop-shadow(0 0 9px rgba(60,120,255,.6));}
+.ring-bg-inner{stroke:rgba(255,255,255,.045);}
+.ring-fg-inner{stroke:url(#tgInterest); stroke-linecap:round; transition:stroke-dashoffset .7s cubic-bezier(.22,.9,.3,1);
+  filter:drop-shadow(0 0 3px rgba(60,220,160,.9)) drop-shadow(0 0 9px rgba(40,200,140,.6));}
+.talent-icon{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#e4e0f5; opacity:.95;}
+.talent-name{font-size:11.5px; font-weight:700; margin-top:9px; color:var(--ink);}
+.talent-ability-tag{position:absolute; bottom:9px; right:10px; font-size:10px; font-weight:800; direction:ltr;
+  color:#8ecbff; background:rgba(60,120,230,.14); border:1px solid rgba(80,150,255,.25); padding:2px 7px; border-radius:8px;}
 </style>
 </head>
 <body>
@@ -366,26 +411,26 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
         </div>
       </div>
       <div class="card lottery-card">
-        <div class="lottery-title">قرعه‌کشی دانش‌آموز</div>
+        <div class="lottery-title">🎲 قرعه‌کشی دانش‌آموز</div>
         <div class="lottery-count">
           <label>تعداد نفرات:</label>
           <input type="number" id="lotteryN" value="1" min="1">
         </div>
         <div class="lottery-stage" id="lotteryStage"><span style="font-size:11.5px; color:var(--muted);">برای شروع دکمه‌ی زیر رو بزن</span></div>
-        <button class="lottery-btn" id="lotteryBtn">شروع قرعه‌کشی</button>
+        <button class="lottery-btn" id="lotteryBtn">🎲 شروع قرعه‌کشی</button>
       </div>
       <div class="card lottery-card">
-        <div class="lottery-title">قرعه‌کشی تیم فوتبال</div>
+        <div class="lottery-title">⚽ قرعه‌کشی تیم فوتبال</div>
         <div class="lottery-count">
           <label>تعداد تیم‌ها:</label>
           <input type="number" id="teamCount" value="4" min="2">
         </div>
         <div style="font-size:11px; color:var(--muted); margin-bottom:12px;">دانش‌آموزها رو شانسی بین تیم‌ها پخش می‌کنه و یه PDF می‌سازه</div>
-        <button class="lottery-btn" id="teamLotteryBtn">ساخت تیم‌ها (PDF)</button>
+        <button class="lottery-btn" id="teamLotteryBtn">⚽ ساخت تیم‌ها (PDF)</button>
       </div>
       <div class="stats-scroll">
         <div class="card stat"><small>امتحان‌های این ماه</small><b id="stat-exams">۰</b><div class="trend" id="stat-exams-sub"></div></div>
-        <div class="card stat"><small>امتیاز ثبت‌شده</small><b id="stat-scores">۰</b><div class="trend">مجموع امتیاز داده‌شده</div></div>
+        <div class="card stat"><small>امتیاز ثبت‌شده</small><b id="stat-scores">۰</b><div class="trend">مجموع امتیاز فعلی همه‌ی دانش‌آموزها</div></div>
         <div class="card stat"><small>غیبت این هفته</small><b id="stat-abs">۰</b><div class="trend" style="color:#a6a1bb;">شنبه تا چهارشنبه</div></div>
       </div>
       <div class="card">
@@ -442,6 +487,19 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
       </div>
     </section>
 
+    <!-- TALENT -->
+    <section class="tabsection" id="tt-talent">
+      <div class="sub active" id="tt-talent-list">
+        <div class="topbar"><div class="search"><input type="text" id="talent-search" placeholder="جستجوی دانش‌آموز برای استعدادیابی..."></div></div>
+        <div class="card" id="talentStudentList" style="padding:10px;"></div>
+      </div>
+      <div class="sub" id="tt-talent-detail">
+        <div class="backbtn" id="btn-talent-back">→ بازگشت به لیست</div>
+        <div class="card" style="text-align:center; font-weight:800; font-size:14px;" id="talentDetailName"></div>
+        <div class="card"><div id="talentRows"></div></div>
+      </div>
+    </section>
+
     <!-- MANAGEMENT -->
     <section class="tabsection" id="tt-manage">
       <div class="topbar"><h1 style="font-size:16px; margin:0;">مدیریت دانش‌آموزان</h1></div>
@@ -459,6 +517,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
     <button data-tab="scoring"><i>+</i>امتیازدهی</button>
     <button data-tab="absence"><i>◔</i>غیبت</button>
     <button data-tab="report"><i>▦</i>کارنامه</button>
+    <button data-tab="talent"><i>✦</i>استعداد</button>
     <button data-tab="manage"><i>⚙</i>مدیریت</button>
   </nav>
 </div>
@@ -503,6 +562,15 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
       <div class="topbar"><h1 style="font-size:16px; margin:0;">کارنامه من</h1></div>
       <div class="card"><div class="subj-list" id="studentSubjects"></div></div>
     </section>
+
+    <section class="tabsection" id="st-talent">
+      <div class="topbar"><h1 style="font-size:16px; margin:0;">استعدادهای من</h1></div>
+      <div class="talent-legend">
+        <span><i class="dot-legend" style="background:var(--green);"></i>علاقه شخصی</span>
+        <span><i class="dot-legend" style="background:#4e9eff;"></i>استعداد واقعی</span>
+      </div>
+      <div class="talent-grid" id="studentTalentGrid"></div>
+    </section>
     <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
 
@@ -510,6 +578,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
     <button data-tab="dashboard" class="active"><i>⌂</i>داشبورد</button>
     <button data-tab="absence"><i>◔</i>غیبت‌ها</button>
     <button data-tab="report"><i>▦</i>کارنامه</button>
+    <button data-tab="talent"><i>✦</i>استعداد</button>
   </nav>
 </div>
 
@@ -530,6 +599,30 @@ const db = firebase.firestore();
 const stateRef = db.collection('app').doc('classScoreboard');
 
 const SUBJECTS = ['فارسی','ریاضی','علوم','مطالعات اجتماعی','قرآن','املا','هدیه‌های آسمانی','کار و فناوری'];
+const TALENTS = [
+  {key:'math',     label:'ریاضی'},
+  {key:'language', label:'زبانی و ادبی'},
+  {key:'science',  label:'علمی و پژوهشی'},
+  {key:'tech',     label:'کامپیوتر و فناوری'},
+  {key:'art',      label:'هنری و تجسمی'},
+  {key:'music',    label:'موسیقی'},
+  {key:'sport',    label:'ورزشی'},
+  {key:'social',   label:'اجتماعی و رهبری'}
+];
+function talentByKey(k){ return TALENTS.find(t=>t.key===k); }
+const TALENT_ICON_PATHS = {
+  math:    '<line x1="3" y1="21" x2="21" y2="21"/><line x1="7" y1="21" x2="7" y2="14"/><line x1="12" y1="21" x2="12" y2="7"/><line x1="17" y1="21" x2="17" y2="11"/>',
+  language:'<path d="M3 5.5c2-1 5-1 7 0v13c-2-1-5-1-7 0v-13z"/><path d="M19 5.5c-2-1-5-1-7 0v13c2-1 5-1 7 0v-13z"/>',
+  science: '<path d="M9.5 3h5M10 3v5.5L5 18a1.8 1.8 0 0 0 1.6 2.6h10.8A1.8 1.8 0 0 0 19 18l-5-9.5V3"/><line x1="7.5" y1="15" x2="16.5" y2="15"/>',
+  tech:    '<rect x="2.5" y="4" width="19" height="13" rx="1.5"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><polyline points="8.5,8 6.3,10.5 8.5,13"/><polyline points="15.5,8 17.7,10.5 15.5,13"/>',
+  art:     '<path d="M12 3a9 9 0 1 0 9 9c0-1.4-1-2.5-2.5-2.5h-2A2.5 2.5 0 0 1 14 7V6c0-1.5-1-3-2-3z"/><circle cx="8" cy="10.2" r="1" fill="currentColor" stroke="none"/><circle cx="8.3" cy="14.7" r="1" fill="currentColor" stroke="none"/><circle cx="13.2" cy="16.5" r="1" fill="currentColor" stroke="none"/>',
+  music:   '<circle cx="6" cy="18" r="2.4"/><circle cx="16" cy="16" r="2.4"/><path d="M8.4 18V5.5L18.4 4v11.5"/>',
+  sport:   '<rect x="2" y="9.5" width="2.2" height="5" rx="1"/><rect x="5" y="7.3" width="2.2" height="9.4" rx="1"/><line x1="8" y1="12" x2="16" y2="12"/><rect x="16.8" y="7.3" width="2.2" height="9.4" rx="1"/><rect x="19.8" y="9.5" width="2.2" height="5" rx="1"/>',
+  social:  '<path d="M4 5.5h16a1.5 1.5 0 0 1 1.5 1.5v8a1.5 1.5 0 0 1-1.5 1.5H9.5L5 20v-3.5H4A1.5 1.5 0 0 1 2.5 15V7A1.5 1.5 0 0 1 4 5.5z"/>'
+};
+function talentIconSvg(key, size){
+  return `<svg viewBox="0 0 24 24" width="${size}" height="${size}" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${TALENT_ICON_PATHS[key]}</svg>`;
+}
 const TEACHER_NAME = 'آقای مهدی‌زاده';
 const CLASS_NAME = '۶/۱';
 const LEVELS = [
@@ -552,6 +645,8 @@ let currentTeacherTab = 'dashboard';
 let currentStudentTab = 'dashboard';
 let reportStudentId = null;
 let reportListMode = true;
+let talentStudentId = null;
+let talentListMode = true;
 let editingGrade = null;
 let scoringFilter = 'all';
 let currentStudentId = null;
@@ -573,6 +668,8 @@ function normalize(){
     if(!s.absences) s.absences = [];
     s.absences.forEach(a=>{ if(typeof a.excused !== 'boolean') a.excused = false; });
     if(!s.history) s.history = [];
+    if(!s.talents) s.talents = {};
+    TALENTS.forEach(t=>{ if(!s.talents[t.key]) s.talents[t.key] = {interest:0, ability:0}; });
     delete s.homework;
   });
 }
@@ -647,6 +744,12 @@ function renderTeacherTab(tab, keepSubState){
       if(s) renderReportDetail(s); else { reportListMode = true; renderReportList(); }
     } else { renderReportList(); }
   }
+  else if(tab==='talent'){
+    if(keepSubState && !talentListMode && talentStudentId){
+      const s = state.students.find(x=>x.id===talentStudentId);
+      if(s) renderTalentDetail(s); else { talentListMode = true; renderTalentList(); }
+    } else { renderTalentList(); }
+  }
   else if(tab==='manage') renderManage();
 }
 
@@ -673,20 +776,22 @@ function classActivityLast7(){
     const iso = isoFromDate(d);
     let sum=0;
     state.students.forEach(s=> s.history.forEach(h=>{ if(h.date===iso) sum+=h.delta; }));
-    days.push({date:d, sum});
+    days.push({date:d, count:sum});
   }
   return days;
 }
 function examsThisMonth(){
+  if(!state.students.length) return 0;
+  const s = sortedByName()[0];
   const now = new Date(); const y=now.getFullYear(), m=now.getMonth();
   let count=0;
-  state.students.forEach(s=> SUBJECTS.forEach(sub=> (s.grades[sub]||[]).forEach(g=>{
+  SUBJECTS.forEach(sub=> (s.grades[sub]||[]).forEach(g=>{
     const d = parseISOLocal(g.date);
     if(d.getFullYear()===y && d.getMonth()===m) count++;
-  })));
+  }));
   return count;
 }
-function totalScoreSum(){ return state.students.reduce((a,s)=>a+total(s),0); }
+function totalScoreEntries(){ return state.students.reduce((a,s)=>a+total(s),0); }
 function absencesThisWeek(){
   const {sat, wed} = getWeekRange();
   const startIso = isoFromDate(sat), endIso = isoFromDate(wed);
@@ -695,12 +800,11 @@ function absencesThisWeek(){
   return count;
 }
 function countUp(el, target, duration){
-  if(target===0){ el.textContent = faNum(0); return; }
   const start = performance.now();
   function step(now){
     const p = Math.min(1, (now-start)/duration);
     const eased = 1 - Math.pow(1-p, 3);
-    el.textContent = faNum(Math.round(eased*target));
+    el.textContent = faNum(Math.round(target*eased));
     if(p<1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
@@ -709,21 +813,20 @@ function renderTeacherDashboard(){
   document.getElementById('teacher-welcome').textContent = 'سلام 👋';
   document.getElementById('teacher-date').textContent = 'امروز · ' + todayFa();
 
-  const exams = examsThisMonth(), scores = totalScoreSum(), abs = absencesThisWeek();
+  const exams = examsThisMonth(), scores = totalScoreEntries(), abs = absencesThisWeek();
   countUp(document.getElementById('stat-exams'), exams, 900);
   countUp(document.getElementById('stat-scores'), scores, 1100);
   countUp(document.getElementById('stat-abs'), abs, 700);
   document.getElementById('stat-exams-sub').textContent = new Date().toLocaleDateString('fa-IR', {month:'long', year:'numeric'});
 
   const days = classActivityLast7();
-  const maxMag = Math.max(1, ...days.map(d=>Math.abs(d.sum)));
+  const max = Math.max(1, ...days.map(d=>Math.abs(d.count)));
   const chartEl = document.getElementById('activityChart');
   const labelsEl = document.getElementById('activityLabels');
   chartEl.innerHTML = days.map(d=>{
-    const h = d.sum!==0 ? Math.max(10, Math.round((Math.abs(d.sum)/maxMag)*100)) : 4;
-    const bg = d.sum>0 ? 'linear-gradient(180deg,#a482ff,#633de0)' : (d.sum<0 ? 'linear-gradient(180deg,#ff8fa8,#e0506b)' : 'linear-gradient(180deg,#4a465c,#35323f)');
-    const sh = d.sum>0 ? '0 8px 18px rgba(112,68,235,.25)' : (d.sum<0 ? '0 8px 18px rgba(224,80,107,.3)' : '0 4px 10px rgba(0,0,0,.2)');
-    return `<div class="chart-bar" style="height:${h}%; background:${bg}; box-shadow:${sh};" title="${faNum(d.sum)}"></div>`;
+    const h = d.count ? Math.max(10, Math.round((Math.abs(d.count)/max)*100)) : 4;
+    const bg = d.count < 0 ? 'linear-gradient(180deg,#ff9fb5,#e0506b)' : 'linear-gradient(180deg,#a482ff,#633de0)';
+    return `<div class="chart-bar" style="height:${h}%; background:${bg};"></div>`;
   }).join('');
   labelsEl.innerHTML = days.map((d,i)=> `<span>${i===days.length-1 ? 'امروز' : d.date.toLocaleDateString('fa-IR',{weekday:'short'})}</span>`).join('');
 
@@ -766,7 +869,7 @@ function initLottery(){
           const idx = Math.floor(Math.random()*pool.length);
           winners.push(pool.splice(idx,1)[0]);
         }
-        stage.innerHTML = winners.map(w=>`<span class="winner-chip">${escapeHtml(w.name)}</span>`).join('');
+        stage.innerHTML = winners.map(w=>`<span class="winner-chip">🎉 ${escapeHtml(w.name)}</span>`).join('');
         btn.disabled = false;
       }
     }, 70);
@@ -1069,6 +1172,66 @@ function renderReportDetail(s){
   });
 }
 
+/* ---------- TALENT (teacher) ---------- */
+function renderTalentList(){
+  talentListMode = true;
+  document.getElementById('tt-talent-detail').classList.remove('active');
+  document.getElementById('tt-talent-list').classList.add('active');
+  const q = (document.getElementById('talent-search').value||'').trim();
+  const list = sortedByName().filter(s=>!q || s.name.includes(q));
+  const listEl = document.getElementById('talentStudentList');
+  if(list.length===0){ listEl.innerHTML = '<div class="empty-note">دانش‌آموزی پیدا نشد</div>'; return; }
+  listEl.innerHTML = list.map(s=>{
+    return `<div class="student-row" data-open="${s.id}" style="cursor:pointer;">
+      <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${initials(s.name)}</div>
+      <div class="info"><strong>${escapeHtml(s.name)}</strong><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
+      <span style="color:var(--muted); font-size:13px;">›</span>
+    </div>`;
+  }).join('');
+  listEl.querySelectorAll('[data-open]').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      talentStudentId = row.dataset.open;
+      const s = state.students.find(x=>x.id===talentStudentId);
+      if(s) renderTalentDetail(s);
+    });
+  });
+}
+function renderTalentDetail(s){
+  talentListMode = false;
+  document.getElementById('tt-talent-list').classList.remove('active');
+  document.getElementById('tt-talent-detail').classList.add('active');
+  document.getElementById('talentDetailName').textContent = 'استعدادیابی — ' + s.name;
+  const box = document.getElementById('talentRows');
+  box.innerHTML = TALENTS.map(t=>{
+    const v = s.talents[t.key] || {interest:0, ability:0};
+    return `<div class="talent-edit-row">
+      <div class="talent-edit-head"><span class="t-icon">${talentIconSvg(t.key,17)}</span><b>${t.label}</b></div>
+      <div class="slider-line">
+        <span class="slider-lbl interest">علاقه شخصی</span>
+        <input type="range" class="slider interest" min="0" max="10" step="1" value="${v.interest}" data-talent="${t.key}" data-kind="interest">
+        <span class="slider-val interest" data-val="${t.key}-interest">${faNum(v.interest)}</span>
+      </div>
+      <div class="slider-line">
+        <span class="slider-lbl ability">استعداد واقعی</span>
+        <input type="range" class="slider ability" min="0" max="10" step="1" value="${v.ability}" data-talent="${t.key}" data-kind="ability">
+        <span class="slider-val ability" data-val="${t.key}-ability">${faNum(v.ability)}</span>
+      </div>
+    </div>`;
+  }).join('');
+  box.querySelectorAll('.slider').forEach(sl=>{
+    sl.addEventListener('input', ()=>{
+      const key = sl.dataset.talent, kind = sl.dataset.kind, val = parseInt(sl.value);
+      box.querySelector(`[data-val="${key}-${kind}"]`).textContent = faNum(val);
+    });
+    sl.addEventListener('change', ()=>{
+      const key = sl.dataset.talent, kind = sl.dataset.kind, val = parseInt(sl.value);
+      if(!s.talents[key]) s.talents[key] = {interest:0, ability:0};
+      s.talents[key][kind] = val;
+      persist();
+    });
+  });
+}
+
 /* ---------- MANAGEMENT ---------- */
 function applyBulkDelete(){
   if(selectedIds.size===0) return;
@@ -1322,7 +1485,7 @@ function exportTeamsPDF(teams){
     .footer{margin-top:30px;text-align:center;color:#a89e92;font-size:11px;border-top:1px solid #e7e1d8;padding-top:14px;}
     @media print{ body{padding:14px;} .team-head{-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
     </style></head><body>
-    <div class="header"><h1>تیم‌های فوتبال</h1>
+    <div class="header"><div class="header-icon">⚽</div><h1>تیم‌های فوتبال</h1>
     ${pdfMetaLine()}
     <div class="subtitle">تقسیم شانسی به ${faNum(teams.length)} تیم — ${new Date().toLocaleDateString('fa-IR')}</div></div>
     <div class="teams-grid">${blocks}</div>
@@ -1354,6 +1517,7 @@ function renderStudentTab(tab){
   if(tab==='dashboard') renderStudentDashboard();
   else if(tab==='absence') renderStudentAbsences();
   else if(tab==='report') renderStudentReport();
+  else if(tab==='talent') renderStudentTalent();
 }
 function buildLineChart(values){
   if(values.length<2) return '<div style="font-size:10.5px;color:var(--muted);padding:6px 2px;">برای نمودار حداقل ۲ ثبت لازم است</div>';
@@ -1385,6 +1549,69 @@ function burstConfetti(container){
   container.classList.add('burst');
   setTimeout(()=>{ container.querySelectorAll('.confetti').forEach(c=>c.remove()); container.classList.remove('burst'); }, 1300);
 }
+function firstName(fullName){
+  const parts = (fullName||'').trim().split(/\s+/);
+  return parts[parts.length-1] || fullName;
+}
+const FALLBACK_MESSAGES = [
+  'امروز امتیاز بگیر و روندت رو شروع کن',
+  'آماده‌ای امروز رو بهتر از دیروز کنی؟',
+  'هر تلاش کوچیک، یه قدم به جلوئه',
+  'امروز یه فرصت تازه‌ست برای درخشیدن'
+];
+function buildStudentMessage(s){
+  const fn = firstName(s.name);
+  const yest = new Date(); yest.setDate(yest.getDate()-1);
+  const yIso = isoFromDate(yest);
+  const weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate()-7);
+  const weekAgoIso = isoFromDate(weekAgo);
+
+  /* ---- priority 1: absence yesterday ---- */
+  const absY = s.absences.find(a=>a.date===yIso);
+  if(absY){
+    if(absY.excused){
+      return {emoji:'🤍', title:`${fn} جان، امیدوارم حالت خوب باشه`, sub:'یادت نره درسای دیروز رو از دوستات بگیری'};
+    }
+    return {emoji:'📚', title:`${fn} جان، دیروز غایب بودی`, sub:'می‌دونم دانش‌آموز زرنگی هستی، ولی حواست بود درسا رو از دوستات بگیری؟'};
+  }
+
+  /* ---- priority 2: report card (last 7 days) ---- */
+  let recentGrades = [];
+  SUBJECTS.forEach(sub=>{
+    (s.grades[sub]||[]).forEach(g=>{ if(g.date >= weekAgoIso) recentGrades.push({subject:sub, ...g}); });
+  });
+  recentGrades.sort((a,b)=> b.date.localeCompare(a.date));
+
+  const greatOne = recentGrades.find(g=>g.level==='great');
+  if(greatOne) return {emoji:'🌟', title:`${fn} جان، تو ${greatOne.subject} عالی بودی!`, sub:'همینطوری ادامه بده'};
+
+  for(const g of recentGrades){
+    const arr = s.grades[g.subject];
+    const idx = arr.findIndex(x=>x.date===g.date && x.level===g.level);
+    if(idx>0){
+      const prevL = levelByKey(arr[idx-1].level), curL = levelByKey(g.level);
+      if(prevL && curL && prevL.value!==null && curL.value!==null && curL.value > prevL.value){
+        return {emoji:'📈', title:`${fn} جان، تو ${g.subject} پیشرفت کردی`, sub:'نسبت به دفعه‌ی قبل بهتر شدی، آفرین'};
+      }
+    }
+  }
+
+  const weakOne = recentGrades.find(g=>g.level==='weak');
+  if(weakOne) return {emoji:'🤔', title:`${fn} جان، تو ${weakOne.subject} یکم مشکل داشتی`, sub:'چرا سوالاتو از معلم نمی‌پرسی؟'};
+
+  /* ---- priority 3: score ---- */
+  const streak = positiveStreak(s);
+  if(streak>=2) return {emoji:'🔥', title:`${fn} جان، ${streak.toLocaleString('fa-IR')} روز متوالیه امتیاز می‌گیری!`, sub:'همینطوری ادامه بده'};
+
+  const dayMap = dailyNetMap(s.history);
+  const hasScoreThisWeek = Object.keys(dayMap).some(d=> d>=weekAgoIso && dayMap[d]!==0);
+  if(!hasScoreThisWeek && s.history.length>0){
+    return {emoji:'💚', title:`${fn} جان، نگران امتیاز نباش`, sub:'می‌دونم کارت درسته، هفته‌ی بعد حتماً می‌گیری'};
+  }
+
+  const sub = FALLBACK_MESSAGES[Math.floor(Math.random()*FALLBACK_MESSAGES.length)];
+  return {emoji:'💪', title:`${fn} جان، هر روز یه قدم جلوتر`, sub};
+}
 function positiveStreak(s){
   const byDate = {};
   s.history.forEach(h=>{ byDate[h.date] = (byDate[h.date]||0) + h.delta; });
@@ -1408,21 +1635,16 @@ function renderStudentDashboard(){
   document.getElementById('student-name-label').textContent = s.name;
   const numEl = document.getElementById('student-total-label');
   countUp(numEl, t, 1100);
-  document.getElementById('student-rank-label').textContent = (rank<=3?'👑 ':'') + `رتبه ${rank.toLocaleString('fa-IR')} از ${ranked.length.toLocaleString('fa-IR')} نفر کلاس`;
+  document.getElementById('student-rank-label').textContent = `${rank.toLocaleString('fa-IR')}/${ranked.length.toLocaleString('fa-IR')}`;
   document.getElementById('trophyRow').innerHTML = rank===1 ? '<span class="em">🏆</span>' : (rank<=3 ? '<span class="em">⭐</span>' : '');
 
   const hero = document.getElementById('scoreHero');
   setTimeout(()=> burstConfetti(hero), 250);
 
-  const streak = positiveStreak(s);
   const streakEl = document.getElementById('streakCard');
-  if(streak>=2){
-    streakEl.innerHTML = `<span class="em">🔥</span><div><b>${streak.toLocaleString('fa-IR')} روز متوالی امتیاز مثبت!</b><span>همینطوری ادامه بده</span></div>`;
-    streakEl.style.display='flex';
-  } else {
-    streakEl.innerHTML = `<span class="em">💪</span><div><b>هر روز یه قدم جلوتر</b><span>امروز امتیاز بگیر و روندت رو شروع کن</span></div>`;
-    streakEl.style.display='flex';
-  }
+  const msg = buildStudentMessage(s);
+  streakEl.innerHTML = `<span class="em">${msg.emoji}</span><div><b>${escapeHtml(msg.title)}</b><span>${escapeHtml(msg.sub)}</span></div>`;
+  streakEl.style.display='flex';
 
   const sorted=[...s.history].sort((a,b)=>a.date.localeCompare(b.date));
   let sum=0; const cum = sorted.map(h=>{sum+=h.delta; return sum;});
@@ -1490,6 +1712,43 @@ function renderStudentReport(){
   box.querySelectorAll('[data-toggle]').forEach(h=>{
     h.addEventListener('click', ()=> document.getElementById(h.dataset.toggle).classList.toggle('open'));
   });
+}
+
+/* ---------- TALENT (student) ---------- */
+function renderStudentTalent(){
+  const s = state.students.find(x=>x.id===currentStudentId);
+  if(!s) return;
+  const grid = document.getElementById('studentTalentGrid');
+  const rOuter=40, rInner=28, sw=8;
+  const cOuter = 2*Math.PI*rOuter, cInner = 2*Math.PI*rInner;
+  const defs = `<svg width="0" height="0" style="position:absolute;">
+    <defs>
+      <linearGradient id="tgAbility" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#8ecbff"/><stop offset="100%" stop-color="#2f6fe0"/>
+      </linearGradient>
+      <linearGradient id="tgInterest" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#9df7d9"/><stop offset="100%" stop-color="#17b885"/>
+      </linearGradient>
+    </defs>
+  </svg>`;
+  grid.innerHTML = defs + TALENTS.map(t=>{
+    const v = s.talents[t.key] || {interest:0, ability:0};
+    const outerOff = cOuter * (1 - Math.min(10,v.ability)/10);
+    const innerOff = cInner * (1 - Math.min(10,v.interest)/10);
+    return `<div class="talent-card">
+      <div class="ring-wrap">
+        <svg viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="${rOuter}" class="ring-bg-outer" stroke-width="${sw}"/>
+          <circle cx="50" cy="50" r="${rOuter}" class="ring-fg-outer" stroke-width="${sw}" stroke-dasharray="${cOuter.toFixed(2)}" stroke-dashoffset="${outerOff.toFixed(2)}"/>
+          <circle cx="50" cy="50" r="${rInner}" class="ring-bg-inner" stroke-width="${sw}"/>
+          <circle cx="50" cy="50" r="${rInner}" class="ring-fg-inner" stroke-width="${sw}" stroke-dasharray="${cInner.toFixed(2)}" stroke-dashoffset="${innerOff.toFixed(2)}"/>
+        </svg>
+        <div class="talent-icon">${talentIconSvg(t.key,22)}</div>
+      </div>
+      <div class="talent-name">${t.label}</div>
+      <span class="talent-ability-tag">${faNum(Math.min(10,v.ability))}/۱۰</span>
+    </div>`;
+  }).join('');
 }
 
 /* ============================================================
@@ -1582,6 +1841,8 @@ document.getElementById('btn-bulk-minus').addEventListener('click', ()=>{
 document.getElementById('absence-search').addEventListener('input', renderAbsenceTab);
 document.getElementById('report-search').addEventListener('input', renderReportList);
 document.getElementById('btn-report-back').addEventListener('click', renderReportList);
+document.getElementById('btn-talent-back').addEventListener('click', renderTalentList);
+document.getElementById('talent-search').addEventListener('input', renderTalentList);
 document.getElementById('btn-add-student').addEventListener('click', addStudent);
 
 /* ============================================================
