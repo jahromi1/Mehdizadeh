@@ -237,15 +237,42 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 @media (prefers-reduced-motion: reduce){ .tabsection.active{animation:none;} }
 .sub{display:none;} .sub.active{display:block;}
 
-.tabbar{
-  position:fixed; left:0; right:0; bottom:0; z-index:50;
-  display:flex; justify-content:space-around; padding:9px 4px calc(9px + var(--safe-b));
-  background:rgba(15,13,28,.82); backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
-  border-top:1px solid var(--line); max-width:440px; margin:0 auto; right:0; left:0;
+@property --sweep-angle{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
+.tabbar-wrap{
+  position:fixed; left:10px; right:10px; bottom:calc(10px + var(--safe-b)); z-index:50;
+  max-width:420px; margin:0 auto; border-radius:24px;
 }
-.tabbar button{background:none; border:none; color:var(--muted); font-family:inherit; font-size:9.6px; font-weight:700; display:flex; flex-direction:column; align-items:center; gap:2px; padding:4px 6px; border-radius:12px; cursor:pointer;}
-.tabbar button i{font-style:normal; font-size:16px;}
-.tabbar button.active{color:#fff; background:linear-gradient(180deg,rgba(142,102,255,.35),rgba(142,102,255,.1));}
+.sweep-border{
+  position:absolute; inset:-1px; border-radius:inherit; padding:2.5px;
+  background:conic-gradient(from var(--sweep-angle), transparent 0%, transparent 62%, rgba(154,114,255,.5) 74%, #fff 84%, rgba(154,114,255,.5) 94%, transparent 100%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor; mask-composite:exclude;
+  animation:sweep-spin 9s linear infinite;
+  pointer-events:none;
+  filter:drop-shadow(0 0 4px rgba(200,180,255,.9));
+}
+@keyframes sweep-spin{ to{ --sweep-angle:360deg; } }
+@media (prefers-reduced-motion: reduce){ .sweep-border{animation:none;} }
+.tabbar{
+  position:relative; overflow:visible;
+  display:flex; justify-content:space-around; padding:12px 4px;
+  background:rgba(15,13,28,.86); backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
+  border-radius:24px;
+}
+.tabbar button{position:relative; z-index:1; background:none; border:none; color:var(--muted); font-family:inherit; font-size:9.6px; font-weight:700; display:flex; flex-direction:column; align-items:center; gap:2px; padding:4px 6px; border-radius:12px; cursor:pointer;}
+.tabbar button i{display:flex; align-items:center; justify-content:center; width:34px; height:34px; font-style:normal; color:var(--muted); opacity:.55; transition:color .35s ease, opacity .35s ease;}
+.tabbar button i svg{width:19px; height:19px; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round;}
+.tabbar button i .fillable{fill-opacity:0; transition:fill-opacity .4s ease;}
+.tabbar button.active i .fillable{fill-opacity:1;}
+.tabbar button.active{color:#fff;}
+.tabbar button.active i{color:#fff; opacity:1;}
+.tab-ind{position:absolute; top:16px; left:0; width:34px; height:34px; transform:translateX(0); transition:transform .56s cubic-bezier(.34,1.62,.5,1); z-index:0;}
+.tab-ind-glow{position:absolute; inset:-6px; border-radius:16px; background:radial-gradient(circle, rgba(154,114,255,.65), rgba(124,88,230,.25) 55%, transparent 75%); filter:blur(9px); z-index:0;}
+.tab-ind-glass{position:absolute; inset:0; border-radius:12px; z-index:1;
+  background:linear-gradient(155deg, rgba(255,255,255,.16), rgba(255,255,255,.03));
+  backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.4), inset 0 -8px 14px -8px rgba(0,0,0,.4), 0 10px 22px -6px rgba(124,88,230,.55);}
 
 /* ---------- delightful student score hero ---------- */
 .score-hero{position:relative; text-align:center; padding:30px 16px 24px; overflow:hidden;}
@@ -512,14 +539,14 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
     <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
 
-  <nav class="tabbar" id="tabbar-teacher">
-    <button data-tab="dashboard" class="active"><i>⌂</i>داشبورد</button>
-    <button data-tab="scoring"><i>+</i>امتیازدهی</button>
-    <button data-tab="absence"><i>◔</i>غیبت</button>
-    <button data-tab="report"><i>▦</i>کارنامه</button>
-    <button data-tab="talent"><i>✦</i>استعداد</button>
-    <button data-tab="manage"><i>⚙</i>مدیریت</button>
-  </nav>
+  <div class="tabbar-wrap"><div class="sweep-border"></div><nav class="tabbar" id="tabbar-teacher">
+    <button data-tab="dashboard" class="active"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M4 11.5 12 4l8 7.5V19a2 2 0 0 1-2 2h-3v-6H9v6H6a2 2 0 0 1-2-2v-7.5z"/></svg></i>داشبورد</button>
+    <button data-tab="scoring"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M9.5 4h5v5.5H20v5h-5.5V20h-5v-5.5H4v-5h5.5V4z"/></svg></i>امتیازدهی</button>
+    <button data-tab="absence"><i><svg viewBox="0 0 24 24" fill="currentColor"><rect class="fillable" x="4" y="7" width="16" height="13" rx="2.6"/><rect class="fillable" x="7.3" y="3.3" width="2.2" height="4.8" rx="1.1"/><rect class="fillable" x="14.5" y="3.3" width="2.2" height="4.8" rx="1.1"/></svg></i>غیبت</button>
+    <button data-tab="report"><i><svg viewBox="0 0 24 24" fill="currentColor"><rect class="fillable" x="3.8" y="3.8" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="13" y="3.8" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="3.8" y="13" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="13" y="13" width="7.2" height="7.2" rx="2"/></svg></i>کارنامه</button>
+    <button data-tab="talent"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6-4.6-4.1 6.1-.6L12 3.5z"/></svg></i>استعداد</button>
+    <button data-tab="manage"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M12 3 20 6.5v5.5c0 5-3.5 8-8 9.5-4.5-1.5-8-4.5-8-9.5V6.5L12 3z"/></svg></i>مدیریت</button>
+  </nav></div>
 </div>
 
 <!-- =================== STUDENT APP =================== -->
@@ -574,12 +601,12 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
     <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
 
-  <nav class="tabbar" id="tabbar-student">
-    <button data-tab="dashboard" class="active"><i>⌂</i>داشبورد</button>
-    <button data-tab="absence"><i>◔</i>غیبت‌ها</button>
-    <button data-tab="report"><i>▦</i>کارنامه</button>
-    <button data-tab="talent"><i>✦</i>استعداد</button>
-  </nav>
+  <div class="tabbar-wrap"><div class="sweep-border"></div><nav class="tabbar" id="tabbar-student">
+    <button data-tab="dashboard" class="active"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M4 11.5 12 4l8 7.5V19a2 2 0 0 1-2 2h-3v-6H9v6H6a2 2 0 0 1-2-2v-7.5z"/></svg></i>داشبورد</button>
+    <button data-tab="absence"><i><svg viewBox="0 0 24 24" fill="currentColor"><rect class="fillable" x="4" y="7" width="16" height="13" rx="2.6"/><rect class="fillable" x="7.3" y="3.3" width="2.2" height="4.8" rx="1.1"/><rect class="fillable" x="14.5" y="3.3" width="2.2" height="4.8" rx="1.1"/></svg></i>غیبت‌ها</button>
+    <button data-tab="report"><i><svg viewBox="0 0 24 24" fill="currentColor"><rect class="fillable" x="3.8" y="3.8" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="13" y="3.8" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="3.8" y="13" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="13" y="13" width="7.2" height="7.2" rx="2"/></svg></i>کارنامه</button>
+    <button data-tab="talent"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6-4.6-4.1 6.1-.6L12 3.5z"/></svg></i>استعداد</button>
+  </nav></div>
 </div>
 
 <!-- Firebase (compat SDK, loaded from Google's CDN) -->
@@ -1776,6 +1803,7 @@ document.getElementById('btn-pin-submit').addEventListener('click', ()=>{
     showTeacherTab('dashboard');
     applyStreamerMode();
     show('view-teacher');
+    if(window.__waveResync['tabbar-teacher']) window.__waveResync['tabbar-teacher']();
   } else document.getElementById('pin-msg').textContent = 'پین اشتباه است';
 });
 document.getElementById('btn-student-submit').addEventListener('click', ()=>{
@@ -1786,6 +1814,7 @@ document.getElementById('btn-student-submit').addEventListener('click', ()=>{
     try{ localStorage.setItem('studentCode', v); }catch(e){}
     showStudentTab('dashboard');
     show('view-student');
+    if(window.__waveResync['tabbar-student']) window.__waveResync['tabbar-student']();
   } else document.getElementById('student-login-msg').textContent = 'کد اشتباه است';
 });
 
@@ -1811,6 +1840,42 @@ document.getElementById('btn-student-exit').addEventListener('click', ()=>{
 
 document.querySelectorAll('#tabbar-teacher button').forEach(b=> b.addEventListener('click', ()=> showTeacherTab(b.dataset.tab)));
 document.querySelectorAll('#tabbar-student button').forEach(b=> b.addEventListener('click', ()=> showStudentTab(b.dataset.tab)));
+
+/* ---------- glass-square tab indicator ---------- */
+window.__waveResync = {};
+function initWaveTabbar(nav){
+  const ind = document.createElement('div');
+  ind.className = 'tab-ind';
+  const glow = document.createElement('div'); glow.className = 'tab-ind-glow';
+  const glass = document.createElement('div'); glass.className = 'tab-ind-glass';
+  ind.appendChild(glow); ind.appendChild(glass);
+  nav.insertBefore(ind, nav.firstChild);
+
+  function tabX(el){
+    const r = el.getBoundingClientRect(), br = nav.getBoundingClientRect();
+    return (r.left - br.left) + r.width/2 - 17;
+  }
+  function place(btn, instant){
+    if(!btn) return;
+    const x = tabX(btn);
+    if(instant){
+      ind.style.transition = 'none';
+      ind.style.transform = 'translateX('+x+'px)';
+      void ind.offsetWidth;
+      ind.style.transition = '';
+    } else {
+      ind.style.transform = 'translateX('+x+'px)';
+    }
+  }
+  const buttons = [...nav.querySelectorAll('button')];
+  buttons.forEach(b=> b.addEventListener('click', ()=> place(b, false)));
+
+  function resync(){ place(nav.querySelector('button.active') || buttons[0], true); }
+  window.__waveResync[nav.id] = resync;
+  requestAnimationFrame(resync);
+  window.addEventListener('resize', resync);
+}
+document.querySelectorAll('.tabbar').forEach(initWaveTabbar);
 
 document.getElementById('btn-export-absences').addEventListener('click', exportWeeklyAbsences);
 document.getElementById('btn-export-reports').addEventListener('click', exportReportCardsPDF);
@@ -1859,12 +1924,17 @@ function decideInitialView(){
       showTeacherTab('dashboard');
       applyStreamerMode();
       show('view-teacher');
+      if(window.__waveResync['tabbar-teacher']) window.__waveResync['tabbar-teacher']();
       return;
     }
     const savedCode = localStorage.getItem('studentCode');
     if(savedCode){
       const s = state.students.find(x=>x.code===savedCode);
-      if(s){ currentStudentId=s.id; showStudentTab('dashboard'); show('view-student'); return; }
+      if(s){
+        currentStudentId=s.id; showStudentTab('dashboard'); show('view-student');
+        if(window.__waveResync['tabbar-student']) window.__waveResync['tabbar-student']();
+        return;
+      }
     }
   }catch(e){}
   show('view-landing');
