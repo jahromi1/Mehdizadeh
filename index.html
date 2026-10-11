@@ -239,8 +239,8 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 
 @property --sweep-angle{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
 .tabbar-wrap{
-  position:fixed; left:10px; right:10px; bottom:calc(10px + var(--safe-b)); z-index:50;
-  max-width:420px; margin:0 auto; border-radius:24px;
+  position:fixed; left:0; right:0; bottom:0; z-index:50;
+  max-width:440px; margin:0 auto; border-radius:24px 24px 0 0;
 }
 .sweep-border{
   position:absolute; inset:-1px; border-radius:inherit; padding:2.5px;
@@ -255,9 +255,9 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 @media (prefers-reduced-motion: reduce){ .sweep-border{animation:none;} }
 .tabbar{
   position:relative; overflow:visible;
-  display:flex; justify-content:space-around; padding:12px 4px;
+  display:flex; justify-content:space-around; padding:12px 4px calc(12px + var(--safe-b));
   background:rgba(15,13,28,.86); backdrop-filter:blur(24px) saturate(160%); -webkit-backdrop-filter:blur(24px) saturate(160%);
-  border-radius:24px;
+  border-radius:24px 24px 0 0;
 }
 .tabbar button{position:relative; z-index:1; background:none; border:none; color:var(--muted); font-family:inherit; font-size:9.6px; font-weight:700; display:flex; flex-direction:column; align-items:center; gap:2px; padding:4px 6px; border-radius:12px; cursor:pointer;}
 .tabbar button i{display:flex; align-items:center; justify-content:center; width:34px; height:34px; font-style:normal; color:var(--muted); opacity:.55; transition:color .35s ease, opacity .35s ease;}
