@@ -343,64 +343,106 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
 .talent-name{font-size:11.5px; font-weight:700; margin-top:9px; color:var(--ink);}
 .talent-ability-tag{position:absolute; bottom:9px; right:10px; font-size:10px; font-weight:800; direction:ltr;
   color:#8ecbff; background:rgba(60,120,230,.14); border:1px solid rgba(80,150,255,.25); padding:2px 7px; border-radius:8px;}
+/* ===== RARITY CARD ===== */
+@property --rc-ang{syntax:'<angle>';inherits:false;initial-value:0deg;}
+.score-hero{--c1:#8c879d;--c2:#d9d6e6;--c3:#3a3748;--glow:rgba(140,135,157,.35);
+  perspective:700px;padding:22px 16px 20px;border:0;isolation:isolate;
+  background:radial-gradient(120% 90% at 50% 0%,color-mix(in srgb,var(--c1) 34%,transparent),transparent 62%),linear-gradient(180deg,rgba(255,255,255,.07),rgba(0,0,0,.28)),#0d0b1c;
+  box-shadow:0 22px 50px -18px var(--glow),inset 0 1.5px 0 rgba(255,255,255,.28);
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .25s ease-out;will-change:transform;}
+.score-hero[data-tier="mythic"]{--c1:#ff2d55;--c2:#ffb3c0;--c3:#6b0016;--glow:rgba(255,45,85,.75);}
+.score-hero[data-tier="legendary"]{--c1:#ff9f1c;--c2:#ffe39a;--c3:#7a3500;--glow:rgba(255,159,28,.65);}
+.score-hero[data-tier="epic"]{--c1:#a56bff;--c2:#e3d0ff;--c3:#341678;--glow:rgba(165,107,255,.6);}
+.score-hero[data-tier="rare"]{--c1:#3fa9ff;--c2:#c4e8ff;--c3:#093a85;--glow:rgba(63,169,255,.55);}
+.score-hero::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:2.5px;z-index:3;pointer-events:none;
+  background:conic-gradient(from var(--rc-ang),transparent 0 62%,var(--c2) 80%,#fff 88%,var(--c1) 94%,transparent 100%),linear-gradient(var(--c1),var(--c1));
+  background-blend-mode:normal;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
+  animation:rcSpin 3.4s linear infinite;}
+.score-hero[data-tier="common"]::before{opacity:.5;animation-duration:6s}
+@keyframes rcSpin{to{--rc-ang:360deg}}
+/* foil shimmer */
+.rc-foil{position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;opacity:.5;mix-blend-mode:screen;
+  background:linear-gradient(115deg,transparent 30%,color-mix(in srgb,var(--c2) 45%,transparent) 45%,rgba(255,255,255,.35) 50%,color-mix(in srgb,var(--c2) 45%,transparent) 55%,transparent 70%);
+  background-size:250% 100%;animation:rcFoil 4.2s ease-in-out infinite;}
+@keyframes rcFoil{0%{background-position:130% 0}60%,100%{background-position:-60% 0}}
+.rc-rays{position:absolute;left:50%;top:118px;width:300px;height:300px;margin:-150px 0 0 -150px;z-index:0;pointer-events:none;opacity:.55;border-radius:50%;
+  background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--c1) 55%,transparent) 0 6deg,transparent 6deg 20deg);
+  -webkit-mask:radial-gradient(circle,#000 8%,transparent 66%);mask:radial-gradient(circle,#000 8%,transparent 66%);animation:rcRays 18s linear infinite;}
+.score-hero[data-tier="rare"] .rc-rays,.score-hero[data-tier="epic"] .rc-rays,.score-hero[data-tier="common"] .rc-rays{display:none}
+.score-hero[data-tier="epic"] .rc-rays{display:block;opacity:.3}
+@keyframes rcRays{to{transform:rotate(360deg)}}
+.rc-top{position:relative;z-index:4;display:flex;justify-content:flex-end;align-items:center;margin-bottom:4px}
+.rc-tier{font-size:11px;font-weight:900;letter-spacing:.2px;padding:5px 12px;border-radius:999px;color:#fff;
+  background:linear-gradient(135deg,var(--c1),var(--c3));box-shadow:0 6px 16px -4px var(--glow),inset 0 1px 0 rgba(255,255,255,.4);}
+.rc-tier small{font-size:8px;opacity:.8;margin-right:5px;letter-spacing:1px;direction:ltr;display:inline-block}
+.rc-gemwrap{position:relative;z-index:3;height:150px;display:flex;align-items:center;justify-content:center;margin-top:-6px}
+.rc-canvas{position:absolute;left:50%;top:50%;margin:-88px 0 0 -115px;pointer-events:none;filter:drop-shadow(0 0 16px var(--glow)) drop-shadow(0 10px 12px rgba(0,0,0,.45));animation:rcFloat 3.4s ease-in-out infinite}
+.rc-gem{width:112px;height:101px;filter:drop-shadow(0 0 18px var(--glow)) drop-shadow(0 12px 14px rgba(0,0,0,.5));animation:rcFloat 3.4s ease-in-out infinite;transform:scale(var(--gs,1))}
+.score-hero[data-tier="mythic"]{--gs:1.14}.score-hero[data-tier="legendary"]{--gs:1}.score-hero[data-tier="epic"]{--gs:.88}.score-hero[data-tier="rare"]{--gs:.76}.score-hero[data-tier="common"]{--gs:.62}
+@keyframes rcFloat{0%,100%{translate:0 0}50%{translate:0 -7px}}
+.score-hero svg .f1{fill:var(--c2)}.score-hero svg .f2{fill:color-mix(in srgb,var(--c2) 70%,#fff)}.score-hero svg .f3{fill:var(--c1)}
+.score-hero svg .f4{fill:color-mix(in srgb,var(--c1) 70%,var(--c3))}.score-hero svg .f5{fill:var(--c1)}.score-hero svg .f6{fill:var(--c3)}
+.score-hero svg .gl{stroke:rgba(255,255,255,.55);stroke-width:1;fill:none}
+.score-hero svg .gshine{animation:rcShine 2.8s ease-in-out infinite}
+@keyframes rcShine{0%{transform:translateX(-60px)}55%,100%{transform:translateX(170px)}}
+.score-hero svg .gband{fill:rgba(255,255,255,.75)}
+.rc-orbit{position:absolute;left:50%;top:50%;width:0;height:0;z-index:2;animation:rcOrb 7s linear infinite}
+.rc-orbit.o2{animation-duration:11s;animation-direction:reverse}
+.rc-orbit svg{position:absolute;width:20px;height:18px;left:-10px;top:-76px;filter:drop-shadow(0 0 8px var(--glow))}
+.rc-orbit.o2 svg{top:-62px;width:15px;height:13px}
+@keyframes rcOrb{to{transform:rotate(360deg)}}
+.rc-orbit svg .f1,.rc-orbit svg .f2{fill:var(--c2)}.rc-orbit svg .f3,.rc-orbit svg .f5{fill:var(--c1)}.rc-orbit svg .f4,.rc-orbit svg .f6{fill:var(--c3)}
+.score-hero[data-tier="rare"] .rc-orbit,.score-hero[data-tier="epic"] .rc-orbit,.score-hero[data-tier="common"] .rc-orbit{display:none}
+.score-hero[data-tier="legendary"] .rc-orbit.o2{display:none}
+.rc-spark{position:absolute;z-index:2;width:5px;height:5px;border-radius:50%;background:var(--c2);box-shadow:0 0 8px 2px var(--c1);pointer-events:none;opacity:0;animation:rcRise var(--d,3s) ease-in infinite var(--dl,0s)}
+@keyframes rcRise{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translateY(-150px) translateX(var(--dx,0)) scale(1.1)}}
+.score-hero .lbl{z-index:4;margin-top:2px;text-shadow:0 2px 12px var(--glow)}
+.rc-plate{position:relative;z-index:4;display:inline-block;margin:10px auto 8px;padding:3px;border-radius:22px}
+.rc-plate::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:2px;
+  background:conic-gradient(from var(--rc-ang),transparent 0 55%,var(--c1) 72%,#fff 86%,var(--c2) 92%,transparent);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:rcSpin 2.4s linear infinite}
+.rc-plate-in{padding:6px 26px 4px;border-radius:19px;background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(0,0,0,.4));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.score-hero .score-num-big{margin:0;font-size:52px;line-height:1.15;background:linear-gradient(170deg,#fff,var(--c2) 45%,var(--c1));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 14px var(--glow))}
+.score-hero .rank-chip{z-index:4;color:#fff;background:rgba(0,0,0,.35);border:1px solid color-mix(in srgb,var(--c1) 60%,transparent);margin-top:4px}
+.rc-hint{position:relative;z-index:4;font-size:10px;color:var(--muted);margin-top:8px}
+.rc-hint:empty{display:none}
+@media (prefers-reduced-motion:reduce){.score-hero *,.score-hero::before{animation-duration:0s!important}}
 
-/* ---------- rarity card (replaces the old score hero) ---------- */
-@property --rc-ang{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
-@property --pl-ang{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
-.rar-card{
-  --rc:#9aa6b8; --rc-l:#e3e8f0; --rc-d:#2b3342; --rc-rgb:154,166,184; --rays:0;
-  position:relative; overflow:hidden; text-align:center; padding:20px 14px 20px; margin-bottom:14px;
-  touch-action:pan-y; user-select:none; -webkit-user-select:none; will-change:transform; transform-origin:50% 50%;
-  background:
-    radial-gradient(120% 85% at 50% 22%, rgba(var(--rc-rgb),.34), rgba(var(--rc-rgb),.08) 48%, transparent 72%),
-    linear-gradient(180deg, rgba(22,17,40,.94), rgba(9,7,20,.97));
-  border:1px solid rgba(var(--rc-rgb),.28);
-  box-shadow:0 24px 60px rgba(0,0,0,.5), 0 0 40px -10px rgba(var(--rc-rgb),.45), inset 0 1px 0 rgba(255,255,255,.16);
-}
-.rar-foil{position:absolute; inset:-40% -60%; pointer-events:none; z-index:1; mix-blend-mode:screen; opacity:.9;
-  background:linear-gradient(112deg, transparent 38%, rgba(255,255,255,.07) 45%, rgba(var(--rc-rgb),.22) 50%, rgba(255,255,255,.09) 55%, transparent 62%);
-  animation:rarFoil 7.5s ease-in-out infinite;}
-@keyframes rarFoil{0%{transform:translateX(-38%);}50%{transform:translateX(38%);}100%{transform:translateX(-38%);}}
-.rar-sweep{position:absolute; inset:0; border-radius:inherit; padding:2px; pointer-events:none; z-index:6;
-  background:conic-gradient(from var(--rc-ang), transparent 0 52%, rgba(var(--rc-rgb),.55) 70%, #fff 84%, rgba(var(--rc-rgb),.55) 94%, transparent 100%);
-  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor; mask-composite:exclude;
-  animation:rarSpin 3.4s linear infinite; filter:drop-shadow(0 0 5px rgba(var(--rc-rgb),.9));}
-@keyframes rarSpin{to{--rc-ang:360deg;}}
-.rar-card .rank-chip{position:absolute; top:12px; left:12px; margin:0; z-index:7; font-size:12px; font-weight:800; color:#fff;
-  padding:4px 11px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.22); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);}
-.rar-stage{position:relative; z-index:3; width:240px; max-width:100%; height:232px; margin:4px auto 0;}
-#rarityCanvas{position:relative; z-index:2; width:100%; height:100%; display:block;
-  filter:drop-shadow(0 0 14px rgba(var(--rc-rgb),.8)) drop-shadow(0 0 4px rgba(var(--rc-rgb),.65));}
-.rar-rays{position:absolute; left:50%; top:50%; width:360px; height:360px; margin:-180px 0 0 -180px; border-radius:50%; pointer-events:none; z-index:1;
-  background:repeating-conic-gradient(from 0deg, rgba(var(--rc-rgb),.5) 0 5deg, transparent 5deg 15deg);
-  -webkit-mask-image:radial-gradient(circle, #000 6%, transparent 64%); mask-image:radial-gradient(circle, #000 6%, transparent 64%);
-  opacity:var(--rays); animation:rarRays 18s linear infinite;}
-@keyframes rarRays{to{transform:rotate(360deg);}}
-.rar-sparks{position:absolute; inset:0; z-index:3; pointer-events:none;}
-.rar-spark{position:absolute; bottom:6%; width:var(--sz); height:var(--sz); border-radius:50%; opacity:0;
-  background:radial-gradient(circle,#fff 0,var(--rc-l) 45%,transparent 72%);
-  animation:rarSpark var(--dur) linear var(--dl) infinite;}
-@keyframes rarSpark{0%{transform:translate(0,0) scale(.5); opacity:0;}15%{opacity:.95;}100%{transform:translate(var(--dx),-205px) scale(1); opacity:0;}}
-.rar-card .lbl{position:relative; z-index:4; font-size:18px; color:#fff; font-weight:800; letter-spacing:-.2px; margin-top:2px;}
-.rar-plate{position:relative; z-index:4; display:inline-block; margin-top:10px; padding:6px 30px; border-radius:20px;
-  background:linear-gradient(155deg, rgba(255,255,255,.15), rgba(255,255,255,.03)); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,.12);
-  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.32), inset 0 -10px 16px -10px rgba(0,0,0,.45), 0 10px 26px -8px rgba(var(--rc-rgb),.5);}
-.rar-plate-sweep{position:absolute; inset:0; border-radius:inherit; padding:1.6px; pointer-events:none;
-  background:conic-gradient(from var(--pl-ang), transparent 0 55%, rgba(var(--rc-rgb),.6) 74%, #fff 86%, rgba(var(--rc-rgb),.6) 95%, transparent 100%);
-  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor; mask-composite:exclude; animation:rarSpin2 2.4s linear infinite;}
-@keyframes rarSpin2{to{--pl-ang:360deg;}}
-.rar-card .score-num-big{font-size:46px; margin:0; line-height:1.15;
-  background:linear-gradient(170deg,#fff 18%, var(--rc-l) 58%, var(--rc) 100%); -webkit-background-clip:text; background-clip:text; color:transparent;
-  filter:drop-shadow(0 4px 14px rgba(var(--rc-rgb),.55));}
-.rar-hint{position:relative; z-index:4; margin-top:10px; font-size:11px; color:var(--muted); min-height:0;}
-.rar-hint:empty{display:none;}
-@media (prefers-reduced-motion: reduce){
-  .rar-foil,.rar-sweep,.rar-plate-sweep,.rar-rays,.rar-spark{animation:none !important;}
-  .rar-spark{display:none;}
-}
+/* ===== ROLES (مسئولیت‌ها) ===== */
+.role-mgr{padding:12px; margin-bottom:12px;}
+.rm-head{display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;}
+.rm-head b{font-size:13px;}
+.rm-head small{font-size:10px; color:var(--muted); text-align:left;}
+.role-mgr .mgmt-add{margin-bottom:10px;}
+.role-chips{display:flex; flex-wrap:wrap; gap:7px;}
+.role-chip{display:inline-flex; align-items:center; gap:2px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); color:var(--text); font-size:11.5px; font-weight:700; transition:.2s;}
+.role-chip .rn{padding:7px 4px 7px 12px; cursor:pointer;}
+.role-chip .rx{border:0; background:transparent; color:var(--muted); font:inherit; font-size:14px; line-height:1; padding:6px 9px 6px 8px; cursor:pointer; border-radius:999px;}
+.role-chip .rx.sure{color:#fff; background:var(--danger); font-size:10px;}
+.role-chip.on{background:linear-gradient(135deg,#9a72ff,#6540d5); border-color:rgba(255,255,255,.4); box-shadow:0 8px 20px -8px rgba(154,114,255,.9);}
+.role-chip.on .rx{color:rgba(255,255,255,.8);}
+.student-row .nm{display:flex; align-items:center; flex-wrap:wrap; gap:4px 5px; min-width:0;}
+.student-row .nm strong{display:block; flex:0 1 auto; min-width:0;}
+.rtag{font-size:9px; font-weight:800; padding:2px 7px; border-radius:999px; color:#e4d8ff; background:rgba(154,114,255,.22); border:1px solid rgba(154,114,255,.45); white-space:nowrap;}
+.student-row.role-target{cursor:pointer;}
+.student-row.role-target.role-on{background:rgba(154,114,255,.16); border-color:rgba(154,114,255,.55);}
+.role-row{display:grid; grid-template-columns:3fr 1fr; gap:10px; align-items:stretch; margin-bottom:12px;}
+.role-row .card{margin-bottom:0;}
+.role-card{padding:12px 14px; display:flex; flex-direction:column; justify-content:center; gap:8px; min-width:0; overflow:hidden;}
+.rl-title{font-size:10px; color:var(--muted); font-weight:700;}
+.rl-list{display:flex; flex-wrap:wrap; gap:6px; max-height:64px; overflow-y:auto;}
+.rl-chip{font-size:12px; font-weight:800; padding:5px 12px; border-radius:999px; color:#fff; background:linear-gradient(135deg,rgba(154,114,255,.55),rgba(108,67,232,.45)); border:1px solid rgba(255,255,255,.28); box-shadow:inset 0 1px 0 rgba(255,255,255,.3);}
+.rl-empty{font-size:11.5px; color:var(--muted);}
+.cd-card{position:relative; aspect-ratio:1/1; padding:0; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden;}
+.cd-card svg{position:absolute; inset:5px; width:calc(100% - 10px); height:calc(100% - 10px); transform:rotate(-90deg); overflow:visible;}
+.cd-track{fill:none; stroke:rgba(255,255,255,.1); stroke-width:7;}
+.cd-prog{fill:none; stroke:url(#cdGrad); stroke-width:7; stroke-linecap:round; transition:stroke-dashoffset 1.3s cubic-bezier(.2,.8,.2,1); filter:drop-shadow(0 0 5px rgba(154,114,255,.9));}
+.cd-spark{fill:none; stroke:#fff; stroke-width:7; stroke-linecap:round; opacity:.75; transform-origin:50px 50px; animation:cdSpin 3.2s linear infinite;}
+@keyframes cdSpin{to{transform:rotate(360deg);}}
+.cd-num{position:relative; z-index:1; font-size:24px; font-weight:900; line-height:1; direction:ltr; background:linear-gradient(170deg,#fff,#cdb8ff 60%,#9a72ff); -webkit-background-clip:text; background-clip:text; color:transparent;}
+.cd-lbl{position:relative; z-index:1; font-size:9px; color:var(--muted); margin-top:3px; font-weight:700;}
+@media (prefers-reduced-motion:reduce){.cd-spark{animation:none;}}
 </style>
 </head>
 <body>
@@ -592,6 +634,14 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
         <input type="text" id="new-student-name" placeholder="نام دانش‌آموز جدید">
         <button id="btn-add-student">＋</button>
       </div>
+      <div class="card role-mgr" id="roleMgr">
+        <div class="rm-head"><b>مسئولیت‌ها</b><small id="roleHint"></small></div>
+        <div class="mgmt-add">
+          <input type="text" id="new-role-name" placeholder="مثلاً مبصر، مسئول پنجره...">
+          <button id="btn-add-role">＋</button>
+        </div>
+        <div class="role-chips" id="roleChips"></div>
+      </div>
       <div class="card" id="manageList" style="padding:10px;"></div>
     </section>
     <div class="tiny-footer">create by Mehdizadeh</div>
@@ -616,20 +666,12 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
     </div>
 
     <section class="tabsection active" id="st-dashboard">
-      <div class="card rar-card" id="scoreHero" data-lv="common">
-        <div class="rar-foil"></div>
-        <div class="rank-chip" id="student-rank-label"></div>
-        <div class="rar-stage">
-          <div class="rar-rays"></div>
-          <canvas id="rarityCanvas"></canvas>
-          <div class="rar-sparks" id="rarSparks"></div>
-        </div>
-        <div class="lbl" id="student-name-label"></div>
-        <div class="rar-plate"><div class="rar-plate-sweep"></div><div class="score-num-big" id="student-total-label">0</div></div>
-        <div class="rar-hint" id="rarHint"></div>
-        <div class="rar-sweep"></div>
-      </div>
+      <div class="card score-hero" id="scoreHero"></div>
       <div class="card streak-card" id="streakCard"></div>
+      <div class="role-row">
+        <div class="card role-card" id="roleCard"></div>
+        <div class="card cd-card" id="cdCard"></div>
+      </div>
       <div class="card">
         <div class="section-head"><h3>روند امتیاز</h3></div>
         <div id="student-chart"></div>
@@ -749,12 +791,15 @@ function normalize(){
   if(!state.pin) state.pin = "52608187";
   if(!state.step) state.step = 50;
   if(!state.students) state.students = [];
+  if(!Array.isArray(state.roles)) state.roles = [];
+  const __rids = new Set(state.roles.map(r=>r.id));
   state.students.forEach(s=>{
     if(!s.grades) s.grades = {};
     SUBJECTS.forEach(sub=>{ if(!s.grades[sub]) s.grades[sub]=[]; });
     if(!s.absences) s.absences = [];
     s.absences.forEach(a=>{ if(typeof a.excused !== 'boolean') a.excused = false; });
     if(!s.history) s.history = [];
+    s.roles = Array.isArray(s.roles) ? s.roles.filter(id=>__rids.has(id)) : [];
     if(!s.talents) s.talents = {};
     TALENTS.forEach(t=>{ if(!s.talents[t.key]) s.talents[t.key] = {interest:0, ability:0}; });
     delete s.homework;
@@ -1328,6 +1373,7 @@ function applyBulkDelete(){
   persist();
 }
 function renderManage(){
+  renderRoleMgr();
   const listEl = document.getElementById('manageList');
   let bar = '';
   if(selectMode){
@@ -1340,13 +1386,22 @@ function renderManage(){
   else{
     listEl.innerHTML = bar + sortedByName().map(s=>{
       const checked = selectedIds.has(s.id) ? 'checked' : '';
-      return `<div class="student-row">
+      const rt = (activeRoleId && !selectMode) ? ' role-target' + ((s.roles||[]).includes(activeRoleId) ? ' role-on' : '') : '';
+      return `<div class="student-row${rt}" data-sid="${s.id}">
         ${selectMode?`<input type="checkbox" class="row-check" data-id="${s.id}" ${checked}>`:''}
         <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${initials(s.name)}</div>
-        <div class="info"><strong>${escapeHtml(s.name)}</strong><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
+        <div class="info"><div class="nm"><strong>${escapeHtml(s.name)}</strong>${(s.roles||[]).map(id=>{const r=state.roles.find(x=>x.id===id);return r?`<span class="rtag">${escapeHtml(r.name)}</span>`:'';}).join('')}</div><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
         <button class="del-btn" data-del="${s.id}">حذف</button>
       </div>`;
     }).join('');
+  }
+  if(activeRoleId && !selectMode){
+    listEl.querySelectorAll('.student-row[data-sid]').forEach(row=>{
+      row.addEventListener('click', (e)=>{
+        if(e.target.closest('.del-btn')) return;
+        toggleRole(row.dataset.sid, activeRoleId);
+      });
+    });
   }
   listEl.querySelectorAll('[data-del]').forEach(b=>{
     b.addEventListener('click', ()=> handleDeleteClick(b.dataset.del, b));
@@ -1379,6 +1434,7 @@ function addStudent(){
   if(!name) return;
   const grades={}; SUBJECTS.forEach(sub=>grades[sub]=[]);
   state.students.push({id: 's'+Date.now()+Math.floor(Math.random()*99), name, code: genCode(), history: [], grades, absences:[]});
+  normalize();
   input.value='';
   renderManage();
   persist();
@@ -1636,175 +1692,6 @@ function burstConfetti(container){
   container.classList.add('burst');
   setTimeout(()=>{ container.querySelectorAll('.confetti').forEach(c=>c.remove()); container.classList.remove('burst'); }, 1300);
 }
-/* ---------- rarity card: software 3D brilliant-cut diamond (2D canvas, no libs) ---------- */
-const Rarity = (function(){
-  const LV = {
-    mythic:   {c:'#ff2d55', l:'#ffb3c0', d:'#5a0013', scale:1.14, rays:1,    orbit:2, sparks:16},
-    legendary:{c:'#ff9f1c', l:'#ffe39a', d:'#6a2c00', scale:1,    rays:.8,   orbit:1, sparks:11},
-    epic:     {c:'#a56bff', l:'#e3d0ff', d:'#2c1066', scale:.9,   rays:.26,  orbit:0, sparks:7},
-    rare:     {c:'#3fa9ff', l:'#c4e8ff', d:'#082f6e', scale:.8,   rays:0,    orbit:0, sparks:4},
-    common:   {c:'#9aa6b8', l:'#e3e8f0', d:'#2b3342', scale:.58,  rays:0,    orbit:0, sparks:0}
-  };
-  const hex = h => [1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
-  const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
-  function levelFor(rank){ return rank<=5?'mythic':rank<=10?'legendary':rank<=20?'epic':rank<=30?'rare':'common'; }
-
-  /* geometry: octagon table, 16 girdle verts (r = 1 / .93 alternating), 1 culet -> 1 + 24 + 16 faces */
-  const YS = 0.265, FACES = [];
-  (function build(){
-    const T=[], G=[];
-    for(let i=0;i<8;i++){ const a=i*Math.PI/4; T.push([Math.cos(a)*.56, .42+YS, Math.sin(a)*.56]); }
-    for(let j=0;j<16;j++){ const a=j*Math.PI/8, r=(j%2===0)?1:.93; G.push([Math.cos(a)*r, YS, Math.sin(a)*r]); }
-    const C=[0,-.95+YS,0];
-    FACES.push({v:T.slice()});
-    for(let i=0;i<8;i++){
-      const i2=(i+1)%8, g0=G[2*i], g1=G[2*i+1], g2=G[(2*i+2)%16];
-      FACES.push({v:[T[i],T[i2],g1]}, {v:[T[i],g0,g1]}, {v:[T[i2],g1,g2]});
-    }
-    for(let j=0;j<16;j++) FACES.push({v:[G[j],G[(j+1)%16],C]});
-  })();
-
-  const D = 5.2, L1 = nz([-.45,.75,.55]), L2 = nz([.55,-.6,.45]);
-  function nz(v){ const l=Math.hypot(v[0],v[1],v[2])||1; return [v[0]/l,v[1]/l,v[2]/l]; }
-  const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
-  const mix=(a,b,t)=>[a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t, a[2]+(b[2]-a[2])*t];
-  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
-
-  let cur=null, cfg=null, cv=null, ctx=null, dirty=true, W=0, H=0, dpr=1;
-
-  function mount(rank){
-    const lv = levelFor(rank), c = LV[lv];
-    cur = lv; cfg = {c:hex(c.c), l:hex(c.l), d:hex(c.d), scale:c.scale, orbit:c.orbit};
-    const card = document.getElementById('scoreHero');
-    if(!card) return lv;
-    card.setAttribute('data-lv', lv);
-    card.style.setProperty('--rc', c.c); card.style.setProperty('--rc-l', c.l); card.style.setProperty('--rc-d', c.d);
-    card.style.setProperty('--rc-rgb', cfg.c.join(','));
-    card.style.setProperty('--rays', String(c.rays));
-    const box = document.getElementById('rarSparks');
-    if(box){
-      box.innerHTML = '';
-      for(let i=0;i<c.sparks;i++){
-        const s = document.createElement('span'); s.className='rar-spark';
-        s.style.left = (12 + Math.random()*76)+'%';
-        s.style.setProperty('--sz', (2.5+Math.random()*3.5).toFixed(1)+'px');
-        s.style.setProperty('--dur', (2.6+Math.random()*2.6).toFixed(2)+'s');
-        s.style.setProperty('--dl', (-Math.random()*5).toFixed(2)+'s');
-        s.style.setProperty('--dx', ((Math.random()-.5)*46).toFixed(0)+'px');
-        box.appendChild(s);
-      }
-    }
-    const hint = document.getElementById('rarHint');
-    if(hint) hint.textContent = lv==='common' ? 'برای گرفتن کارت رنگی، به ۳۰ نفر اول برس' : '';
-    dirty = true;
-    return lv;
-  }
-
-  function drawObject(o, time, tilt, roll, S, cx, cy, list){
-    const cs=Math.cos(o.spin), sn=Math.sin(o.spin), ct=Math.cos(tilt), st=Math.sin(tilt), cr=Math.cos(roll), sr=Math.sin(roll);
-    const xf = p => {
-      let x=p[0]*o.s, y=p[1]*o.s, z=p[2]*o.s;
-      const x1=x*cs+z*sn, z1=-x*sn+z*cs; x=x1+o.tx; y=y+o.ty; z=z1+o.tz;
-      const y2=y*ct-z*st, z2=y*st+z*ct;
-      return [x*cr-y2*sr, x*sr+y2*cr, z2];
-    };
-    const ctr = xf([0,0,0]);
-    const backs=[], fronts=[];
-    FACES.forEach((f,idx)=>{
-      const tp = f.v.map(xf);
-      let cen=[0,0,0]; tp.forEach(p=>{cen[0]+=p[0];cen[1]+=p[1];cen[2]+=p[2];}); cen=cen.map(v=>v/tp.length);
-      const a=[tp[1][0]-tp[0][0],tp[1][1]-tp[0][1],tp[1][2]-tp[0][2]], b=[tp[2][0]-tp[0][0],tp[2][1]-tp[0][1],tp[2][2]-tp[0][2]];
-      let n = nz([a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]]);
-      if(dot(n,[cen[0]-ctr[0],cen[1]-ctr[1],cen[2]-ctr[2]])<0) n=[-n[0],-n[1],-n[2]];
-      const V = nz([-cen[0],-cen[1],D-cen[2]]);
-      const front = dot(n,V) > 0;
-      const nn = front ? n : [-n[0],-n[1],-n[2]];
-      const l1=Math.max(0,dot(nn,L1)), l2=Math.max(0,dot(nn,L2));
-      const H1 = nz([L1[0]+V[0],L1[1]+V[1],L1[2]+V[2]]);
-      const spec = front ? Math.pow(Math.max(0,dot(nn,H1)),34) : 0;
-      const rim = Math.pow(1-Math.max(0,dot(nn,V)),2.6);
-      const t = clamp(.1 + .62*l1 + .34*l2 + .06*Math.sin(idx*1.7+time*1.3), 0, 1);
-      let col = t<.5 ? mix(cfg.d,cfg.c,t/.5) : mix(cfg.c,cfg.l,(t-.5)/.5);
-      col = mix(col, cfg.l, clamp(l2*.18,0,.3));
-      col = mix(col, [255,255,255], Math.min(.8, spec*1.05 + rim*.14));
-      if(!front) col = col.map(v=>v*.5);
-      const pts = tp.map(p=>{ const k=D/(D-p[2]); return [cx+p[0]*k*S, cy-p[1]*k*S]; });
-      const rec = {pts, col, front, depth:cen[2], spec, cen:pts.reduce((m,p)=>[m[0]+p[0]/pts.length,m[1]+p[1]/pts.length],[0,0]), main:o.main};
-      (front?fronts:backs).push(rec);
-    });
-    backs.sort((a,b)=>a.depth-b.depth); fronts.sort((a,b)=>a.depth-b.depth);
-    list.push({depth:ctr[2], backs, fronts});
-  }
-
-  function star(x,y,r,a){
-    ctx.save(); ctx.translate(x,y); ctx.globalAlpha=a; ctx.globalCompositeOperation='lighter';
-    const g=ctx.createRadialGradient(0,0,0,0,0,r*.9); g.addColorStop(0,'rgba(255,255,255,.55)'); g.addColorStop(1,'rgba(255,255,255,0)');
-    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(0,0,r*.9,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='#fff'; ctx.beginPath();
-    const q=r*.16;
-    ctx.moveTo(0,-r); ctx.lineTo(q,-q); ctx.lineTo(r,0); ctx.lineTo(q,q); ctx.lineTo(0,r); ctx.lineTo(-q,q); ctx.lineTo(-r,0); ctx.lineTo(-q,-q); ctx.closePath(); ctx.fill();
-    ctx.restore();
-  }
-
-  function render(time){
-    ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,W,H);
-    const S=(W/2)/1.78, cx=W/2, cy=H/2;
-    const tilt = .42 + (reduce?0:.07*Math.sin(time*.9)), roll = reduce?0:.05*Math.sin(time*.6);
-    const list=[];
-    drawObject({s:cfg.scale, spin:.5+time*.95, tx:0, ty:0, tz:0, main:true}, time, tilt, roll, S, cx, cy, list);
-    for(let k=0;k<cfg.orbit;k++){
-      const a = time*.85 + k*Math.PI*2/cfg.orbit + .6;
-      drawObject({s:.2, spin:time*2.2+k*1.7, tx:Math.cos(a)*1.32, ty:Math.sin(a)*.2, tz:Math.sin(a)*1.32, main:false}, time, tilt, roll, S, cx, cy, list);
-    }
-    list.sort((a,b)=>a.depth-b.depth);
-    ctx.lineJoin='round';
-    const glints=[];
-    list.forEach(obj=>{
-      const paint=(rec)=>{
-        ctx.beginPath(); rec.pts.forEach((p,i)=> i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
-        const c=rec.col.map(Math.round);
-        ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},${rec.front?.94:.6})`; ctx.fill();
-        ctx.lineWidth = (rec.front?.9:.7)*dpr; ctx.strokeStyle = rec.front?'rgba(255,255,255,.26)':'rgba(255,255,255,.1)'; ctx.stroke();
-        if(rec.front && rec.main && rec.spec>.5) glints.push(rec);
-      };
-      obj.backs.forEach(paint); obj.fronts.forEach(paint);
-    });
-    glints.sort((a,b)=>b.spec-a.spec).slice(0,2).forEach(g=> star(g.cen[0], g.cen[1], (5+g.spec*6)*dpr*cfg.scale, clamp((g.spec-.5)/.45,0,1)*.9));
-  }
-
-  function frame(ts){
-    requestAnimationFrame(frame);
-    const el = document.getElementById('rarityCanvas');
-    if(!el || !cfg || !el.offsetParent) return;           /* hidden or missing -> skip */
-    if(el !== cv){ cv = el; ctx = cv.getContext('2d'); W = 0; dirty = true; }
-    const cw = el.clientWidth, ch = el.clientHeight; if(!cw || !ch) return;
-    dpr = Math.min(window.devicePixelRatio||1, 2);
-    const w = Math.round(cw*dpr), h = Math.round(ch*dpr);
-    if(w!==W || h!==H || el.width!==w){ el.width = W = w; el.height = H = h; dirty = true; }
-    if(reduce && !dirty) return;
-    dirty = false;
-    render(reduce ? 1.1 : ts/1000);
-  }
-  requestAnimationFrame(frame);
-
-  /* gentle 3D tilt on touch / pointer */
-  function bindTilt(){
-    const card = document.getElementById('scoreHero'); if(!card || reduce) return;
-    let down=false;
-    const apply = e => {
-      const r = card.getBoundingClientRect();
-      const nx = ((e.clientX-r.left)/r.width-.5)*2, ny = ((e.clientY-r.top)/r.height-.5)*2;
-      card.style.transition = 'transform .08s linear';
-      card.style.transform = `perspective(850px) rotateX(${(-ny*13).toFixed(2)}deg) rotateY(${(nx*13).toFixed(2)}deg)`;
-    };
-    const rest = () => { down=false; card.style.transition='transform .55s cubic-bezier(.2,.9,.3,1)'; card.style.transform=''; };
-    card.addEventListener('pointerdown', e=>{ down=true; apply(e); });
-    card.addEventListener('pointermove', e=>{ if(e.pointerType==='touch' && !down) return; apply(e); });
-    ['pointerup','pointercancel','pointerleave'].forEach(ev=> card.addEventListener(ev, rest));
-  }
-  return {mount, levelFor, bindTilt, LV};
-})();
-Rarity.bindTilt();
 function firstName(fullName){
   const parts = (fullName||'').trim().split(/\s+/);
   return parts[parts.length-1] || fullName;
@@ -1881,6 +1768,194 @@ function positiveStreak(s){
   }
   return streak;
 }
+/* ===== RARITY LOGIC (software 3D gem, canvas 2D) ===== */
+const __PAL={mythic:['#ff2d55','#ffb3c0','#5a0013',1.14,2],legendary:['#ff9f1c','#ffe39a','#6a2c00',1.0,1],epic:['#a56bff','#e3d0ff','#2c1066',.9,0],rare:['#3fa9ff','#c4e8ff','#082f6e',.8,0],common:['#8c879d','#d9d6e6','#2f2c3b',.66,0]};
+const __SPARKS={mythic:16,legendary:11,epic:7,rare:4,common:0};
+function __tierOf(rank){return rank<=5?'mythic':rank<=10?'legendary':rank<=20?'epic':rank<=30?'rare':'common';}
+const __hx=h=>[1,3,5].map(i=>parseInt(h.substr(i,2),16));
+const __GEM=(function(){
+  const V=[],F=[];
+  for(let i=0;i<8;i++){const a=i*Math.PI/4;V.push([.56*Math.cos(a),.42,.56*Math.sin(a)]);}            // T 0-7
+  for(let j=0;j<16;j++){const a=j*Math.PI/8,r=j%2?.93:1;V.push([r*Math.cos(a),0,r*Math.sin(a)]);}      // G 8-23
+  V.push([0,-1.1,0]);                                                                                    // C 24
+  const T=i=>i%8,G=j=>8+(j%16);
+  F.push({v:[0,1,2,3,4,5,6,7].map(T),table:true});
+  for(let i=0;i<8;i++){
+    F.push({v:[T(i),T(i+1),G(2*i+1)]});F.push({v:[T(i),G(2*i),G(2*i+1)]});F.push({v:[T(i+1),G(2*i+1),G(2*i+2)]});
+  }
+  for(let j=0;j<16;j++)F.push({v:[G(j),G(j+1),24]});
+  const c=[0,-.2,0];
+  F.forEach(f=>{const p=f.v.map(k=>V[k]);let n=[0,0,0];
+    if(f.table){n=[0,1,0];}else{const u=p[1].map((x,k)=>x-p[0][k]),w=p[2].map((x,k)=>x-p[0][k]);n=[u[1]*w[2]-u[2]*w[1],u[2]*w[0]-u[0]*w[2],u[0]*w[1]-u[1]*w[0]];}
+    const cx=p.reduce((s,q)=>[s[0]+q[0],s[1]+q[1],s[2]+q[2]],[0,0,0]).map(x=>x/p.length);
+    if(n[0]*(cx[0]-c[0])+n[1]*(cx[1]-c[1])+n[2]*(cx[2]-c[2])<0)n=n.map(x=>-x);
+    const l=Math.hypot(...n)||1;f.n=n.map(x=>x/l);f.c=cx;});
+  const cv=document.createElement('canvas');cv.className='rc-canvas';
+  const W=230,H=176,dpr=Math.min(window.devicePixelRatio||1,2);
+  cv.width=W*dpr;cv.height=H*dpr;cv.style.width=W+'px';cv.style.height=H+'px';
+  const ctx=cv.getContext('2d');let pal=__PAL.common,col=[__hx(pal[0]),__hx(pal[1]),__hx(pal[2])];
+  const mix=(a,b,t)=>a.map((x,i)=>x+(b[i]-x)*t);
+  const rot=(p,cy,sy,cx,sx)=>{let x=p[0]*cy+p[2]*sy,z=-p[0]*sy+p[2]*cy,y=p[1];return [x,y*cx-z*sx,y*sx+z*cx];};
+  function collect(out,ox,oy,oz,sc,spin,tilt,full,glints){
+    const cy=Math.cos(spin),sy=Math.sin(spin),cx=Math.cos(tilt),sx=Math.sin(tilt);
+    const L=[-.4,.7,.6],ln=Math.hypot(...L),Lk=L.map(x=>x/ln);
+    const L2=[.75,-.25,.5],l2=Math.hypot(...L2),L2k=L2.map(x=>x/l2);
+    const Hh=[Lk[0],Lk[1],Lk[2]+1],hn=Math.hypot(...Hh),Hk=Hh.map(x=>x/hn);
+    const P=V.map(v=>{const r=rot([v[0],v[1]+.2,v[2]],cy,sy,cx,sx);return [r[0]*sc+ox,r[1]*sc+oy,r[2]*sc+oz];});
+    F.forEach(f=>{
+      const n=rot(f.n,cy,sy,cx,sx);const front=n[2]>0;
+      const pts=f.v.map(k=>P[k]);const z=pts.reduce((s,p)=>s+p[2],0)/pts.length;
+      let rgb,alpha=1,stroke;
+      if(front){
+        const d=Math.max(0,n[0]*Lk[0]+n[1]*Lk[1]+n[2]*Lk[2]),d2=Math.max(0,n[0]*L2k[0]+n[1]*L2k[1]+n[2]*L2k[2]);
+        const sp=Math.pow(Math.max(0,n[0]*Hk[0]+n[1]*Hk[1]+n[2]*Hk[2]),f.table?40:60);
+        const rim=1-n[2];
+        rgb=mix(col[2],col[0],Math.min(1,.28+d*.95));
+        rgb=mix(rgb,col[1],Math.min(1,Math.pow(d,2.2)*.75+d2*.28+rim*.12));
+        rgb=mix(rgb,[255,255,255],Math.min(.8,sp*.85));
+        stroke='rgba(255,255,255,'+(.28+sp*.4).toFixed(2)+')';
+        if(glints&&sp>.55){const q=f.v.map(k=>P[k]).reduce((s,p)=>[s[0]+p[0]/f.v.length,s[1]+p[1]/f.v.length,0],[0,0,0]);glints.push([q[0],q[1],Math.min(1,sp)]);}
+      }else{rgb=mix(col[2],col[0],.35);alpha=.6;stroke='rgba(255,255,255,.12)';}
+      out.push({z,pts,rgb,alpha,stroke});
+    });
+  }
+  function draw(t){
+    const s=t/1000,S=62*pal[3],D=5.2,out=[],gl=[];
+    ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
+    const spin=s*.95,tilt=.42+Math.sin(s*.8)*.08;
+    collect(out,0,0,0,1,spin,tilt,true,gl);
+    // flatten main gem into unit space; minis orbit
+    const minis=[];
+    for(let m=0;m<pal[4];m++){const a=s*(m?-.9:1.15)+m*Math.PI;minis.push([Math.cos(a)*1.32,Math.sin(a*1.0)*.18-.05+(m?-.35:.3),Math.sin(a)*1.1]);}
+    const polys=out.slice();
+    minis.forEach((q,m)=>collect(polys,q[0],q[1],q[2],.2,s*(m?-2.1:2.6),.5,false,null));
+    polys.sort((a,b)=>a.z-b.z);
+    polys.forEach(p=>{
+      ctx.beginPath();
+      p.pts.forEach((q,i)=>{const k=D/(D-q[2]);const x=W/2+q[0]*S*k,y=H/2+6-q[1]*S*k;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+      ctx.closePath();ctx.globalAlpha=p.alpha;ctx.fillStyle='rgb('+p.rgb.map(Math.round).join(',')+')';ctx.fill();
+      ctx.globalAlpha=1;ctx.lineWidth=.8;ctx.strokeStyle=p.stroke;ctx.stroke();
+    });
+    gl.slice(0,2).forEach(g=>{const k=D/(D-0),x=W/2+g[0]*S*k,y=H/2+6-g[1]*S*k,r=7+g[2]*9;
+      ctx.save();ctx.translate(x,y);ctx.globalAlpha=g[2];ctx.fillStyle='#fff';ctx.shadowColor='#fff';ctx.shadowBlur=10;
+      ctx.beginPath();ctx.moveTo(0,-r);ctx.quadraticCurveTo(1,-1,r,0);ctx.quadraticCurveTo(1,1,0,r);ctx.quadraticCurveTo(-1,1,-r,0);ctx.quadraticCurveTo(-1,-1,0,-r);ctx.fill();ctx.restore();});
+  }
+  function loop(t){requestAnimationFrame(loop);if(!cv.isConnected||!cv.offsetParent)return;draw(t);}
+  requestAnimationFrame(loop);
+  return {cv,set(tier){pal=__PAL[tier];col=[__hx(pal[0]),__hx(pal[1]),__hx(pal[2])];}};
+})();
+function applyRarity(hero,rank,name,count){
+  const tier=__tierOf(rank);
+  hero.dataset.tier=tier;
+  let sparks='';for(let i=0;i<__SPARKS[tier];i++){sparks+='<i class="rc-spark" style="left:'+(8+Math.random()*84)+'%;bottom:'+(8+Math.random()*50)+'%;--d:'+(2.4+Math.random()*2.4).toFixed(1)+'s;--dl:'+(Math.random()*3).toFixed(1)+'s;--dx:'+((Math.random()*40-20)|0)+'px"></i>';}
+  hero.innerHTML='<div class="rc-foil"></div><div class="rc-rays"></div>'+sparks
+   +'<div class="rc-top"><div class="rank-chip" id="student-rank-label"></div></div>'
+   +'<div class="rc-gemwrap"></div>'
+   +'<div class="lbl" id="student-name-label"></div>'
+   +'<div class="rc-plate"><div class="rc-plate-in"><div class="score-num-big" id="student-total-label">0</div></div></div>'
+   +'<div class="rc-hint">'+(tier==='common'?'برای گرفتن کارت رنگی، به ۳۰ نفر اول برس':'')+'</div>';
+  __GEM.set(tier);hero.querySelector('.rc-gemwrap').appendChild(__GEM.cv);
+  document.getElementById('student-name-label').textContent=name;
+  document.getElementById('student-rank-label').textContent=rank.toLocaleString('fa-IR')+'/'+count.toLocaleString('fa-IR');
+}
+(function(){const h=()=>document.getElementById('scoreHero');
+ const mv=e=>{const el=h();if(!el)return;const r=el.getBoundingClientRect();const x=((e.clientX-r.left)/r.width-.5),y=((e.clientY-r.top)/r.height-.5);el.style.setProperty('--ry',(x*14)+'deg');el.style.setProperty('--rx',(-y*12)+'deg');};
+ const lv=()=>{const el=h();if(el){el.style.setProperty('--ry','0deg');el.style.setProperty('--rx','0deg');}};
+ document.addEventListener('pointermove',e=>{if(e.target.closest&&e.target.closest('#scoreHero'))mv(e);});
+ document.addEventListener('pointerup',lv);document.addEventListener('pointerleave',lv,true);})();
+
+/* ---------- ROLES (مسئولیت‌ها) ---------- */
+let activeRoleId = null;
+let pendingRoleDel = null, pendingRoleDelTimer = null;
+function renderRoleMgr(){
+  const box = document.getElementById('roleChips'); if(!box) return;
+  if(activeRoleId && !state.roles.some(r=>r.id===activeRoleId)) activeRoleId = null;
+  const hint = document.getElementById('roleHint');
+  const act = state.roles.find(r=>r.id===activeRoleId);
+  hint.textContent = act ? `روی دانش‌آموز بزن تا «${act.name}» ثبت یا برداشته شود` : (state.roles.length ? 'یک مسئولیت را انتخاب کن' : '');
+  if(state.roles.length===0){ box.innerHTML = '<div class="empty-note" style="padding:6px;">هنوز مسئولیتی اضافه نشده</div>'; return; }
+  box.innerHTML = state.roles.map(r=>`<div class="role-chip${r.id===activeRoleId?' on':''}" data-rid="${r.id}"><span class="rn">${escapeHtml(r.name)}</span><button class="rx" data-rdel="${r.id}" title="حذف مسئولیت">${pendingRoleDel===r.id?'مطمئنی؟':'×'}</button></div>`).join('');
+  box.querySelectorAll('.rn').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const id = el.parentElement.dataset.rid;
+      activeRoleId = (activeRoleId===id) ? null : id;
+      renderManage();
+    });
+  });
+  box.querySelectorAll('.rx').forEach(el=>{
+    if(pendingRoleDel===el.dataset.rdel) el.classList.add('sure');
+    el.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const id = el.dataset.rdel;
+      if(pendingRoleDel===id){
+        clearTimeout(pendingRoleDelTimer); pendingRoleDel = null;
+        state.roles = state.roles.filter(r=>r.id!==id);
+        state.students.forEach(s=>{ s.roles = (s.roles||[]).filter(x=>x!==id); });
+        if(activeRoleId===id) activeRoleId = null;
+        renderManage(); persist();
+        return;
+      }
+      pendingRoleDel = id;
+      clearTimeout(pendingRoleDelTimer);
+      pendingRoleDelTimer = setTimeout(()=>{ pendingRoleDel = null; renderRoleMgr(); }, 3000);
+      renderRoleMgr();
+    });
+  });
+}
+function addRole(){
+  const input = document.getElementById('new-role-name');
+  const name = input.value.trim();
+  if(!name) return;
+  if(!state.roles.some(r=>r.name===name)) state.roles.push({id:'r'+Date.now()+Math.floor(Math.random()*99), name});
+  input.value='';
+  renderRoleMgr(); persist();
+}
+function toggleRole(studentId, roleId){
+  const s = state.students.find(x=>x.id===studentId); if(!s) return;
+  if(!Array.isArray(s.roles)) s.roles = [];
+  const i = s.roles.indexOf(roleId);
+  if(i>=0) s.roles.splice(i,1); else s.roles.push(roleId);
+  renderManage(); persist();
+}
+/* days until the 1st of the next Jalali month (30..1) */
+function jalaliDay(d){
+  try{
+    const p = new Intl.DateTimeFormat('en-US-u-ca-persian-nu-latn',{day:'numeric'}).formatToParts(d).find(x=>x.type==='day');
+    const n = parseInt(p && p.value, 10);
+    return isNaN(n) ? null : n;
+  }catch(e){ return null; }
+}
+function monthCountdown(){
+  const now = new Date();
+  const d0 = jalaliDay(now);
+  if(d0===null) return null;
+  const x = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12);
+  let left = 0;
+  do{ x.setDate(x.getDate()+1); left++; }while(jalaliDay(x)!==1 && left<32);
+  return {left, len:(d0-1)+left};
+}
+function renderRoleRow(s){
+  const card = document.getElementById('roleCard');
+  const names = (s.roles||[]).map(id=>state.roles.find(r=>r.id===id)).filter(Boolean).map(r=>r.name);
+  card.innerHTML = '<div class="rl-title">مسئولیت من</div>' + (names.length
+    ? '<div class="rl-list">'+names.map(n=>`<span class="rl-chip">${escapeHtml(n)}</span>`).join('')+'</div>'
+    : '<div class="rl-empty">فعلاً مسئولیتی نداری</div>');
+  const cd = document.getElementById('cdCard');
+  const m = monthCountdown();
+  if(!m){ cd.style.display='none'; card.parentElement.style.gridTemplateColumns='1fr'; return; }
+  cd.style.display=''; card.parentElement.style.gridTemplateColumns='';
+  const C = 2*Math.PI*42;
+  cd.title = 'روز مانده تا امتیاز ماهانه';
+  cd.innerHTML = `<svg viewBox="0 0 100 100" aria-hidden="true"><defs><linearGradient id="cdGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9c8ff"/><stop offset=".55" stop-color="#9a72ff"/><stop offset="1" stop-color="#6c43e8"/></linearGradient></defs>
+    <circle class="cd-track" cx="50" cy="50" r="42"/>
+    <circle class="cd-prog" id="cdProg" cx="50" cy="50" r="42" stroke-dasharray="${C}" stroke-dashoffset="${C}"/>
+    <circle class="cd-spark" cx="50" cy="50" r="42" stroke-dasharray="5 ${C-5}"/></svg>
+    <div class="cd-num" id="cdNum">0</div><div class="cd-lbl">روز</div>`;
+  const frac = Math.max(0.04, Math.min(1, m.left/m.len));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ const p=document.getElementById('cdProg'); if(p) p.style.strokeDashoffset = C*(1-frac); }));
+  countUp(document.getElementById('cdNum'), m.left, 900);
+}
+
 function renderStudentDashboard(){
   const s = state.students.find(x=>x.id===currentStudentId);
   if(!s) return;
@@ -1888,18 +1963,17 @@ function renderStudentDashboard(){
   const rank = ranked.findIndex(x=>x.id===s.id)+1;
   const t = total(s);
 
-  const ov = window.__rarityOverride;                       /* preview-only hook, undefined in production */
-  const showRank = ov ? ov.rank : rank, showCount = ov ? ov.count : ranked.length;
-  document.getElementById('student-name-label').textContent = s.name;
-  const numEl = document.getElementById('student-total-label');
-  countUp(numEl, t, 1100);
-  document.getElementById('student-rank-label').textContent = `${showRank.toLocaleString('fa-IR')}/${showCount.toLocaleString('fa-IR')}`;
-  Rarity.mount(showRank);
+  applyRarity(document.getElementById('scoreHero'), rank, s.name, ranked.length);
+  countUp(document.getElementById('student-total-label'), t, 1100);
+
+  const hero = document.getElementById('scoreHero');
+  setTimeout(()=> burstConfetti(hero), 250);
 
   const streakEl = document.getElementById('streakCard');
   const msg = buildStudentMessage(s);
   streakEl.innerHTML = `<span class="em">${msg.emoji}</span><div><b>${escapeHtml(msg.title)}</b><span>${escapeHtml(msg.sub)}</span></div>`;
   streakEl.style.display='flex';
+  renderRoleRow(s);
 
   const sorted=[...s.history].sort((a,b)=>a.date.localeCompare(b.date));
   let sum=0; const cum = sorted.map(h=>{sum+=h.delta; return sum;});
@@ -2137,6 +2211,8 @@ document.getElementById('btn-report-back').addEventListener('click', renderRepor
 document.getElementById('btn-talent-back').addEventListener('click', renderTalentList);
 document.getElementById('talent-search').addEventListener('input', renderTalentList);
 document.getElementById('btn-add-student').addEventListener('click', addStudent);
+document.getElementById('btn-add-role').addEventListener('click', addRole);
+document.getElementById('new-role-name').addEventListener('keydown', e=>{ if(e.key==='Enter') addRole(); });
 
 /* ============================================================
    BOOT: load from Firestore, then listen for realtime changes
