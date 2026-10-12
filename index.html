@@ -1552,12 +1552,12 @@ function renderManage(){
   }
   if(state.students.length===0){ listEl.innerHTML = bar + '<div class="empty-note">هنوز دانش‌آموزی اضافه نشده</div>'; }
   else{
-    listEl.innerHTML = bar + sortedByName().map(s=>{
+    listEl.innerHTML = bar + sortedByName().map((s,idx)=>{
       const checked = selectedIds.has(s.id) ? 'checked' : '';
       const rt = (activeRoleId && !selectMode) ? ' role-target' + ((s.roles||[]).includes(activeRoleId) ? ' role-on' : '') : '';
       return `<div class="student-row${rt}" data-sid="${s.id}">
         ${selectMode?`<input type="checkbox" class="row-check" data-id="${s.id}" ${checked}>`:''}
-        <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${initials(s.name)}</div>
+        <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${faNum(idx+1)}</div>
         <div class="info"><div class="nm"><strong>${escapeHtml(s.name)}</strong>${(s.roles||[]).map(id=>{const r=state.roles.find(x=>x.id===id);return r?`<span class="rtag">${escapeHtml(r.name)}</span>`:'';}).join('')}</div><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
         <button class="del-btn" data-del="${s.id}">${pendingDeleteId===s.id?'مطمئنی؟':'حذف'}</button>
       </div>`;
