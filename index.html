@@ -1355,24 +1355,29 @@ function buildAcademicChart(arr){
 const openSubj = new Set(); let openSubjFor = null;
 const __reduceMotion = ()=>{ try{ return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } };
 function slideOpen(el){
+  const wasBusy = !!el._busy;                       // mid-animation (e.g. fast re-click): continue from the current height
   clearTimeout(el._t);
   el.classList.add('open');
   if(__reduceMotion()) return;
+  const startH = wasBusy ? el.offsetHeight : 0;     // a closed panel always starts from 0, never from its full height
+  const startO = wasBusy ? getComputedStyle(el).opacity : '0';
   const h = el.scrollHeight;
-  el.style.transition = 'none'; el.style.overflow = 'hidden'; el.style.height = (el.offsetHeight||0)+'px'; el.style.opacity = el.offsetHeight ? '' : '0';
+  el._busy = true;
+  el.style.transition = 'none'; el.style.overflow = 'hidden'; el.style.height = startH+'px'; el.style.opacity = startO;
   void el.offsetHeight;
   el.style.transition = 'height .85s cubic-bezier(.34,1.4,.64,1), opacity .55s ease';
   el.style.height = h+'px'; el.style.opacity = '1';
-  el._t = setTimeout(()=>{ el.style.height=''; el.style.transition=''; el.style.opacity=''; el.style.overflow=''; }, 900);
+  el._t = setTimeout(()=>{ el._busy = false; el.style.height=''; el.style.transition=''; el.style.opacity=''; el.style.overflow=''; }, 900);
 }
 function slideClose(el){
   clearTimeout(el._t);
   if(__reduceMotion()){ el.classList.remove('open'); return; }
+  el._busy = true;
   el.style.overflow = 'hidden'; el.style.transition = 'none'; el.style.height = el.offsetHeight+'px';
   void el.offsetHeight;
   el.style.transition = 'height .6s cubic-bezier(.4,0,.2,1), opacity .4s ease';
   el.style.height = '0px'; el.style.opacity = '0';
-  el._t = setTimeout(()=>{ el.classList.remove('open'); el.style.height=''; el.style.transition=''; el.style.opacity=''; el.style.overflow=''; }, 620);
+  el._t = setTimeout(()=>{ el._busy = false; el.classList.remove('open'); el.style.height=''; el.style.transition=''; el.style.opacity=''; el.style.overflow=''; }, 620);
 }
 function wireAccordion(box){
   box.querySelectorAll('[data-toggle]').forEach(h=>{
