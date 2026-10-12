@@ -427,6 +427,7 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
 .student-row .nm strong{display:block; flex:0 1 auto; min-width:0;}
 .rtag{font-size:9px; font-weight:800; padding:2px 7px; border-radius:999px; color:#e4d8ff; background:rgba(154,114,255,.22); border:1px solid rgba(154,114,255,.45); white-space:nowrap;}
 .student-row.role-target{cursor:pointer;}
+#manageList.role-mode .del-btn{display:none;}
 .student-row.role-target.role-on{background:rgba(154,114,255,.16); border-color:rgba(154,114,255,.55);}
 .role-row{display:flex; flex-direction:row; gap:10px; align-items:stretch; margin-bottom:12px; height:86px;}
 .role-row .card{margin:0;}
@@ -442,6 +443,31 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
 .cd-spark{fill:none; stroke:#fff; stroke-width:7; stroke-linecap:round; opacity:.75;}
 .cd-num{position:relative; z-index:1; font-size:24px; font-weight:900; line-height:1; direction:ltr; color:#e4d8ff;}
 .cd-lbl{position:relative; z-index:1; font-size:9px; color:var(--muted); margin-top:3px; font-weight:700;}
+
+/* ===== ABSENCE DATE PICKER ===== */
+.abs-date-card{padding:12px 14px;}
+.abs-datebar{display:flex; align-items:center; gap:10px;}
+.abs-date-info{flex:1; min-width:0;}
+.abs-date-info b{display:block; font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.abs-date-info small{display:block; font-size:10px; color:var(--muted); margin-top:2px;}
+.abs-date-info small a{color:#cdb8ff; text-decoration:none; font-weight:800;}
+.abs-cal-btn{flex:none; width:38px; height:38px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.06); color:#e4d8ff; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0;}
+.abs-cal-btn.open{background:linear-gradient(135deg,#9a72ff,#6540d5); color:#fff; border-color:rgba(255,255,255,.35);}
+.abs-cal{margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,.08);}
+.cal-nav{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
+.cal-nav b{font-size:13px;}
+.cal-arrow{width:32px; height:32px; border-radius:10px; border:1px solid var(--line); background:rgba(255,255,255,.05); color:#e4d8ff; display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer;}
+.cal-arrow:disabled{opacity:.3; cursor:default;}
+.cal-grid{display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px;}
+.cal-wd{margin-bottom:5px;}
+.cal-wd span{text-align:center; font-size:10px; font-weight:800; color:var(--muted);}
+.cal-blank{height:40px;}
+.cal-cell{position:relative; height:40px; padding:0; border-radius:12px; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.06); color:var(--text); font-family:inherit; font-size:12.5px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center;}
+.cal-cell.today{border-color:rgba(154,114,255,.9); box-shadow:inset 0 0 0 1px rgba(154,114,255,.5);}
+.cal-cell.sel{background:linear-gradient(135deg,#9a72ff,#6540d5); border-color:rgba(255,255,255,.4); color:#fff; box-shadow:0 8px 18px -8px rgba(154,114,255,.9);}
+.cal-cell.future{background:#04040a; border-color:rgba(255,255,255,.04); color:rgba(255,255,255,.22); cursor:not-allowed;}
+.cal-dot{position:absolute; bottom:5px; left:50%; width:5px; height:5px; margin-left:-2.5px; border-radius:50%; background:var(--danger);}
+.cal-cell.sel .cal-dot{background:#fff;}
 </style>
 </head>
 <body>
@@ -593,10 +619,7 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
     <!-- ABSENCE -->
     <section class="tabsection" id="tt-absence">
       <div class="topbar"><div class="search"><input type="text" id="absence-search" placeholder="جستجوی دانش‌آموز..."></div></div>
-      <div class="card" style="padding:12px 14px; display:flex; justify-content:space-between; align-items:center;">
-        <span style="font-size:12px; color:var(--muted); font-weight:700;">غیبت‌های امروز</span>
-        <span class="badge" style="color:var(--danger); background:rgba(255,125,156,.12);" id="todayAbsCount">۰ نفر</span>
-      </div>
+      <div class="card abs-date-card" id="absDateCard"></div>
       <div class="card" id="absenceList" style="padding:10px;"></div>
     </section>
 
@@ -667,9 +690,9 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
     <section class="tabsection active" id="st-dashboard">
       <div class="card score-hero" id="scoreHero"></div>
       <div class="card streak-card" id="streakCard"></div>
-      <div class="role-row">
-        <div class="card role-card" id="roleCard"></div>
-        <div class="card cd-card" id="cdCard"></div>
+      <div class="role-row" style="display:flex; flex-direction:row; height:86px; gap:10px;">
+        <div class="card role-card" id="roleCard" style="flex:1 1 0%; min-width:0; height:86px; margin:0;"></div>
+        <div class="card cd-card" id="cdCard" style="flex:0 0 86px; width:86px; height:86px; margin:0; padding:0;"></div>
       </div>
       <div class="card">
         <div class="section-head"><h3>روند امتیاز</h3></div>
@@ -868,7 +891,10 @@ function showTeacherTab(tab){
 function renderTeacherTab(tab, keepSubState){
   if(tab==='dashboard') renderTeacherDashboard();
   else if(tab==='scoring') renderScoring();
-  else if(tab==='absence') renderAbsenceTab();
+  else if(tab==='absence'){
+    if(!keepSubState){ absSelectedISO = null; absMonthOffset = 0; absCalOpen = false; }
+    renderAbsenceTab();
+  }
   else if(tab==='report'){
     if(keepSubState && !reportListMode && reportStudentId){
       const s = state.students.find(x=>x.id===reportStudentId);
@@ -1096,15 +1122,98 @@ function bulkScore(delta){
 }
 
 /* ---------- ABSENCE ---------- */
-function todayAbsenceState(s){
-  const e = s.absences.find(a=>a.date===todayISO());
+/* selected day in the absence panel (null = always "today", also after refresh) */
+let absSelectedISO = null, absMonthOffset = 0, absCalOpen = false;
+const ABS_MAX_BACK = 12;
+function absDate(){ const t = todayISO(); return (absSelectedISO && absSelectedISO<=t) ? absSelectedISO : t; }
+function absenceStateOn(s, iso){
+  const e = s.absences.find(a=>a.date===iso);
   if(!e) return null;
   return e.excused ? 'excused' : 'absent';
+}
+function todayAbsenceState(s){ return absenceStateOn(s, absDate()); }
+function jalaliParts(d){
+  try{
+    const parts = new Intl.DateTimeFormat('en-US-u-ca-persian-nu-latn',{year:'numeric',month:'numeric',day:'numeric'}).formatToParts(d);
+    const g = t=>{ const p = parts.find(x=>x.type===t); return p ? parseInt(p.value,10) : NaN; };
+    return {y:g('year'), m:g('month'), d:g('day')};
+  }catch(e){ return {y:NaN,m:NaN,d:NaN}; }
+}
+/* all days (Date at noon) of the Jalali month `offset` months before the current one */
+function absMonthDays(offset){
+  const n = new Date();
+  const base = new Date(n.getFullYear(), n.getMonth(), n.getDate(), 12);
+  const jp = jalaliParts(base);
+  if(isNaN(jp.d)) return null;
+  base.setDate(base.getDate() - (jp.d-1));
+  for(let i=0;i<-offset;i++){
+    base.setDate(base.getDate()-1);
+    const j = jalaliParts(base);
+    base.setDate(base.getDate() - (j.d-1));
+  }
+  const days = []; const x = new Date(base);
+  do{ days.push(new Date(x)); x.setDate(x.getDate()+1); }while(jalaliParts(x).d!==1 && days.length<32);
+  return days;
+}
+const ABS_WD = ['ش','ی','د','س','چ','پ','ج'];
+function renderAbsDateCard(){
+  const el = document.getElementById('absDateCard'); if(!el) return;
+  const sel = absDate(), today = todayISO(), isToday = sel===today;
+  const cnt = state.students.filter(s=> !!absenceStateOn(s, sel)).length;
+  const full = parseISOLocal(sel).toLocaleDateString('fa-IR',{weekday:'long', day:'numeric', month:'long'});
+  let html = `<div class="abs-datebar">
+    <div class="abs-date-info"><b>${isToday ? 'غیبت‌های امروز' : 'غیبت‌های ' + escapeHtml(full)}</b>
+      <small>${isToday ? escapeHtml(full) : '<a href="#" id="absBackToday">بازگشت به امروز</a>'}</small></div>
+    <span class="badge" style="color:var(--danger); background:rgba(255,125,156,.12);">${faNum(cnt)} نفر</span>
+    <button type="button" class="abs-cal-btn${absCalOpen?' open':''}" id="absCalToggle" aria-label="تقویم">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg>
+    </button></div>`;
+  if(absCalOpen){
+    const days = absMonthDays(absMonthOffset);
+    if(days){
+      const title = days[0].toLocaleDateString('fa-IR',{month:'long', year:'numeric'});
+      const lead = (days[0].getDay()+1)%7;
+      let cells = '';
+      for(let i=0;i<lead;i++) cells += '<span class="cal-blank"></span>';
+      days.forEach(d=>{
+        const iso = isoFromDate(d), fut = iso>today;
+        const c = state.students.filter(s=> s.absences.some(a=>a.date===iso)).length;
+        const cls = 'cal-cell' + (fut?' future':'') + (iso===sel?' sel':'') + (iso===today?' today':'');
+        cells += `<button type="button" class="${cls}" data-iso="${iso}" ${fut?'disabled':''}><span>${faNum(jalaliParts(d).d)}</span>${(!fut && c>0)?'<i class="cal-dot"></i>':''}</button>`;
+      });
+      html += `<div class="abs-cal">
+        <div class="cal-nav">
+          <button type="button" class="cal-arrow" id="absPrevMonth" ${absMonthOffset<=-ABS_MAX_BACK?'disabled':''} aria-label="ماه قبل"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+          <b>${escapeHtml(title)}</b>
+          <button type="button" class="cal-arrow" id="absNextMonth" ${absMonthOffset>=0?'disabled':''} aria-label="ماه بعد"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+        </div>
+        <div class="cal-grid cal-wd">${ABS_WD.map(w=>`<span>${w}</span>`).join('')}</div>
+        <div class="cal-grid">${cells}</div>
+      </div>`;
+    }
+  }
+  el.innerHTML = html;
+  const tg = document.getElementById('absCalToggle');
+  tg.addEventListener('click', ()=>{ absCalOpen = !absCalOpen; renderAbsDateCard(); });
+  const bt = document.getElementById('absBackToday');
+  if(bt) bt.addEventListener('click', (e)=>{ e.preventDefault(); absSelectedISO = null; absMonthOffset = 0; absCalOpen = false; renderAbsenceTab(); });
+  const pv = document.getElementById('absPrevMonth'), nx = document.getElementById('absNextMonth');
+  if(pv) pv.addEventListener('click', ()=>{ if(absMonthOffset>-ABS_MAX_BACK){ absMonthOffset--; renderAbsDateCard(); } });
+  if(nx) nx.addEventListener('click', ()=>{ if(absMonthOffset<0){ absMonthOffset++; renderAbsDateCard(); } });
+  el.querySelectorAll('.cal-cell:not(.future)').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      const iso = b.dataset.iso;
+      if(iso>todayISO()) return;
+      absSelectedISO = (iso===todayISO()) ? null : iso;
+      absCalOpen = false;
+      renderAbsenceTab();
+    });
+  });
 }
 function setAbsence(id, kind){
   const s = state.students.find(x=>x.id===id);
   if(!s) return;
-  const t = todayISO();
+  const t = absDate();
   const idx = s.absences.findIndex(a=>a.date===t);
   const current = idx>=0 ? (s.absences[idx].excused ? 'excused' : 'absent') : null;
   if(current===kind){ s.absences.splice(idx,1); }
@@ -1116,7 +1225,7 @@ function setAbsence(id, kind){
 function setAbsenceForce(id, kind){
   const s = state.students.find(x=>x.id===id);
   if(!s) return;
-  const t = todayISO();
+  const t = absDate();
   const idx = s.absences.findIndex(a=>a.date===t);
   if(idx>=0) s.absences[idx].excused = (kind==='excused');
   else s.absences.push({date:t, excused:(kind==='excused')});
@@ -1130,7 +1239,7 @@ function applyBulkAbsence(kind){
 function renderAbsenceTab(){
   const q = (document.getElementById('absence-search').value||'').trim();
   const list = sortedByName().filter(s=>!q || s.name.includes(q));
-  document.getElementById('todayAbsCount').textContent = faNum(state.students.filter(s=> !!todayAbsenceState(s)).length) + ' نفر';
+  renderAbsDateCard();
   const listEl = document.getElementById('absenceList');
   let bar = '';
   if(selectMode){
@@ -1373,6 +1482,7 @@ function applyBulkDelete(){
 }
 function renderManage(){
   renderRoleMgr();
+  document.getElementById('manageList').classList.toggle('role-mode', !!activeRoleId && !selectMode);
   const listEl = document.getElementById('manageList');
   let bar = '';
   if(selectMode){
@@ -1390,7 +1500,7 @@ function renderManage(){
         ${selectMode?`<input type="checkbox" class="row-check" data-id="${s.id}" ${checked}>`:''}
         <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${initials(s.name)}</div>
         <div class="info"><div class="nm"><strong>${escapeHtml(s.name)}</strong>${(s.roles||[]).map(id=>{const r=state.roles.find(x=>x.id===id);return r?`<span class="rtag">${escapeHtml(r.name)}</span>`:'';}).join('')}</div><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
-        <button class="del-btn" data-del="${s.id}">حذف</button>
+        <button class="del-btn" data-del="${s.id}">${pendingDeleteId===s.id?'مطمئنی؟':'حذف'}</button>
       </div>`;
     }).join('');
   }
@@ -1878,6 +1988,7 @@ function renderRoleMgr(){
     el.addEventListener('click', ()=>{
       const id = el.parentElement.dataset.rid;
       activeRoleId = (activeRoleId===id) ? null : id;
+      clearTimeout(pendingDeleteTimeout); pendingDeleteId = null;
       renderManage();
     });
   });
@@ -1910,6 +2021,7 @@ function addRole(){
   renderRoleMgr(); persist();
 }
 function toggleRole(studentId, roleId){
+  clearTimeout(pendingDeleteTimeout); pendingDeleteId = null;
   const s = state.students.find(x=>x.id===studentId); if(!s) return;
   if(!Array.isArray(s.roles)) s.roles = [];
   s.roles = (s.roles[0]===roleId) ? [] : [roleId];   // one responsibility per student
@@ -1941,8 +2053,8 @@ function renderRoleRow(s){
     : '<div class="rl-empty">فعلاً مسئولیتی نداری</div>');
   const cd = document.getElementById('cdCard');
   const m = monthCountdown();
-  if(!m){ cd.style.display='none'; card.parentElement.style.gridTemplateColumns='1fr'; return; }
-  cd.style.display=''; card.parentElement.style.gridTemplateColumns='';
+  if(!m){ cd.style.display='none'; return; }
+  cd.style.display='';
   const C = 2*Math.PI*42;
   cd.title = 'روز مانده تا امتیاز ماهانه';
   cd.innerHTML = `<svg viewBox="0 0 100 100" width="76" height="76" aria-hidden="true"><defs><linearGradient id="cdGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d9c8ff"/><stop offset=".55" stop-color="#9a72ff"/><stop offset="1" stop-color="#6c43e8"/></linearGradient></defs>
