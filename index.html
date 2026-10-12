@@ -212,11 +212,11 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .del-btn{width:auto; height:auto; white-space:nowrap; padding:8px 14px; border-radius:11px; border:1px solid rgba(255,125,156,.35); background:rgba(255,125,156,.1); color:var(--danger); font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit;}
 
 .subj-list{display:grid; gap:8px;}
-.subj-row{padding:2px;}
+.subj-row{padding:2px; border-radius:18px; border:1px solid transparent; transition:background .35s ease, border-color .35s ease, box-shadow .4s ease;}
 .subj-head{display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:13px; background:rgba(255,255,255,.035); cursor:pointer;}
 .dot{width:8px; height:8px; border-radius:50%; flex:none; box-shadow:0 0 12px currentColor;}
 .subj-head b{font-size:11.5px; flex:1; font-weight:700;}
-.subj-detail{display:none; padding:12px 6px 4px;}
+.subj-detail{display:none; padding:0 6px 6px;}
 .subj-detail.open{display:block;}
 .lvl-choices{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
 .lvl-btn{padding:7px 12px; border-radius:10px; font-size:10.5px; font-weight:700; color:#0b0710; border:none; cursor:pointer; font-family:inherit;}
@@ -468,6 +468,22 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
 .cal-cell.future{background:#04040a; border-color:rgba(255,255,255,.04); color:rgba(255,255,255,.22); cursor:not-allowed;}
 .cal-dot{position:absolute; bottom:5px; left:50%; width:5px; height:5px; margin-left:-2.5px; border-radius:50%; background:var(--danger);}
 .cal-cell.sel .cal-dot{background:#fff;}
+
+/* ===== opened subject: lifted card + recessed well so grades never blend with other subjects ===== */
+.subj-head .chev{flex:none; color:var(--muted); transition:transform .4s cubic-bezier(.2,.8,.2,1), color .3s;}
+.subj-row.is-open{background:linear-gradient(180deg,rgba(154,114,255,.14),rgba(255,255,255,.025)); border-color:rgba(154,114,255,.42); box-shadow:0 24px 40px -16px rgba(0,0,0,.9), 0 10px 22px -10px rgba(124,88,230,.5), inset 0 1px 0 rgba(255,255,255,.12);}
+.subj-row.is-open .subj-head{background:rgba(154,114,255,.16);}
+.subj-row.is-open .chev{transform:rotate(180deg); color:#e4d8ff;}
+.subj-inner{margin-top:10px; padding:12px; border-radius:14px; background:rgba(0,0,0,.3); box-shadow:inset 0 3px 12px rgba(0,0,0,.6), inset 0 0 0 1px rgba(255,255,255,.05);}
+.subj-title{display:flex; align-items:center; gap:8px; font-size:11px; color:var(--muted); font-weight:700; margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,.08);}
+.subj-title b{color:#fff; font-size:12.5px;}
+.subj-title .dot{width:9px; height:9px;}
+/* sliding sub-views and calendar */
+@keyframes subSlide{from{opacity:0; transform:translateY(22px);}to{opacity:1; transform:none;}}
+.sub.active{animation:subSlide .45s cubic-bezier(.2,.8,.2,1);}
+@keyframes calOpen{from{max-height:0; opacity:0; padding-top:0; margin-top:0;}to{max-height:520px; opacity:1;}}
+.abs-cal.anim{overflow:hidden; animation:calOpen .5s cubic-bezier(.2,.8,.2,1);}
+@media (prefers-reduced-motion:reduce){.sub.active,.abs-cal.anim{animation:none;}}
 </style>
 </head>
 <body>
@@ -563,22 +579,22 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
         </div>
       </div>
       <div class="card lottery-card">
-        <div class="lottery-title">🎲 قرعه‌کشی دانش‌آموز</div>
+        <div class="lottery-title">قرعه‌کشی دانش‌آموز</div>
         <div class="lottery-count">
           <label>تعداد نفرات:</label>
           <input type="number" id="lotteryN" value="1" min="1">
         </div>
         <div class="lottery-stage" id="lotteryStage"><span style="font-size:11.5px; color:var(--muted);">برای شروع دکمه‌ی زیر رو بزن</span></div>
-        <button class="lottery-btn" id="lotteryBtn">🎲 شروع قرعه‌کشی</button>
+        <button class="lottery-btn" id="lotteryBtn">شروع قرعه‌کشی</button>
       </div>
       <div class="card lottery-card">
-        <div class="lottery-title">⚽ قرعه‌کشی تیم فوتبال</div>
+        <div class="lottery-title">قرعه‌کشی تیم فوتبال</div>
         <div class="lottery-count">
           <label>تعداد تیم‌ها:</label>
           <input type="number" id="teamCount" value="4" min="2">
         </div>
         <div style="font-size:11px; color:var(--muted); margin-bottom:12px;">دانش‌آموزها رو شانسی بین تیم‌ها پخش می‌کنه و یه PDF می‌سازه</div>
-        <button class="lottery-btn" id="teamLotteryBtn">⚽ ساخت تیم‌ها (PDF)</button>
+        <button class="lottery-btn" id="teamLotteryBtn">ساخت تیم‌ها (PDF)</button>
       </div>
       <div class="stats-scroll">
         <div class="card stat"><small>امتحان‌های این ماه</small><b id="stat-exams">۰</b><div class="trend" id="stat-exams-sub"></div></div>
@@ -1026,7 +1042,7 @@ function initLottery(){
           const idx = Math.floor(Math.random()*pool.length);
           winners.push(pool.splice(idx,1)[0]);
         }
-        stage.innerHTML = winners.map(w=>`<span class="winner-chip">🎉 ${escapeHtml(w.name)}</span>`).join('');
+        stage.innerHTML = winners.map(w=>`<span class="winner-chip">${escapeHtml(w.name)}</span>`).join('');
         btn.disabled = false;
       }
     }, 70);
@@ -1123,7 +1139,7 @@ function bulkScore(delta){
 
 /* ---------- ABSENCE ---------- */
 /* selected day in the absence panel (null = always "today", also after refresh) */
-let absSelectedISO = null, absMonthOffset = 0, absCalOpen = false;
+let absSelectedISO = null, absMonthOffset = 0, absCalOpen = false, absCalAnim = false;
 const ABS_MAX_BACK = 12;
 function absDate(){ const t = todayISO(); return (absSelectedISO && absSelectedISO<=t) ? absSelectedISO : t; }
 function absenceStateOn(s, iso){
@@ -1181,7 +1197,7 @@ function renderAbsDateCard(){
         const cls = 'cal-cell' + (fut?' future':'') + (iso===sel?' sel':'') + (iso===today?' today':'');
         cells += `<button type="button" class="${cls}" data-iso="${iso}" ${fut?'disabled':''}><span>${faNum(jalaliParts(d).d)}</span>${(!fut && c>0)?'<i class="cal-dot"></i>':''}</button>`;
       });
-      html += `<div class="abs-cal">
+      html += `<div class="abs-cal${absCalAnim?' anim':''}">
         <div class="cal-nav">
           <button type="button" class="cal-arrow" id="absPrevMonth" ${absMonthOffset<=-ABS_MAX_BACK?'disabled':''} aria-label="ماه قبل"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
           <b>${escapeHtml(title)}</b>
@@ -1193,8 +1209,9 @@ function renderAbsDateCard(){
     }
   }
   el.innerHTML = html;
+  absCalAnim = false;
   const tg = document.getElementById('absCalToggle');
-  tg.addEventListener('click', ()=>{ absCalOpen = !absCalOpen; renderAbsDateCard(); });
+  tg.addEventListener('click', ()=>{ absCalOpen = !absCalOpen; absCalAnim = absCalOpen; renderAbsDateCard(); });
   const bt = document.getElementById('absBackToday');
   if(bt) bt.addEventListener('click', (e)=>{ e.preventDefault(); absSelectedISO = null; absMonthOffset = 0; absCalOpen = false; renderAbsenceTab(); });
   const pv = document.getElementById('absPrevMonth'), nx = document.getElementById('absNextMonth');
@@ -1333,7 +1350,44 @@ function buildAcademicChart(arr){
   const dots = coords.map((c,i)=> raw[i]===null ? `<circle cx="${c.x}" cy="${c.y}" r="4" fill="#8c879d"/>` : '').join('');
   return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:70px;"><polyline points="${pointsAttr}" fill="none" stroke="#a482ff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${dots}</svg>`;
 }
+
+/* ---------- sliding panels ---------- */
+const openSubj = new Set(); let openSubjFor = null;
+const __reduceMotion = ()=>{ try{ return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } };
+function slideOpen(el){
+  clearTimeout(el._t);
+  el.classList.add('open');
+  if(__reduceMotion()) return;
+  const h = el.scrollHeight;
+  el.style.transition = 'none'; el.style.overflow = 'hidden'; el.style.height = (el.offsetHeight||0)+'px'; el.style.opacity = el.offsetHeight ? '' : '0';
+  void el.offsetHeight;
+  el.style.transition = 'height .45s cubic-bezier(.2,.8,.2,1), opacity .35s ease';
+  el.style.height = h+'px'; el.style.opacity = '1';
+  el._t = setTimeout(()=>{ el.style.height=''; el.style.transition=''; el.style.opacity=''; el.style.overflow=''; }, 480);
+}
+function slideClose(el){
+  clearTimeout(el._t);
+  if(__reduceMotion()){ el.classList.remove('open'); return; }
+  el.style.overflow = 'hidden'; el.style.transition = 'none'; el.style.height = el.offsetHeight+'px';
+  void el.offsetHeight;
+  el.style.transition = 'height .36s cubic-bezier(.4,0,.2,1), opacity .26s ease';
+  el.style.height = '0px'; el.style.opacity = '0';
+  el._t = setTimeout(()=>{ el.classList.remove('open'); el.style.height=''; el.style.transition=''; el.style.opacity=''; el.style.overflow=''; }, 380);
+}
+function wireAccordion(box){
+  box.querySelectorAll('[data-toggle]').forEach(h=>{
+    const id = h.dataset.toggle, panel = document.getElementById(id), row = h.closest('.subj-row');
+    if(!panel || !row) return;
+    if(openSubj.has(id)){ panel.classList.add('open'); row.classList.add('is-open'); }   // restored after a re-render, no animation
+    h.addEventListener('click', ()=>{
+      if(row.classList.contains('is-open')){ row.classList.remove('is-open'); openSubj.delete(id); slideClose(panel); }
+      else { row.classList.add('is-open'); openSubj.add(id); slideOpen(panel); }
+    });
+  });
+}
+
 function renderReportDetail(s){
+  if(openSubjFor !== s.id){ openSubj.clear(); openSubjFor = s.id; }
   reportListMode = false;
   document.getElementById('tt-report-list').classList.remove('active');
   document.getElementById('tt-report-detail').classList.add('active');
@@ -1363,20 +1417,20 @@ function renderReportDetail(s){
         <span class="dot" style="background:${lv?lv.color:'#4a465c'}; color:${lv?lv.color:'#4a465c'};"></span>
         <b>${sub}</b>
         <span class="badge" style="${lv?`color:${lv.color}; background:${lv.color}22;`:'color:var(--muted);'}">${lv?lv.label:'بدون نمره'}</span>
+        <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </div>
-      <div class="subj-detail" id="rep-${sub}">
+      <div class="subj-detail" id="rep-${sub}"><div class="subj-inner">
+        <div class="subj-title"><span class="dot" style="background:${lv?lv.color:'#4a465c'}; color:${lv?lv.color:'#4a465c'};"></span>نمره‌های درس <b>${sub}</b></div>
         <input type="text" class="note-input" data-notesub="${sub}" placeholder="توضیح اختیاری، مثلاً: امتحان فصل ۲">
         <div class="lvl-choices">${LEVELS.map(l=>`<button class="lvl-btn" style="background:${l.color};" data-sub="${sub}" data-lvl="${l.key}">${l.label}</button>`).join('')}</div>
         <div style="margin:10px 0 6px; font-size:10.5px; color:var(--muted); font-weight:700;">روند نمرات:</div>
         ${buildAcademicChart(arr)}
         ${histHtml}
-      </div>
+      </div></div>
     </div>`;
   }).join('');
 
-  box.querySelectorAll('[data-toggle]').forEach(h=>{
-    h.addEventListener('click', ()=> document.getElementById(h.dataset.toggle).classList.toggle('open'));
-  });
+  wireAccordion(box);
   box.querySelectorAll('[data-lvl][data-sub]').forEach(b=>{
     b.addEventListener('click', ()=>{
       const sub = b.dataset.sub, lvl = b.dataset.lvl;
@@ -1737,7 +1791,7 @@ function exportTeamsPDF(teams){
     .footer{margin-top:30px;text-align:center;color:#a89e92;font-size:11px;border-top:1px solid #e7e1d8;padding-top:14px;}
     @media print{ body{padding:14px;} .team-head{-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
     </style></head><body>
-    <div class="header"><div class="header-icon">⚽</div><h1>تیم‌های فوتبال</h1>
+    <div class="header"><h1>تیم‌های فوتبال</h1>
     ${pdfMetaLine()}
     <div class="subtitle">تقسیم شانسی به ${faNum(teams.length)} تیم — ${new Date().toLocaleDateString('fa-IR')}</div></div>
     <div class="teams-grid">${blocks}</div>
@@ -2145,13 +2199,14 @@ function renderStudentReport(){
         <span class="dot" style="background:${dotColor}; color:${dotColor};"></span>
         <b>${sub}</b>
         <span class="badge" style="${lv?`color:${lv.color}; background:${lv.color}22;`:'color:var(--muted);'}">${lv?lv.label:'—'}</span>
+        <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </div>
-      <div class="subj-detail" id="stu-${sub}">${buildAcademicChart(arr)}${histHtml}</div>
+      <div class="subj-detail" id="stu-${sub}"><div class="subj-inner">
+        <div class="subj-title"><span class="dot" style="background:${dotColor}; color:${dotColor};"></span>نمره‌های درس <b>${sub}</b></div>
+        ${buildAcademicChart(arr)}${histHtml}</div></div>
     </div>`;
   }).join('');
-  box.querySelectorAll('[data-toggle]').forEach(h=>{
-    h.addEventListener('click', ()=> document.getElementById(h.dataset.toggle).classList.toggle('open'));
-  });
+  wireAccordion(box);
 }
 
 /* ---------- TALENT (student) ---------- */
