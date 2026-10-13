@@ -425,6 +425,8 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
 .role-chip.on .rx{color:rgba(255,255,255,.8);}
 .student-row .nm{display:flex; align-items:center; flex-wrap:wrap; gap:4px 5px; min-width:0;}
 .student-row .nm strong{display:block; flex:0 1 auto; min-width:0;}
+.seen-dot{width:8px; height:8px; border-radius:50%; flex:none; background:#4a465c; color:#4a465c; box-shadow:0 0 12px currentColor; transition:background .3s, color .3s;}
+.seen-dot.on{background:var(--green); color:var(--green);}
 .rtag{font-size:9px; font-weight:800; padding:2px 7px; border-radius:999px; color:#e4d8ff; background:rgba(154,114,255,.22); border:1px solid rgba(154,114,255,.45); white-space:nowrap;}
 .student-row.role-target{cursor:pointer;}
 #manageList.role-mode .del-btn{display:none;}
@@ -830,6 +832,7 @@ function normalize(){
   if(!state.step) state.step = 50;
   if(!state.students) state.students = [];
   if(!Array.isArray(state.roles)) state.roles = [];
+  if(!state.seen || typeof state.seen!=='object' || Array.isArray(state.seen)) state.seen = {};
   const __rids = new Set(state.roles.map(r=>r.id));
   state.students.forEach(s=>{
     if(!s.grades) s.grades = {};
@@ -1558,7 +1561,7 @@ function renderManage(){
       return `<div class="student-row${rt}" data-sid="${s.id}">
         ${selectMode?`<input type="checkbox" class="row-check" data-id="${s.id}" ${checked}>`:''}
         <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${faNum(idx+1)}</div>
-        <div class="info"><div class="nm"><strong>${escapeHtml(s.name)}</strong>${(s.roles||[]).map(id=>{const r=state.roles.find(x=>x.id===id);return r?`<span class="rtag">${escapeHtml(r.name)}</span>`:'';}).join('')}</div><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
+        <div class="info"><div class="nm"><span class="seen-dot${(state.seen&&state.seen[s.id]===todayISO())?' on':''}" title="ورود امروز"></span><strong>${escapeHtml(s.name)}</strong>${(s.roles||[]).map(id=>{const r=state.roles.find(x=>x.id===id);return r?`<span class="rtag">${escapeHtml(r.name)}</span>`:'';}).join('')}</div><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
         <button class="del-btn" data-del="${s.id}">${pendingDeleteId===s.id?'مطمئنی؟':'حذف'}</button>
       </div>`;
     }).join('');
@@ -2975,6 +2978,7 @@ function renderRoleRow(s){
 function renderStudentDashboard(){
   const s = state.students.find(x=>x.id===currentStudentId);
   if(!s) return;
+  markStudentSeen(s.id);
   const ranked = sortedByScore();
   const rank = ranked.findIndex(x=>x.id===s.id)+1;
   const t = total(s);
@@ -3100,6 +3104,19 @@ function renderStudentTalent(){
 /* ============================================================
    PERSISTENCE
    ============================================================ */
+/* ثبت «ورود امروز» دانش‌آموز؛ فقط یک فیلد را merge می‌کند تا چیز دیگری بازنویسی نشود */
+function markStudentSeen(id){
+  try{
+    if(!state || !id) return;
+    if(!state.seen) state.seen = {};
+    const today = todayISO();
+    if(state.seen[id] === today) return;
+    state.seen[id] = today;
+    suppressNextSnapshot = true;
+    const p = stateRef.update({['seen.'+id]: today});
+    if(p && p.catch) p.catch(e=>{ suppressNextSnapshot = false; console.error('seen failed', e); });
+  }catch(e){ suppressNextSnapshot = false; }
+}
 async function persist(){
   try{
     suppressNextSnapshot = true;
@@ -3130,6 +3147,7 @@ document.getElementById('btn-student-submit').addEventListener('click', ()=>{
   const s = state.students.find(x=>x.code===v);
   if(s){
     currentStudentId = s.id;
+    markStudentSeen(s.id);
     try{ localStorage.setItem('studentCode', v); }catch(e){}
     showStudentTab('dashboard');
     show('view-student');
@@ -3252,7 +3270,7 @@ function decideInitialView(){
     if(savedCode){
       const s = state.students.find(x=>x.code===savedCode);
       if(s){
-        currentStudentId=s.id; showStudentTab('dashboard'); show('view-student');
+        currentStudentId=s.id; markStudentSeen(s.id); showStudentTab('dashboard'); show('view-student');
         if(window.__waveResync['tabbar-student']) window.__waveResync['tabbar-student']();
         return;
       }
