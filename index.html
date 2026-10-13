@@ -296,8 +296,8 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 @keyframes confettiBurst{0%{opacity:1; transform:translate(-50%,-50%) rotate(0) scale(1);}100%{opacity:0; transform:translate(var(--tx),var(--ty)) rotate(var(--tr)) scale(.4);}}
 .streak-card{display:flex; align-items:center; gap:12px; padding:14px 16px;}
 .streak-card .em{font-size:26px;}
-.streak-card b{display:block; font-size:13.5px; font-weight:600; line-height:1.85;}
-.streak-card span{display:block; font-size:11px; color:var(--muted); margin-top:1px;}
+.streak-card b{display:block; font-size:14px;}
+.streak-card span{display:block; font-size:11px; line-height:1.7; color:var(--muted); margin-top:1px;}
 .tiny-footer{text-align:center; font-size:9px; color:rgba(255,255,255,.22); margin-top:10px; padding:2px 0 2px; letter-spacing:.2px;}
 
 /* ---------- talent: teacher editor ---------- */
@@ -2336,11 +2336,156 @@ const MSG_BANK = {
     ]
   }
 };
-/* ایموجی‌ها کم و فقط در بعضی پیام‌ها (≈ یک‌سوم) */
-const MSG_EMOJI = {
-  A:['🌱','✨','📘'], B:['📈','🌿','✨'], C:['🎯','⭐','🚀'], D:['💡','🎨','🔭'],
-  E:['✨','📝','🌟'], F:['☀️','🌱','💬'], G:['🤍','💬','📚']
+/* ===== تیتر هر پیام (بالا، همراه ایموجی و نام دانش‌آموز) =====
+   e: ایموجی · t: متن تیتر. در تیترهای D.interest ایموجی از استعداد می‌آید (e:null).
+   در هر گروه حداقل یک تیتر بدون {n} هست تا اگر نام نبود مشکلی پیش نیاد. */
+const MSG_TITLES = {
+  'G.ex': [
+    {e:'🤍',t:'{n} جان، امیدوارم حالت خوب باشه'},{e:'🌿',t:'{n} جان، دلمون برات تنگ شده'},
+    {e:'💬',t:'{n} جان، حواسم بهت هست'},{e:'☕',t:'{n} جان، خیالت راحت باشه'},
+    {e:'🤍',t:'امیدوارم همه‌چی مرتب باشه'},{e:'🌼',t:'{n} جان، به فکرت بودیم'}
+  ],
+  'G.un': [
+    {e:'📚',t:'{n} جان، جات خالی بود'},{e:'🪑',t:'{n} جان، جات رو کم داشتیم'},
+    {e:'🤝',t:'{n} جان، درسا رو با هم می‌رسونیم'},{e:'💬',t:'{n} جان، یه خبر ازت می‌گیرم'},
+    {e:'📚',t:'جات خالی بود'},{e:'🍀',t:'{n} جان، نگران نباش'}
+  ],
+  'E.grade_great': [
+    {e:'🌟',t:'{n} جان، تو {s} عالی بودی!'},{e:'🏅',t:'{n} جان، {s} رو درخشیدی'},
+    {e:'🎉',t:'{n} جان، نتیجه‌ی {s} فوق‌العاده بود'},{e:'✨',t:'{n} جان، خبر خیلی خوب از {s}'},
+    {e:'🌟',t:'تو {s} عالی بودی!'}
+  ],
+  'E.grade_good': [
+    {e:'👏',t:'{n} جان، {s} خوب پیش رفت'},{e:'🌿',t:'{n} جان، توی {s} خوب بودی'},
+    {e:'✅',t:'{n} جان، نتیجه‌ی {s} ثبت شد'},{e:'👏',t:'توی {s} خوب بودی'}
+  ],
+  'E.grade_ok': [
+    {e:'📝',t:'{n} جان، نتیجه‌ی {s} ثبت شد'},{e:'🌤️',t:'{n} جان، توی {s} می‌تونی بهتر هم بشی'},
+    {e:'🔁',t:'{n} جان، یه مرور کوچیک برای {s}'},{e:'📝',t:'نتیجه‌ی {s} ثبت شد'}
+  ],
+  'E.grade_weak': [
+    {e:'🤝',t:'{n} جان، {s} رو با هم درست می‌کنیم'},{e:'🌱',t:'{n} جان، توی {s} یه کم وقت می‌خواد'},
+    {e:'💬',t:'{n} جان، درباره‌ی {s} حرف بزنیم'},{e:'🤝',t:'{s} رو با هم درست می‌کنیم'}
+  ],
+  'E.grade_up': [
+    {e:'📈',t:'{n} جان، تو {s} پیشرفت کردی'},{e:'🚀',t:'{n} جان، {s} بهتر شد'},
+    {e:'🌟',t:'{n} جان، رشدت توی {s} دیده شد'},{e:'📈',t:'تو {s} پیشرفت کردی'}
+  ],
+  'E.score_up': [
+    {e:'⭐',t:'{n} جان، امروز {k} امتیاز گرفتی'},{e:'🎯',t:'{n} جان، {k} امتیاز اضافه شد'},
+    {e:'💚',t:'{n} جان، امروز روز خوبی بود'},{e:'⭐',t:'امروز {k} امتیاز اضافه شد'}
+  ],
+  'E.score_down': [
+    {e:'🌤️',t:'{n} جان، فردا یه شروع تازه‌ست'},{e:'💪',t:'{n} جان، جبران می‌شه'},
+    {e:'🍀',t:'{n} جان، نگران نباش'},{e:'🌤️',t:'فردا یه شروع تازه‌ست'}
+  ],
+  'E.threshold': [
+    {e:'🏆',t:'{n} جان، به {v} امتیاز رسیدی!'},{e:'🎊',t:'{n} جان، مرز {v} امتیاز رو رد کردی'},
+    {e:'🚀',t:'{n} جان، {v} امتیاز!'},{e:'🏆',t:'به {v} امتیاز رسیدی!'}
+  ],
+  'A.great': [
+    {e:'🌟',t:'{n} جان، حسابی خوب پیش می‌ری'},{e:'✨',t:'{n} جان، کارنامه‌ات قشنگه'},
+    {e:'📘',t:'{n} جان، تلاشت دیده می‌شه'},{e:'🌟',t:'حسابی خوب پیش می‌ری'},{e:'🌈',t:'{n} جان، روند درسیت عالیه'}
+  ],
+  'A.ok': [
+    {e:'🌱',t:'{n} جان، مسیرت درسته'},{e:'📗',t:'{n} جان، روی روال خوبی هستی'},
+    {e:'🧭',t:'{n} جان، داری جلو می‌ری'},{e:'🌱',t:'مسیرت درسته'},{e:'🪜',t:'{n} جان، پله‌ی بعدی نزدیکه'}
+  ],
+  'A.weak': [
+    {e:'🤝',t:'{n} جان، من کنارتم'},{e:'🌱',t:'{n} جان، قدم‌به‌قدم می‌ریم'},
+    {e:'💬',t:'{n} جان، هر سؤالی داری بپرس'},{e:'🤝',t:'من کنارتم'},{e:'🧩',t:'{n} جان، با هم حلش می‌کنیم'}
+  ],
+  'B.up': [
+    {e:'📈',t:'{n} جان، نسبت به قبل بهتر شدی'},{e:'🚀',t:'{n} جان، یه پله بالا اومدی'},
+    {e:'🌟',t:'{n} جان، رشدت معلومه'},{e:'📈',t:'نسبت به قبل بهتر شدی'}
+  ],
+  'B.same': [
+    {e:'🧭',t:'{n} جان، ثبات داری'},{e:'⚖️',t:'{n} جان، روندت پایداره'},
+    {e:'🪜',t:'{n} جان، وقت یه پله‌ی تازه‌ست'},{e:'🧭',t:'روندت پایداره'}
+  ],
+  'B.down': [
+    {e:'🌤️',t:'{n} جان، یه کم کندتر شده'},{e:'🤝',t:'{n} جان، با هم درستش می‌کنیم'},
+    {e:'🍃',t:'{n} جان، اتفاق عادیه'},{e:'🌤️',t:'یه کم کندتر شده، نگران نباش'}
+  ],
+  'C.start': [
+    {e:'🎯',t:'{n} جان، وقت شروعه'},{e:'🌱',t:'{n} جان، اولین قدم رو بردار'},
+    {e:'🚀',t:'{n} جان، مسیر ۱۰۰۰ امتیاز شروع می‌شه'},{e:'🎯',t:'وقت شروعه'}
+  ],
+  'C.low': [
+    {e:'🎯',t:'{n} جان، {pts} امتیاز داری'},{e:'🌱',t:'{n} جان، شروع قشنگیه'},
+    {e:'🧗',t:'{n} جان، تا ۱۰۰۰ امتیاز {gap} مونده'},{e:'🎯',t:'{pts} امتیاز داری'}
+  ],
+  'C.mid': [
+    {e:'⭐',t:'{n} جان، {pts} امتیاز داری'},{e:'🧗',t:'{n} جان، تا ۱۰۰۰ امتیاز {gap} مونده'},
+    {e:'🛣️',t:'{n} جان، نیمه‌ی راهی'},{e:'⭐',t:'{pts} امتیاز داری'}
+  ],
+  'C.near': [
+    {e:'🚀',t:'{n} جان، نزدیکی'},{e:'🔥',t:'{n} جان، فقط {gap} امتیاز مونده'},
+    {e:'⭐',t:'{n} جان، {pts} امتیاز داری'},{e:'🚀',t:'فقط {gap} امتیاز مونده'}
+  ],
+  'C.close': [
+    {e:'🏁',t:'{n} جان، خط پایان نزدیکه'},{e:'🔥',t:'{n} جان، فقط {gap} امتیاز تا ۱۰۰۰'},
+    {e:'🚀',t:'{n} جان، آخرین قدم‌هاست'},{e:'🏁',t:'فقط {gap} امتیاز تا ۱۰۰۰'}
+  ],
+  'C.reached': [
+    {e:'🏆',t:'{n} جان، به ۱۰۰۰ رسیدی!'},{e:'🎊',t:'{n} جان، تبریک!'},
+    {e:'👑',t:'{n} جان، ۱۰۰۰ امتیاز رو رد کردی'},{e:'🏆',t:'به ۱۰۰۰ رسیدی!'}
+  ],
+  'C.week': [
+    {e:'📆',t:'{n} جان، هفته‌ی خوبی بود'},{e:'⭐',t:'{n} جان، این هفته {k} امتیاز گرفتی'},
+    {e:'💚',t:'{n} جان، پیگیری‌ت دیده شد'},{e:'📆',t:'این هفته {k} امتیاز گرفتی'}
+  ],
+  'C.streak': [
+    {e:'🔥',t:'{n} جان، {k} روز پشت‌سرهم!'},{e:'🔥',t:'{n} جان، ردیف روزهای خوبت بلنده'},
+    {e:'⚡',t:'{n} جان، پایداری‌ت عالیه'},{e:'🔥',t:'{k} روز پشت‌سرهم!'}
+  ],
+  'D.interest': [
+    {e:null,t:'{n} جان، علاقه‌ت به {t} قشنگه'},{e:null,t:'{n} جان، {t} یه جرقه توئه'},
+    {e:null,t:'{n} جان، دنیای {t} صداش می‌کنه'},{e:null,t:'{n} جان، یه چیز جالب برای {t}'},
+    {e:null,t:'علاقه‌ت به {t} قشنگه'},{e:null,t:'{n} جان، {t} رو دنبال کن'}
+  ],
+  'D.growth': [
+    {e:'🌱',t:'{n} جان، توی {t} ظرفیت خوبی داری'},{e:'🧭',t:'{n} جان، یه نگاه تازه به {t}'},
+    {e:'🌱',t:'توی {t} ظرفیت خوبی داری'},{e:'💡',t:'{n} جان، {t} رو امتحان کن'}
+  ],
+  'F': [
+    {e:'☀️',t:'{n} جان، یه فرصت تازه‌ست'},{e:'🌤️',t:'{n} جان، سلام'},{e:'💬',t:'{n} جان، یه چیزی بگم؟'},
+    {e:'🌱',t:'{n} جان، قدم به قدم'},{e:'🍀',t:'{n} جان، حواسم بهت هست'},{e:'📚',t:'{n} جان، امروز چه خبر؟'},
+    {e:'🌸',t:'{n} جان، دلم می‌خواد ببینمت'},{e:'💡',t:'{n} جان، یه فکر خوب'},{e:'🌈',t:'{n} جان، روزت قشنگ باشه'},
+    {e:'🤍',t:'{n} جان، تو مهمی'},{e:'🎈',t:'{n} جان، یه شروع دوباره'},{e:'☀️',t:'یه فرصت تازه‌ست'},{e:'💬',t:'یه چیزی بگم؟'},{e:'🍃',t:'یه نفس عمیق'}
+  ]
 };
+const MSG_TALENT_EMOJI = {math:'🧮', language:'📖', science:'🔬', tech:'💻', art:'🎨', music:'🎵', sport:'⚽', social:'🤝'};
+function msgTitleKey(id){
+  const p = id.split('.');
+  if(p[0]==='F') return 'F';
+  if(p[0]==='A'||p[0]==='B'||p[0]==='C') return p[0]+'.'+p[1];
+  if(p[0]==='D') return p[1]==='growth' ? 'D.growth' : 'D.interest';
+  if(p[0]==='E') return 'E.'+p[1];
+  if(p[0]==='G') return p[1].indexOf('ex_')===0 ? 'G.ex' : 'G.un';
+  return 'F';
+}
+function msgTalentOfId(id){ const m = id.match(/^D\.(?:generic|byTalent|growth)\.(\w+)\./); return m ? m[1] : null; }
+/* انتخاب تیتر: فقط تیترهایی که همه‌ی جای‌گذارهاشان مقدار دارد؛ تیتر قبلی تکرار نمی‌شود */
+function msgPickTitle(id, vars, rng, lastTid){
+  const okIdx = key => (MSG_TITLES[key]||[]).map((x,i)=>i).filter(i=> msgPlaceholders(MSG_TITLES[key][i].t).every(k=> vars[k]!==undefined && String(vars[k]).length));
+  let key = msgTitleKey(id), idx = okIdx(key);
+  if(vars.n){ const withN = idx.filter(i=> MSG_TITLES[key][i].t.indexOf('{n}')>=0); if(withN.length) idx = withN; }
+  if(!idx.length){ key = 'F'; idx = okIdx('F'); }
+  if(vars.n){ const w2 = idx.filter(i=> MSG_TITLES[key][i].t.indexOf('{n}')>=0); if(w2.length) idx = w2; }
+  const last = lastTid ? lastTid.split('#') : null;
+  if(last && last[0]===key){ const f = idx.filter(i=> String(i)!==last[1]); if(f.length) idx = f; }
+  if(!idx.length) return null;
+  const i = idx[Math.floor(rng()*idx.length)];
+  const built = msgTitleBuild(key, i, vars, id);
+  return built ? Object.assign({tid:key+'#'+i}, built) : null;
+}
+function msgTitleBuild(key, i, vars, id){
+  const x = (MSG_TITLES[key]||[])[i]; if(!x) return null;
+  if(!msgPlaceholders(x.t).every(k=> vars[k]!==undefined && String(vars[k]).length)) return null;
+  const tk = key==='D.interest' ? msgTalentOfId(id) : null;
+  return {emoji: x.e || MSG_TALENT_EMOJI[tk] || '✨', title: msgFill(x.t, vars)};
+}
 
 /* --- ابزارهای عمومی --- */
 function msgHash(str){
@@ -2491,13 +2636,15 @@ function selectStudentMessage(s, opts){
     ev = e; break;
   }
   const recent = Array.isArray(store.recent) ? store.recent : [];
-  const lastName = !!store.lastName, lastEmoji = !!store.lastEmoji, lastCat = store.lastCat||null;
+  const lastName = !!store.lastName, lastCat = store.lastCat||null;
   const sig = ev ? ev.sig : 'gen';
 
   /* پیام امروز برای همین رویداد قبلاً ساخته شده؟ همان را نگه دار */
   if(store.day===todayIso && store.sig===sig && store.id){
-    const kept = msgResolve(store.id, Object.assign({}, baseVars, ev?ev.vars:{}, msgExtra(f,s,store.id)), s, f);
-    if(kept) return Object.assign(kept, {sig, id:store.id, cat:store.cat, reused:true, hasName:store.lastName, hasEmoji:store.lastEmoji});
+    const kv = Object.assign({}, baseVars, ev?ev.vars:{}, msgExtra(f,s,store.id));
+    const kept = msgResolve(store.id, kv, s, f);
+    const kt = store.tid ? msgTitleBuild(store.tid.split('#')[0], Number(store.tid.split('#')[1]), kv, store.id) : null;
+    if(kept && kt) return {emoji:kt.emoji, title:kt.title, sub:kept.sub, sig, id:store.id, tid:store.tid, cat:store.cat, reused:true, hasName:!!store.lastName};
   }
 
   /* ۲) پول متن‌ها */
@@ -2560,20 +2707,18 @@ function selectStudentMessage(s, opts){
     pool = cands.filter(c=> !lastFew.includes(c.id));
   }
   if(!pool.length) pool = cands;
-  if(lastName){ const noName = pool.filter(c=> !c.text.includes('{n}')); if(noName.length) pool = noName; }
   const pick = pool[Math.floor(rng()*pool.length)];
-  let text = msgFill(pick.text, pick.vars);
+  const sub = msgFill(msgStripName(pick.text), pick.vars);
+  const tt = msgPickTitle(pick.id, pick.vars, rng, store.tid);
   /* دفاع نهایی: هرگز undefined / NaN / آکولاد */
-  if(/undefined|NaN|\{|\}/.test(text)){
+  if(!tt || !tt.title || /undefined|NaN|\{|\}/.test(sub+tt.title)){
     const safe = MSG_BANK.F.filter(t=>!t.includes('{'));
-    text = safe[Math.floor(rng()*safe.length)];
-    return {emoji:'', title:text, sub:'', sig, id:'F.safe', cat:'F', hasName:false, hasEmoji:false};
+    return {emoji:'🌱', title:'یه فرصت تازه‌ست', sub:safe[Math.floor(rng()*safe.length)], sig, id:'F.safe', tid:'', cat:'F', hasName:false};
   }
-  const emojiOk = !lastEmoji && rng()<0.33;
-  const pool2 = MSG_EMOJI[catKey]||[];
-  const emoji = emojiOk && pool2.length ? pool2[Math.floor(rng()*pool2.length)] : '';
-  return {emoji, title:text, sub:'', sig, id:pick.id, cat:catKey, hasName:pick.text.includes('{n}'), hasEmoji:!!emoji};
+  return {emoji:tt.emoji, title:tt.title, sub, sig, id:pick.id, tid:tt.tid, cat:catKey, hasName:/\{n\}/.test(MSG_TITLES[tt.tid.split('#')[0]][Number(tt.tid.split('#')[1])].t)};
 }
+/* اگر متن با «{n} جان،» شروع شود، چون نام در تیتر هست، از زیرمتن حذفش می‌کنیم */
+function msgStripName(text){ return text.replace(/^\{n\} جان،\s*/, '').replace(/\{n\}/g, ''); }
 /* بازسازی یک پیام ذخیره‌شده با داده‌ی فعلی (تا مقادیر مثل امتیاز تازه بمونن) */
 function msgExtra(f, s, id){
   const v = {pts:msgFaNum(f.tot), gap:msgFaNum(Math.max(0,MSG_GOAL-f.tot))};
@@ -2601,9 +2746,9 @@ function msgResolve(id, vars, s, f){
   if(!text) return null;
   const ph = msgPlaceholders(text);
   if(!ph.every(k=> vars[k]!==undefined && String(vars[k]).length)) return null;
-  const out = msgFill(text, vars);
+  const out = msgFill(msgStripName(text), vars);
   if(/undefined|NaN|\{|\}/.test(out)) return null;
-  return {emoji:'', title:out, sub:''};
+  return {sub:out};
 }
 
 /* --- لایه‌ی ذخیره‌سازی (localStorage، با try/catch) --- */
@@ -2617,13 +2762,9 @@ function buildStudentMessage(s){
   const mine = all[s.id] || {};
   const todayIso = todayISO();
   const m = selectStudentMessage(s, {todayIso, store:mine});
-  if(m.reused){
-    /* ایموجی ثابت بماند: از ذخیره */
-    m.emoji = mine.emoji || '';
-    return m;
-  }
+  if(m.reused) return m;
   const recent = (Array.isArray(mine.recent)?mine.recent:[]).concat(m.id).slice(-14);
-  all[s.id] = {day:todayIso, sig:m.sig, id:m.id, cat:m.cat, emoji:m.emoji, recent, lastName:m.hasName, lastEmoji:m.hasEmoji, lastCat:m.cat};
+  all[s.id] = {day:todayIso, sig:m.sig, id:m.id, tid:m.tid, cat:m.cat, recent, lastName:m.hasName, lastCat:m.cat};
   msgSaveStore(all);
   return m;
 }
@@ -2846,7 +2987,7 @@ function renderStudentDashboard(){
 
   const streakEl = document.getElementById('streakCard');
   const msg = buildStudentMessage(s);
-  streakEl.innerHTML = (msg.emoji?`<span class="em">${msg.emoji}</span>`:'') + `<div><b>${escapeHtml(msg.title)}</b>${msg.sub?`<span>${escapeHtml(msg.sub)}</span>`:''}</div>`;
+  streakEl.innerHTML = `<span class="em">${msg.emoji||'✨'}</span><div><b>${escapeHtml(msg.title)}</b>${msg.sub?`<span>${escapeHtml(msg.sub)}</span>`:''}</div>`;
   streakEl.style.display='flex';
   renderRoleRow(s);
 
