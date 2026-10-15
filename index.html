@@ -137,6 +137,38 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .pdf-btn{flex:1; min-width:0; padding:13px 6px; border-radius:14px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); color:#fff; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; text-align:center;}
 .pdf-btn:active{transform:scale(.96);}
 
+/* ---------- football: top / banned players ---------- */
+.fb-btns{display:flex; gap:8px; margin-bottom:10px;}
+.fb-btn{flex:1; min-width:0; padding:12px 6px; border-radius:14px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); color:#fff; font-family:inherit; font-size:12px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap;}
+.fb-btn:active{transform:scale(.96);}
+.fb-btn.top{border-color:rgba(255,217,138,.55); background:rgba(255,217,138,.09);}
+.fb-btn.ban{border-color:rgba(255,125,156,.55); background:rgba(255,125,156,.09);}
+.fb-btn .n{min-width:20px; height:20px; padding:0 6px; border-radius:999px; background:rgba(255,255,255,.14); font-size:10.5px; display:inline-flex; align-items:center; justify-content:center;}
+.fb-info{font-size:10.5px; color:var(--muted); margin-bottom:12px; line-height:1.9;}
+.fb-info b{color:#fff; font-weight:800;}
+.fb-msg{font-size:11.5px; color:var(--danger); margin-top:10px; min-height:0;}
+.fb-sheet{position:fixed; inset:0; z-index:9000; display:flex; align-items:flex-end; justify-content:center; background:rgba(4,3,10,.72); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); visibility:hidden; opacity:0; transition:opacity .25s ease, visibility 0s linear .3s;}
+.fb-sheet.show{visibility:visible; opacity:1; transition:opacity .25s ease, visibility 0s;}
+.fb-panel{width:100%; max-width:520px; height:82%; display:flex; flex-direction:column; gap:10px; background:linear-gradient(180deg,rgba(40,30,72,.98),rgba(16,12,32,.99)); border:1px solid var(--line); border-bottom:none; border-radius:26px 26px 0 0; padding:16px 14px calc(14px + env(safe-area-inset-bottom,0px)); transform:translateY(100%); transition:transform .38s cubic-bezier(.2,.9,.25,1.05); box-shadow:0 -20px 50px rgba(0,0,0,.5);}
+.fb-sheet.show .fb-panel{transform:none;}
+.fb-head{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.fb-head h3{margin:0; font-size:15px; font-weight:800;}
+.fb-head small{display:block; font-size:10.5px; color:var(--muted); font-weight:500; margin-top:2px;}
+.fb-close{width:36px; height:36px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.07); color:#fff; font-size:18px; line-height:1; cursor:pointer; font-family:inherit; flex:none;}
+.fb-search{width:100%; padding:12px 14px; border-radius:14px; border:1px solid var(--line); background:rgba(0,0,0,.28); color:#fff; font-family:inherit; font-size:16px;}
+.fb-list{flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch; display:flex; flex-direction:column; gap:6px; padding-bottom:6px;}
+.fb-row{display:flex; align-items:center; gap:10px; padding:10px 12px; border-radius:14px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); color:#fff; font-family:inherit; font-size:13px; font-weight:700; text-align:right; cursor:pointer; width:100%; flex:none;}
+.fb-row .nm{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.fb-row .tg{font-size:9px; font-weight:800; padding:2px 7px; border-radius:999px; white-space:nowrap; flex:none;}
+.fb-row .tg.abs{color:#cfc9e4; background:rgba(140,135,157,.25);}
+.fb-row .tg.other{color:#ffd98a; background:rgba(255,217,138,.16);}
+.fb-row .ck{width:22px; height:22px; border-radius:50%; border:2px solid rgba(255,255,255,.28); flex:none; display:flex; align-items:center; justify-content:center; font-size:12px; color:transparent;}
+.fb-sheet.k-top .fb-row.on{background:rgba(255,217,138,.14); border-color:rgba(255,217,138,.6);}
+.fb-sheet.k-top .fb-row.on .ck{background:#ffd98a; border-color:#ffd98a; color:#241a00;}
+.fb-sheet.k-ban .fb-row.on{background:rgba(255,125,156,.13); border-color:rgba(255,125,156,.6);}
+.fb-sheet.k-ban .fb-row.on .ck{background:#ff7d9c; border-color:#ff7d9c; color:#2a0610;}
+.fb-sheet.k-top .fb-row .tg.other{color:#ff9db3; background:rgba(255,125,156,.16);}
+.fb-empty{text-align:center; color:var(--muted); font-size:12px; padding:22px 0;}
 /* ---------- lottery ---------- */
 .lottery-card{text-align:center;}
 .lottery-title{display:flex; align-items:center; justify-content:center; gap:7px; font-size:14px; font-weight:800; margin-bottom:12px;}
@@ -595,8 +627,13 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
           <label>تعداد تیم‌ها:</label>
           <input type="number" id="teamCount" value="4" min="2">
         </div>
-        <div style="font-size:11px; color:var(--muted); margin-bottom:12px;">دانش‌آموزها رو شانسی بین تیم‌ها پخش می‌کنه و یه PDF می‌سازه</div>
+        <div class="fb-btns">
+          <button type="button" class="fb-btn top" id="fbTopBtn">بازیکنان برتر <span class="n" id="fbTopN">۰</span></button>
+          <button type="button" class="fb-btn ban" id="fbBanBtn">بازیکنان محروم <span class="n" id="fbBanN">۰</span></button>
+        </div>
+        <div class="fb-info" id="fbInfo">دانش‌آموزها رو شانسی بین تیم‌ها پخش می‌کنه و یه PDF می‌سازه</div>
         <button class="lottery-btn" id="teamLotteryBtn">ساخت تیم‌ها (PDF)</button>
+        <div class="fb-msg" id="teamMsg"></div>
       </div>
       <div class="stats-scroll">
         <div class="card stat"><small>امتحان‌های این ماه</small><b id="stat-exams">۰</b><div class="trend" id="stat-exams-sub"></div></div>
@@ -833,6 +870,10 @@ function normalize(){
   if(!state.students) state.students = [];
   if(!Array.isArray(state.roles)) state.roles = [];
   if(!state.seen || typeof state.seen!=='object' || Array.isArray(state.seen)) state.seen = {};
+  { const ids = new Set(state.students.map(s=>s.id));
+    const clean = a => Array.isArray(a) ? [...new Set(a.filter(id=>ids.has(id)))] : [];
+    state.footballBan = clean(state.footballBan);
+    state.footballTop = clean(state.footballTop).filter(id=>!state.footballBan.includes(id)); }
   const __rids = new Set(state.roles.map(r=>r.id));
   state.students.forEach(s=>{
     if(!s.grades) s.grades = {};
@@ -986,6 +1027,8 @@ function countUp(el, target, duration){
   requestAnimationFrame(step);
 }
 function renderTeacherDashboard(){
+  updateFootballInfo();
+  if(typeof fbKind!=='undefined' && fbKind) fbRenderList();
   document.getElementById('teacher-welcome').textContent = 'سلام 👋';
   document.getElementById('teacher-date').textContent = 'امروز · ' + todayFa();
 
@@ -1774,7 +1817,7 @@ function shuffleArray(arr){
   for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; }
   return arr;
 }
-function exportTeamsPDF(teams){
+function exportTeamsPDF(teams, info){
   const teamColors = ['#6c43e8','#9a72ff','#1e7a3d','#c0392b','#b8860b','#0e7490'];
   const blocks = teams.map((team,i)=>{
     const names = team.length
@@ -1801,19 +1844,119 @@ function exportTeamsPDF(teams){
     </style></head><body>
     <div class="header"><h1>تیم‌های فوتبال</h1>
     ${pdfMetaLine()}
-    <div class="subtitle">تقسیم شانسی به ${faNum(teams.length)} تیم — ${new Date().toLocaleDateString('fa-IR')}</div></div>
+    <div class="subtitle">تقسیم شانسی ${info&&info.players?faNum(info.players)+' بازیکن ':''}به ${faNum(teams.length)} تیم — ${new Date().toLocaleDateString('fa-IR')}</div></div>
     <div class="teams-grid">${blocks}</div>
     <div class="footer">کلاس ما</div></body></html>`;
   openPrintWindow(html);
 }
-function runTeamLottery(){
-  if(state.students.length===0) return;
-  let n = parseInt(document.getElementById('teamCount').value)||4;
-  n = Math.max(2, Math.min(n, state.students.length));
-  const pool = shuffleArray([...state.students]);
+/* ---------- FOOTBALL: top / banned players + team builder ---------- */
+function fbList(kind){ const k = kind==='top' ? 'footballTop' : 'footballBan'; if(!Array.isArray(state[k])) state[k] = []; return state[k]; }
+function fbAbsentToday(s){ const t = todayISO(); return (s.absences||[]).some(a=>a.date===t); }
+function fbNorm(str){ return String(str||'').replace(/ي/g,'ی').replace(/ك/g,'ک').replace(/[‌\s]+/g,' ').trim().toLowerCase(); }
+/* شرکت‌کننده‌ها: بدون محروم‌ها و بدون غایب‌های امروز (موجه و غیرموجه) */
+function fbEligible(){
+  const ban = new Set(fbList('ban'));
+  return state.students.filter(s=> !ban.has(s.id) && !fbAbsentToday(s));
+}
+/* تقسیم‌بندی: n تیم با اندازه‌ی مساوی یا حداکثر یک نفر اختلاف؛ برترها تا حد ممکن یکنواخت بین تیم‌ها */
+function fbMakeTeams(players, n, topIdSet){
+  const E = players.length, base = Math.floor(E/n), r = E % n;
+  const cap = Array.from({length:n}, (_,i)=> base + (i<r ? 1 : 0));   /* تیم‌های اول ظرفیت بیشتر دارن */
   const teams = Array.from({length:n}, ()=>[]);
-  pool.forEach((s,i)=> teams[i%n].push(s));
-  exportTeamsPDF(teams);
+  const tops = shuffleArray(players.filter(p=>topIdSet.has(p.id)));
+  const rest = shuffleArray(players.filter(p=>!topIdSet.has(p.id)));
+  tops.forEach((p,i)=> teams[i % n].push(p));                           /* پخش دورانی برترها */
+  let t = 0;
+  rest.forEach(p=>{ while(teams[t].length>=cap[t]) t++; teams[t].push(p); });
+  /* ترتیب نمایش تیم‌ها تصادفی تا «تیم ۱» همیشه بزرگ‌تر نباشه */
+  return shuffleArray(teams).map(team=> shuffleArray(team));
+}
+function updateFootballInfo(){
+  const nTop = document.getElementById('fbTopN'); if(!nTop) return;
+  const ids = new Set(state.students.map(s=>s.id));
+  const nBan = fbList('ban').filter(id=>ids.has(id)).length, nT = fbList('top').filter(id=>ids.has(id)).length;
+  nTop.textContent = faNum(nT);
+  document.getElementById('fbBanN').textContent = faNum(nBan);
+  const abs = state.students.filter(s=>fbAbsentToday(s) && !fbList('ban').includes(s.id)).length;
+  const el = document.getElementById('fbInfo');
+  if(state.students.length===0){ el.textContent = 'دانش‌آموزی ثبت نشده'; return; }
+  el.innerHTML = `غایب‌های امروز: <b>${faNum(abs)}</b> · شرکت‌کننده در قرعه: <b>${faNum(fbEligible().length)}</b> نفر`;
+}
+let fbKind = null;
+function fbEnsureSheet(){
+  let sh = document.getElementById('fbSheet');
+  if(sh) return sh;
+  sh = document.createElement('div');
+  sh.id = 'fbSheet'; sh.className = 'fb-sheet';
+  sh.innerHTML = `<div class="fb-panel" role="dialog" aria-modal="true">
+    <div class="fb-head"><div><h3 id="fbTitle"></h3><small id="fbSub"></small></div><button type="button" class="fb-close" id="fbClose" aria-label="بستن">✕</button></div>
+    <input type="text" class="fb-search" id="fbSearch" placeholder="جستجوی اسم دانش‌آموز..." autocomplete="off">
+    <div class="fb-list" id="fbListEl"></div>
+  </div>`;
+  document.body.appendChild(sh);
+  sh.addEventListener('click', e=>{ if(e.target===sh) fbClose(); });
+  document.getElementById('fbClose').addEventListener('click', fbClose);
+  document.getElementById('fbSearch').addEventListener('input', fbRenderList);
+  document.getElementById('fbListEl').addEventListener('click', e=>{
+    const row = e.target.closest('.fb-row'); if(!row) return;
+    fbToggle(row.dataset.id);
+  });
+  return sh;
+}
+function fbOpen(kind){
+  fbKind = kind;
+  const sh = fbEnsureSheet();
+  sh.classList.remove('k-top','k-ban'); sh.classList.add(kind==='top'?'k-top':'k-ban');
+  document.getElementById('fbTitle').textContent = kind==='top' ? 'بازیکنان برتر' : 'بازیکنان محروم';
+  document.getElementById('fbSub').textContent = kind==='top'
+    ? 'این بازیکن‌ها تا حد ممکن بین تیم‌ها پخش می‌شن و کنار هم نمی‌افتن'
+    : 'این بازیکن‌ها در قرعه‌کشی فوتبال شرکت داده نمی‌شن';
+  document.getElementById('fbSearch').value = '';
+  fbRenderList();
+  requestAnimationFrame(()=> requestAnimationFrame(()=> sh.classList.add('show')));
+}
+function fbClose(){
+  const sh = document.getElementById('fbSheet'); if(!sh) return;
+  sh.classList.remove('show'); fbKind = null;
+  const s = document.getElementById('fbSearch'); if(s) s.blur();
+  updateFootballInfo();
+}
+function fbRenderList(){
+  if(!fbKind) return;
+  const q = fbNorm(document.getElementById('fbSearch').value);
+  const mine = new Set(fbList(fbKind)), other = new Set(fbList(fbKind==='top'?'ban':'top'));
+  const otherLabel = fbKind==='top' ? 'محروم' : 'برتر';
+  const rows = sortedByName().filter(s=> !q || fbNorm(s.name).includes(q));
+  const el = document.getElementById('fbListEl');
+  document.getElementById('fbSub').dataset.n = mine.size;
+  el.innerHTML = rows.length ? rows.map(s=>`<button type="button" class="fb-row${mine.has(s.id)?' on':''}" data-id="${s.id}">
+      <span class="ck">✓</span><span class="nm">${escapeHtml(s.name)}</span>
+      ${fbAbsentToday(s)?'<span class="tg abs">غایب امروز</span>':''}
+      ${other.has(s.id)?`<span class="tg other">${otherLabel}</span>`:''}
+    </button>`).join('') : '<div class="fb-empty">دانش‌آموزی با این اسم پیدا نشد</div>';
+}
+function fbToggle(id){
+  if(!fbKind || !state.students.some(s=>s.id===id)) return;
+  const mine = fbList(fbKind), other = fbList(fbKind==='top'?'ban':'top');
+  const i = mine.indexOf(id);
+  if(i>=0) mine.splice(i,1);
+  else{ mine.push(id); const j = other.indexOf(id); if(j>=0) other.splice(j,1); }
+  const list = document.getElementById('fbListEl'), sc = list.scrollTop;
+  fbRenderList(); list.scrollTop = sc;
+  updateFootballInfo();
+  persist();
+}
+function runTeamLottery(){
+  const msg = document.getElementById('teamMsg');
+  const say = t=>{ msg.textContent = t; clearTimeout(say._t); if(t) say._t = setTimeout(()=>{ msg.textContent=''; }, 4500); };
+  say('');
+  if(state.students.length===0){ say('دانش‌آموزی ثبت نشده'); return; }
+  const eligible = fbEligible();
+  let n = parseInt(document.getElementById('teamCount').value)||4;
+  n = Math.max(2, n);
+  if(eligible.length < n){ say(`فقط ${faNum(eligible.length)} نفر در قرعه هستن؛ برای ${faNum(n)} تیم کافی نیست`); return; }
+  const teams = fbMakeTeams(eligible, n, new Set(fbList('top')));
+  exportTeamsPDF(teams, {players: eligible.length});
 }
 
 /* ============================================================
@@ -3219,6 +3362,8 @@ document.getElementById('btn-export-reports').addEventListener('click', exportRe
 document.getElementById('btn-export-scores').addEventListener('click', exportScoresPDF);
 initLottery();
 document.getElementById('teamLotteryBtn').addEventListener('click', runTeamLottery);
+document.getElementById('fbTopBtn').addEventListener('click', ()=> fbOpen('top'));
+document.getElementById('fbBanBtn').addEventListener('click', ()=> fbOpen('ban'));
 
 document.getElementById('scoring-search').addEventListener('input', renderScoring);
 document.querySelectorAll('#scoringFilters .chip').forEach(c=>{
