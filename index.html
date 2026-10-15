@@ -139,10 +139,10 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 
 /* ---------- football: top / banned players ---------- */
 .fb-btns{display:flex; gap:8px; margin-bottom:10px;}
-.fb-btn{flex:1; min-width:0; padding:12px 6px; border-radius:14px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); color:#fff; font-family:inherit; font-size:12px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap;}
+.fb-btn{flex:1; min-width:0; padding:12px 6px; border-radius:14px; background:rgba(154,114,255,.14); border:1px solid rgba(154,114,255,.42); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); transition:background .18s, border-color .18s, box-shadow .18s, transform .12s; color:#fff; font-family:inherit; font-size:12px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap;}
 .fb-btn:active{transform:scale(.96);}
-.fb-btn.top{border-color:rgba(255,217,138,.55); background:rgba(255,217,138,.09);}
-.fb-btn.ban{border-color:rgba(255,125,156,.55); background:rgba(255,125,156,.09);}
+.fb-btn.top:active{border-color:rgba(255,217,138,.8); background:rgba(255,217,138,.2); box-shadow:0 0 18px -4px rgba(255,217,138,.6);}
+.fb-btn.ban:active{border-color:rgba(255,125,156,.85); background:rgba(255,125,156,.22); box-shadow:0 0 18px -4px rgba(255,125,156,.6);}
 .fb-btn .n{min-width:20px; height:20px; padding:0 6px; border-radius:999px; background:rgba(255,255,255,.14); font-size:10.5px; display:inline-flex; align-items:center; justify-content:center;}
 .fb-info{font-size:10.5px; color:var(--muted); margin-bottom:12px; line-height:1.9;}
 .fb-info b{color:#fff; font-weight:800;}
@@ -448,10 +448,14 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
 .rm-head b{font-size:13px;}
 .rm-head small{font-size:10px; color:var(--muted); text-align:left;}
 .role-mgr .mgmt-add{margin-bottom:10px;}
-.role-chips{display:flex; flex-wrap:wrap; gap:7px;}
-.role-chip{display:inline-flex; align-items:center; gap:2px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); color:var(--text); font-size:11.5px; font-weight:700; transition:.2s;}
-.role-chip .rn{padding:7px 4px 7px 12px; cursor:pointer;}
-.role-chip .rx{border:0; background:transparent; color:var(--muted); font:inherit; font-size:14px; line-height:1; padding:6px 9px 6px 8px; cursor:pointer; border-radius:999px;}
+.role-chips{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:7px;}
+.role-chip{grid-column:span 2;}
+.role-chip.w6{grid-column:span 6;}
+.role-chip.w3{grid-column:span 3;}
+.role-chips .empty-note{grid-column:1/-1;}
+.role-chip{display:flex; align-items:center; justify-content:space-between; gap:2px; min-width:0; height:38px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); color:var(--text); font-size:11.5px; font-weight:700; transition:.2s;}
+.role-chip .rn{flex:1; min-width:0; height:100%; padding:0 2px 0 8px; display:flex; align-items:center; justify-content:center; text-align:center; font-size:10.5px; line-height:1.3; word-break:break-word; overflow:hidden; cursor:pointer;}
+.role-chip .rx{border:0; background:transparent; color:var(--muted); font:inherit; font-size:14px; line-height:1; height:100%; min-width:24px; padding:0 7px 0 4px; cursor:pointer; border-radius:999px; flex:none; white-space:nowrap;}
 .role-chip .rx.sure{color:#fff; background:var(--danger); font-size:10px;}
 .role-chip.on{background:linear-gradient(135deg,#9a72ff,#6540d5); border-color:rgba(255,255,255,.4); box-shadow:0 8px 20px -8px rgba(154,114,255,.9);}
 .role-chip.on .rx{color:rgba(255,255,255,.8);}
@@ -3034,7 +3038,8 @@ function renderRoleMgr(){
   const act = state.roles.find(r=>r.id===activeRoleId);
   hint.textContent = act ? `روی دانش‌آموز بزن تا «${act.name}» برایش ثبت شود (دوباره بزنی برداشته می‌شود)` : (state.roles.length ? 'یک مسئولیت را انتخاب کن' : '');
   if(state.roles.length===0){ box.innerHTML = '<div class="empty-note" style="padding:6px;">هنوز مسئولیتی اضافه نشده</div>'; return; }
-  box.innerHTML = state.roles.map(r=>`<div class="role-chip${r.id===activeRoleId?' on':''}" data-rid="${r.id}"><span class="rn">${escapeHtml(r.name)}</span><button class="rx" data-rdel="${r.id}" title="حذف مسئولیت">${pendingRoleDel===r.id?'مطمئنی؟':'×'}</button></div>`).join('');
+  const __rn = state.roles.length, __rem = __rn % 3, __full = __rn - __rem;
+  box.innerHTML = state.roles.map((r,ri)=>{ const w = ri>=__full ? (__rem===1?' w6':__rem===2?' w3':'') : ''; return `<div class="role-chip${w}${r.id===activeRoleId?' on':''}" data-rid="${r.id}"><span class="rn">${escapeHtml(r.name)}</span><button class="rx" data-rdel="${r.id}" title="حذف مسئولیت">${pendingRoleDel===r.id?'حذف؟':'×'}</button></div>`; }).join('');
   box.querySelectorAll('.rn').forEach(el=>{
     el.addEventListener('click', ()=>{
       const id = el.parentElement.dataset.rid;
