@@ -137,6 +137,34 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .pdf-btn{flex:1; min-width:0; padding:13px 6px; border-radius:14px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); color:#fff; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; text-align:center;}
 .pdf-btn:active{transform:scale(.96);}
 
+.bk-card{display:flex; flex-direction:column; gap:10px;}
+.bk-btns{display:flex; gap:8px;}
+.bk-box{font-size:11.5px; line-height:1.9; color:var(--muted);}
+.bk-box:empty{display:none;}
+.bk-box b{color:#fff;}
+.bk-box .bk-act{display:flex; gap:8px; margin-top:8px;}
+.bk-box .bk-act button{flex:1; padding:11px 6px; border-radius:13px; border:1px solid rgba(255,255,255,.16); background:rgba(154,114,255,.14); color:#fff; font-family:inherit; font-size:12px; font-weight:800; cursor:pointer;}
+.bk-box .bk-act button.warn{border-color:rgba(255,125,156,.6); background:rgba(255,125,156,.18);}
+.bk-box .bk-err{color:var(--danger);}
+/* ---------- unhide PIN pad ---------- */
+.pin-modal{position:fixed; inset:0; z-index:9500; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(4,3,10,.78); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); visibility:hidden; opacity:0; transition:opacity .22s ease, visibility 0s linear .25s;}
+.pin-modal.show{visibility:visible; opacity:1; transition:opacity .22s ease, visibility 0s;}
+.pin-box{width:100%; max-width:300px; padding:22px 18px 18px; border-radius:26px; background:linear-gradient(180deg,rgba(46,34,86,.97),rgba(18,13,36,.99)); border:1px solid var(--line); box-shadow:0 30px 70px rgba(0,0,0,.6); text-align:center; transform:scale(.92) translateY(10px); transition:transform .3s cubic-bezier(.2,.9,.25,1.15);}
+.pin-modal.show .pin-box{transform:none;}
+.pin-box h3{margin:0 0 4px; font-size:15px; font-weight:800;}
+.pin-box p{margin:0 0 16px; font-size:11px; color:var(--muted);}
+.pin-dots{display:flex; justify-content:center; gap:12px; margin-bottom:8px; direction:ltr;}
+.pin-dots i{width:13px; height:13px; border-radius:50%; border:2px solid rgba(255,255,255,.35); transition:background .15s, border-color .15s, transform .15s;}
+.pin-dots i.f{background:var(--purple); border-color:var(--purple); transform:scale(1.12); box-shadow:0 0 12px rgba(154,114,255,.8);}
+.pin-dots.bad i{background:var(--danger); border-color:var(--danger);}
+.pin-dots.shake{animation:pinShake .38s ease;}
+@keyframes pinShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+.pin-msg{min-height:16px; font-size:11px; color:var(--danger); margin-bottom:10px;}
+.pin-pad{display:grid; grid-template-columns:repeat(3,1fr); gap:9px; direction:ltr;}
+.pin-pad button{height:50px; border-radius:16px; border:1px solid rgba(255,255,255,.14); background:rgba(154,114,255,.12); color:#fff; font-family:inherit; font-size:20px; font-weight:700; cursor:pointer; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);}
+.pin-pad button:active{background:rgba(154,114,255,.38); transform:scale(.95);}
+.pin-pad button.ghost{background:transparent; border-color:transparent; font-size:12px; color:var(--muted);}
+.pin-pad button:disabled{opacity:.4;}
 /* ---------- football: top / banned players ---------- */
 .fb-btns{display:flex; gap:8px; margin-bottom:10px;}
 .fb-btn{flex:1; min-width:0; padding:12px 6px; border-radius:14px; background:rgba(154,114,255,.14); border:1px solid rgba(154,114,255,.42); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); transition:background .18s, border-color .18s, box-shadow .18s, transform .12s; color:#fff; font-family:inherit; font-size:12px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; white-space:nowrap;}
@@ -722,6 +750,15 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
           <button id="btn-add-role">＋</button>
         </div>
         <div class="role-chips" id="roleChips"></div>
+      </div>
+      <div class="card bk-card" id="bkCard">
+        <div class="rm-head"><b>پشتیبان‌گیری</b><small id="bkLast"></small></div>
+        <div class="bk-btns">
+          <button type="button" class="fb-btn" id="bkSave">دانلود پشتیبان</button>
+          <button type="button" class="fb-btn" id="bkLoad">بازگردانی</button>
+        </div>
+        <input type="file" id="bkFile" accept=".json,application/json" hidden>
+        <div class="bk-box" id="bkBox"></div>
       </div>
       <div class="card" id="manageList" style="padding:10px;"></div>
     </section>
@@ -3311,9 +3348,155 @@ document.getElementById('btn-teacher-exit').addEventListener('click', ()=>{
   show('view-landing');
 });
 document.getElementById('btn-select-mode').addEventListener('click', toggleSelectMode);
+/* ---------- BACKUP / RESTORE ---------- */
+const BK_APP = 'kelas-ma';
+function bkLastText(){
+  let t = null; try{ t = localStorage.getItem('cm_last_backup'); }catch(e){}
+  const el = document.getElementById('bkLast'); if(!el) return;
+  el.textContent = t ? ('آخرین پشتیبان: ' + new Date(Number(t)).toLocaleDateString('fa-IR') + ' ' + new Date(Number(t)).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})) : 'هنوز پشتیبان نگرفته‌ای';
+}
+function bkDownload(){
+  const stamp = new Date();
+  const pad = n=>String(n).padStart(2,'0');
+  const payload = {app:BK_APP, version:1, exportedAt:stamp.toISOString(), data:state};
+  const blob = new Blob([JSON.stringify(payload)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `kelas-ma-backup-${stamp.getFullYear()}-${pad(stamp.getMonth()+1)}-${pad(stamp.getDate())}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>{ try{ URL.revokeObjectURL(url); }catch(e){} }, 60000);
+  try{ localStorage.setItem('cm_last_backup', String(Date.now())); }catch(e){}
+  bkLastText();
+  const box = document.getElementById('bkBox');
+  box.innerHTML = `پشتیبان ساخته شد: <b>${faNum(state.students.length)}</b> دانش‌آموز. فایل رو جای امنی نگه دار.`;
+}
+let bkPending = null;
+function bkValidate(obj){
+  const d = obj && obj.app===BK_APP && obj.data ? obj.data : null;
+  if(!d || !Array.isArray(d.students)) return null;
+  if(!d.students.every(s=> s && typeof s.id==='string' && typeof s.name==='string' && typeof s.code==='string')) return null;
+  return d;
+}
+function bkFilePicked(file){
+  const box = document.getElementById('bkBox');
+  bkPending = null;
+  if(!file){ return; }
+  if(file.size > 8*1024*1024){ box.innerHTML = '<span class="bk-err">فایل خیلی بزرگه و پشتیبان این برنامه نیست.</span>'; return; }
+  const fr = new FileReader();
+  fr.onerror = ()=>{ box.innerHTML = '<span class="bk-err">فایل خونده نشد. دوباره امتحان کن.</span>'; };
+  fr.onload = ()=>{
+    let obj = null; try{ obj = JSON.parse(String(fr.result)); }catch(e){}
+    const d = bkValidate(obj);
+    if(!d){ box.innerHTML = '<span class="bk-err">این فایل پشتیبان «کلاس ما» نیست یا خراب شده. هیچ‌چیز تغییر نکرد.</span>'; return; }
+    bkPending = d;
+    const when = obj.exportedAt ? new Date(obj.exportedAt).toLocaleDateString('fa-IR') : 'نامشخص';
+    box.innerHTML = `فایل پشتیبان: <b>${faNum(d.students.length)}</b> دانش‌آموز · تاریخ <b>${when}</b><br>الان <b>${faNum(state.students.length)}</b> دانش‌آموز داری. بازگردانی همه‌ی اطلاعات فعلی رو با این فایل جایگزین می‌کنه (رمز معلم عوض نمی‌شه).
+      <div class="bk-act"><button type="button" class="warn" id="bkConfirm">بله، جایگزین کن</button><button type="button" id="bkCancel">انصراف</button></div>`;
+    document.getElementById('bkCancel').addEventListener('click', ()=>{ bkPending = null; box.innerHTML = ''; });
+    document.getElementById('bkConfirm').addEventListener('click', bkApply);
+  };
+  fr.readAsText(file);
+}
+async function bkApply(){
+  const box = document.getElementById('bkBox');
+  if(!bkPending) return;
+  try{
+    /* یک نسخه از وضعیت فعلی کنار می‌ذاریم تا اگه اشتباهی شد قابل برگشت باشه */
+    try{ localStorage.setItem('cm_pre_restore', JSON.stringify({at:Date.now(), data:state})); }catch(e){}
+    const keepPin = state.pin;
+    state = JSON.parse(JSON.stringify(bkPending));
+    state.pin = keepPin || state.pin;
+    normalize();
+    bkPending = null;
+    await persist();
+    box.innerHTML = `بازگردانی انجام شد: <b>${faNum(state.students.length)}</b> دانش‌آموز.`;
+    selectedIds = new Set(); selectMode = false; activeRoleId = null; pendingDeleteId = null;
+    renderTeacherTab(currentTeacherTab, true);
+  }catch(e){
+    console.error('restore failed', e);
+    box.innerHTML = '<span class="bk-err">بازگردانی با خطا مواجه شد.</span>';
+  }
+}
+/* ---------- رمز ۴ رقمی برای برداشتن حالت پنهان ---------- */
+const UNHIDE_PIN = '1994';
+let pinBuf = '', pinBusy = false, pinLockUntil = 0;
+function pinEnsure(){
+  let m = document.getElementById('pinModal');
+  if(m) return m;
+  m = document.createElement('div'); m.id = 'pinModal'; m.className = 'pin-modal';
+  m.innerHTML = `<div class="pin-box" role="dialog" aria-modal="true">
+    <h3>برداشتن حالت پنهان</h3><p>رمز چهار رقمی رو وارد کن</p>
+    <div class="pin-dots" id="pinDots"><i></i><i></i><i></i><i></i></div>
+    <div class="pin-msg" id="pinMsg"></div>
+    <div class="pin-pad" id="pinPad">
+      ${[1,2,3,4,5,6,7,8,9].map(n=>`<button type="button" data-k="${n}">${faNum(n)}</button>`).join('')}
+      <button type="button" class="ghost" data-k="cancel">لغو</button>
+      <button type="button" data-k="0">${faNum(0)}</button>
+      <button type="button" class="ghost" data-k="del">⌫</button>
+    </div></div>`;
+  document.body.appendChild(m);
+  m.addEventListener('click', e=>{ if(e.target===m) pinClose(); });
+  document.getElementById('pinPad').addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    const k = b.dataset.k;
+    if(k==='cancel') return pinClose();
+    if(k==='del'){ if(!pinBusy){ pinBuf = pinBuf.slice(0,-1); pinPaint(); } return; }
+    pinPress(k);
+  });
+  return m;
+}
+function pinPaint(bad){
+  const dots = document.getElementById('pinDots');
+  dots.querySelectorAll('i').forEach((d,i)=> d.classList.toggle('f', i<pinBuf.length || !!bad));
+  dots.classList.toggle('bad', !!bad);
+}
+function pinOpen(){
+  const m = pinEnsure();
+  pinBuf = ''; pinBusy = false; pinPaint();
+  document.getElementById('pinMsg').textContent = '';
+  pinCheckLock();
+  requestAnimationFrame(()=> requestAnimationFrame(()=> m.classList.add('show')));
+}
+function pinClose(){
+  const m = document.getElementById('pinModal'); if(m) m.classList.remove('show');
+  pinBuf = ''; pinBusy = false;
+}
+function pinCheckLock(){
+  const left = Math.ceil((pinLockUntil - Date.now())/1000);
+  const msg = document.getElementById('pinMsg');
+  if(left>0){ msg.textContent = `چند بار اشتباه زدی. ${faNum(left)} ثانیه صبر کن`; setTimeout(()=>{ if(document.getElementById('pinModal').classList.contains('show')) pinCheckLock(); }, 1000); return true; }
+  if(msg.textContent.indexOf('صبر کن')>=0) msg.textContent = '';
+  return false;
+}
+let pinFails = 0;
+function pinPress(d){
+  if(pinBusy || pinBuf.length>=4) return;
+  if(pinCheckLock()) return;
+  pinBuf += d; pinPaint();
+  if(pinBuf.length<4) return;
+  pinBusy = true;
+  if(pinBuf === UNHIDE_PIN){
+    pinFails = 0;
+    setTimeout(()=>{
+      pinClose();
+      streamerMode = false;
+      try{ localStorage.removeItem('streamerMode'); }catch(e){}
+      applyStreamerMode();
+      renderTeacherTab(currentTeacherTab, true);
+    }, 160);
+  } else {
+    pinFails++;
+    const dots = document.getElementById('pinDots'), msg = document.getElementById('pinMsg');
+    pinPaint(true); dots.classList.remove('shake'); void dots.offsetWidth; dots.classList.add('shake');
+    if(pinFails>=3){ pinFails = 0; pinLockUntil = Date.now()+30000; }
+    msg.textContent = pinLockUntil>Date.now() ? '' : 'رمز اشتباهه';
+    setTimeout(()=>{ pinBuf = ''; pinBusy = false; pinPaint(); if(pinLockUntil>Date.now()) pinCheckLock(); }, 450);
+  }
+}
 document.getElementById('btn-streamer').addEventListener('click', ()=>{
-  streamerMode = !streamerMode;
-  try{ if(streamerMode) localStorage.setItem('streamerMode','1'); else localStorage.removeItem('streamerMode'); }catch(e){}
+  if(streamerMode){ pinOpen(); return; }          /* برداشتن حالت پنهان فقط با رمز */
+  streamerMode = true;
+  try{ localStorage.setItem('streamerMode','1'); }catch(e){}
   applyStreamerMode();
   renderTeacherTab(currentTeacherTab, true);
 });
@@ -3367,6 +3550,10 @@ document.getElementById('btn-export-reports').addEventListener('click', exportRe
 document.getElementById('btn-export-scores').addEventListener('click', exportScoresPDF);
 initLottery();
 document.getElementById('teamLotteryBtn').addEventListener('click', runTeamLottery);
+document.getElementById('bkSave').addEventListener('click', bkDownload);
+document.getElementById('bkLoad').addEventListener('click', ()=>{ const f = document.getElementById('bkFile'); f.value = ''; f.click(); });
+document.getElementById('bkFile').addEventListener('change', e=> bkFilePicked(e.target.files && e.target.files[0]));
+bkLastText();
 document.getElementById('fbTopBtn').addEventListener('click', ()=> fbOpen('top'));
 document.getElementById('fbBanBtn').addEventListener('click', ()=> fbOpen('ban'));
 
