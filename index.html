@@ -178,6 +178,20 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .fb-btn.ban.pend, #mtReset.ban{border-color:rgba(255,125,156,.7); background:rgba(255,125,156,.18);}
 .mt-info{font-size:11px; color:var(--muted); line-height:1.9;}
 .mt-info b{color:#fff;}
+.mt-editor{display:flex; flex-direction:column; gap:9px; margin-top:4px;}
+.mte-row{padding:11px 12px; border-radius:16px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);}
+.mte-row.changed{border-color:rgba(255,217,138,.45);}
+.mte-top{display:flex; align-items:center; gap:9px; margin-bottom:8px;}
+.mte-top .ic{font-size:19px;}
+.mte-top b{font-size:12.5px; display:block;}
+.mte-top span{font-size:10px; color:var(--muted); display:block; line-height:1.6;}
+.mte-top em{font-style:normal; font-size:9.5px; color:var(--yellow); margin-right:auto; white-space:nowrap;}
+.mte-in{display:flex; gap:7px; direction:ltr;}
+.mte-in label{flex:1; min-width:0; font-size:9.5px; color:var(--muted); text-align:center;}
+.mte-in input{margin-top:3px; padding:9px 4px; text-align:center; font-weight:800; font-size:14px;}
+.mte-msg{font-size:11px; line-height:1.9; color:var(--yellow); min-height:14px;}
+.mte-msg.err{color:var(--danger);}
+#mteSave.pend{border-color:rgba(255,125,156,.7); background:rgba(255,125,156,.2);}
 /* ---------- unhide PIN pad ---------- */
 .pin-modal{position:fixed; inset:0; z-index:9500; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(4,3,10,.78); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); visibility:hidden; opacity:0; transition:opacity .22s ease, visibility 0s linear .25s;}
 .pin-modal.show{visibility:visible; opacity:1; transition:opacity .22s ease, visibility 0s;}
@@ -797,7 +811,18 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
         <div class="mt-info" id="mtInfo"></div>
         <div class="bk-btns">
           <button type="button" class="fb-btn" id="mtToggle">خاموش کردن</button>
+          <button type="button" class="fb-btn" id="mtEdit">ویرایش</button>
           <button type="button" class="fb-btn" id="mtReset">حذف همه‌ی جایزه‌ها</button>
+        </div>
+        <div class="mt-editor hidden" id="mtEditor">
+          <div class="mt-info">برای هر ماموریت عدد لازم برای ستاره‌ی ۱، ۲ و ۳ را بنویس. اگر ماموریتی را سخت‌تر کنی، ستاره‌ی دانش‌آموزی که دیگر به آن عدد نمی‌رسد پس گرفته می‌شود و همان مقدار امتیاز ستاره (<span id="mteStarPts">۵۰</span>) از او کم می‌شود. اگر راحت‌تر کنی، ستاره‌ی تازه خودکار اضافه می‌شود.</div>
+          <div id="mteList"></div>
+          <div class="mte-msg" id="mteMsg"></div>
+          <div class="bk-btns">
+            <button type="button" class="fb-btn" id="mteSave">ذخیره</button>
+            <button type="button" class="fb-btn" id="mteDefault">مقادیر پیش‌فرض</button>
+            <button type="button" class="fb-btn" id="mteClose">بستن</button>
+          </div>
         </div>
       </div>
       <div class="card" id="manageList" style="padding:10px;"></div>
@@ -958,6 +983,7 @@ function normalize(){
   if(!state.seen || typeof state.seen!=='object' || Array.isArray(state.seen)) state.seen = {};
   if(!state.missions || typeof state.missions!=='object' || Array.isArray(state.missions)) state.missions = {};
   if(typeof state.missionsOn!=='boolean') state.missionsOn = true;
+  if(!state.missionCfg || typeof state.missionCfg!=='object' || Array.isArray(state.missionCfg)) state.missionCfg = {};
   { const ids = new Set(state.students.map(s=>s.id));
     const clean = a => Array.isArray(a) ? [...new Set(a.filter(id=>ids.has(id)))] : [];
     state.footballBan = clean(state.footballBan);
@@ -2066,7 +2092,12 @@ const MISSIONS = [
   {id:'attend', icon:'🗓️', title:'حاضر همیشه',           desc:'هفته‌ی پشت‌سرهم بدون غیبت (رکوردت)',        th:[2,4,8],         val:f=>f.cleanWeeks},
   {id:'talent', icon:'💎', title:'گنجینه‌ی استعدادها',   desc:'استعدادی که توانایی‌اش بالای ۷ است',       th:[1,2,3],         val:f=>f.talents}
 ];
-function missionStars(m, val){ return m.th.filter(x=>val>=x).length; }
+function missionTh(m){
+  const c = state.missionCfg && state.missionCfg[m.id];
+  if(Array.isArray(c) && c.length===3 && c.every(x=>Number.isInteger(x) && x>=1) && c[0]<c[1] && c[1]<c[2]) return c;
+  return m.th;
+}
+function missionStars(m, val){ return missionTh(m).filter(x=>val>=x).length; }
 function missionIsSchoolDay(d){ const g = d.getDay(); return g===6 || g===0 || g===1 || g===2 || g===3; }   /* شنبه تا چهارشنبه */
 
 function missionFacts(s, todayIso){
@@ -2209,7 +2240,7 @@ function renderStudentMissions(){
     <div><h2>ماموریت‌ها</h2><p>ستاره‌هایی که جمع کرده‌ای<br>امتیاز گرفته‌شده از ماموریت‌ها: <b>+${faNum(earnedPts)}</b> از ${faNum(maxStars*MISSION_STAR_POINTS)}</p></div></div>`;
   const ban = missionBanner ? `<div class="card mbanner">🎉 ${missionBanner}</div>` : '';
   const cards = prog.map(p=>{
-    const m = p.m, th = m.th, got = p.stars, done = got===3;
+    const m = p.m, th = missionTh(m), got = p.stars, done = got===3;
     const next = th.find(x=>p.val<x), prevT = got ? th[got-1] : 0;
     const pct = done ? 100 : Math.max(4, Math.min(100, Math.round((p.val-prevT)/(next-prevT)*100)));
     const stars = [0,1,2].map(i=>`<div class="ms">${missionStarSvg(i<got)}<small>${faNum(th[i])}</small></div>`).join('');
@@ -3612,6 +3643,85 @@ function mtReset(){
   state.missionsOn = false;           /* برای اینکه دوباره خودکار ثبت نشوند؛ معلم می‌تواند دوباره روشن کند */
   renderMissionTeacher(); persist();
 }
+/* ---------- ویرایش سختی ماموریت‌ها ---------- */
+/* ستاره‌هایی که با آستانه‌های فعلی دیگر استحقاقشان را ندارند پس گرفته می‌شوند (apply=false: فقط محاسبه) */
+function missionRevokeCalc(apply){
+  const todayIso = todayISO();
+  let stars = 0, pts = 0; const kids = new Set();
+  state.students.forEach(s=>{
+    const mine = state.missions && state.missions[s.id]; if(!mine) return;
+    const facts = missionFacts(s, todayIso);
+    MISSIONS.forEach(m=>{
+      const have = mine[m.id]||0; if(!have) return;
+      const now = Math.min(have, missionStars(m, Math.max(0, m.val(facts))));
+      if(now>=have) return;
+      stars += have-now; pts += (have-now)*MISSION_STAR_POINTS; kids.add(s.id);
+      if(apply){
+        if(!Array.isArray(s.history)) s.history = [];
+        for(let k=have;k>now;k--) s.history.push({date:todayIso, delta:-MISSION_STAR_POINTS, m:1, note:`کسر ستاره‌ی ماموریت (سخت‌تر شد): ${m.title} (ستاره‌ی ${k})`});
+        mine[m.id] = now;
+      }
+    });
+  });
+  return {stars, pts, kids:kids.size};
+}
+let mteDraft = null, mtePending = false;
+function mteReadInputs(){
+  const out = {}; let err = null;
+  MISSIONS.forEach(m=>{
+    const v = [0,1,2].map(i=>{ const el = document.getElementById(`mte-${m.id}-${i}`); return el ? Number(String(el.value).replace(/[^\d]/g,'')) : NaN; });
+    if(!v.every(x=>Number.isInteger(x) && x>=1) || !(v[0]<v[1] && v[1]<v[2])){ if(!err) err = `«${m.title}»: سه عدد صحیح مثبت و صعودی بنویس (مثلاً ۵، ۱۰، ۱۵)`; }
+    out[m.id] = v;
+  });
+  return {out, err};
+}
+function mteRender(){
+  const list = document.getElementById('mteList'); if(!list) return;
+  document.getElementById('mteStarPts').textContent = faNum(MISSION_STAR_POINTS);
+  list.innerHTML = MISSIONS.map(m=>{
+    const th = mteDraft[m.id], ch = th.join()!==m.th.join();
+    return `<div class="mte-row${ch?' changed':''}" data-mid="${m.id}"><div class="mte-top"><div class="ic">${m.icon}</div><div style="flex:1;min-width:0;"><b>${m.title}</b><span>${m.desc}</span></div>${ch?'<em>تغییر یافته</em>':''}</div>
+      <div class="mte-in">${[0,1,2].map(i=>`<label>ستاره‌ی ${faNum(i+1)}<input type="number" inputmode="numeric" min="1" id="mte-${m.id}-${i}" value="${th[i]}"></label>`).join('')}</div></div>`;
+  }).join('');
+  list.querySelectorAll('input').forEach(inp=> inp.addEventListener('input', mteDirty));
+}
+function mteDirty(){
+  mtePending = false;
+  const b = document.getElementById('mteSave'); b.textContent = 'ذخیره'; b.classList.remove('pend');
+  const m = document.getElementById('mteMsg'); m.textContent = ''; m.classList.remove('err');
+}
+function mtEditToggle(){
+  const box = document.getElementById('mtEditor');
+  if(!box.classList.contains('hidden')){ box.classList.add('hidden'); return; }
+  mteDraft = {}; MISSIONS.forEach(m=>{ mteDraft[m.id] = missionTh(m).slice(); });
+  mteRender(); mteDirty(); box.classList.remove('hidden');
+}
+function mteDefaults(){
+  mteDraft = {}; MISSIONS.forEach(m=>{ mteDraft[m.id] = m.th.slice(); });
+  mteRender(); mteDirty();
+}
+function mteSave(){
+  const msg = document.getElementById('mteMsg'), btn = document.getElementById('mteSave');
+  const {out, err} = mteReadInputs();
+  if(err){ msg.textContent = err; msg.classList.add('err'); return; }
+  const prevCfg = state.missionCfg;
+  const cfg = {}; MISSIONS.forEach(m=>{ if(out[m.id].join()!==m.th.join()) cfg[m.id] = out[m.id]; });
+  if(!mtePending){
+    state.missionCfg = cfg; const plan = missionRevokeCalc(false); state.missionCfg = prevCfg;
+    if(plan.stars>0){
+      mtePending = true; btn.textContent = 'تأیید و ذخیره'; btn.classList.add('pend');
+      msg.classList.remove('err');
+      msg.textContent = `با این تغییر ${faNum(plan.stars)} ستاره از ${faNum(plan.kids)} دانش‌آموز پس گرفته می‌شود و در مجموع ${faNum(plan.pts)} امتیاز کم می‌شود. برای ادامه دوباره «تأیید و ذخیره» را بزن.`;
+      return;
+    }
+  }
+  state.missionCfg = cfg;
+  const done = missionRevokeCalc(true);
+  mteDraft = out; mteRender(); mtePending = false; btn.textContent = 'ذخیره'; btn.classList.remove('pend');
+  msg.classList.remove('err');
+  msg.textContent = done.stars>0 ? `ذخیره شد. ${faNum(done.stars)} ستاره پس گرفته شد (${faNum(done.pts)}- امتیاز).` : 'ذخیره شد.';
+  renderMissionTeacher(); persist();
+}
 /* ---------- BACKUP / RESTORE ---------- */
 const BK_APP = 'kelas-ma';
 function bkLastText(){
@@ -3816,6 +3926,10 @@ initLottery();
 document.getElementById('teamLotteryBtn').addEventListener('click', runTeamLottery);
 document.getElementById('mtToggle').addEventListener('click', mtToggle);
 document.getElementById('mtReset').addEventListener('click', mtReset);
+document.getElementById('mtEdit').addEventListener('click', mtEditToggle);
+document.getElementById('mteSave').addEventListener('click', mteSave);
+document.getElementById('mteDefault').addEventListener('click', mteDefaults);
+document.getElementById('mteClose').addEventListener('click', ()=> document.getElementById('mtEditor').classList.add('hidden'));
 document.getElementById('bkSave').addEventListener('click', bkDownload);
 document.getElementById('bkLoad').addEventListener('click', ()=>{ const f = document.getElementById('bkFile'); f.value = ''; f.click(); });
 document.getElementById('bkFile').addEventListener('change', e=> bkFilePicked(e.target.files && e.target.files[0]));
