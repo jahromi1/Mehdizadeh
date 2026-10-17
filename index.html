@@ -146,6 +146,38 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .bk-box .bk-act button{flex:1; padding:11px 6px; border-radius:13px; border:1px solid rgba(255,255,255,.16); background:rgba(154,114,255,.14); color:#fff; font-family:inherit; font-size:12px; font-weight:800; cursor:pointer;}
 .bk-box .bk-act button.warn{border-color:rgba(255,125,156,.6); background:rgba(255,125,156,.18);}
 .bk-box .bk-err{color:var(--danger);}
+/* ---------- missions ---------- */
+.mhead{display:flex; align-items:center; gap:14px; padding:16px;}
+.mring{width:74px; height:74px; flex:none; position:relative;}
+.mring svg{width:74px; height:74px; transform:rotate(-90deg);}
+.mring b{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800;}
+.mhead h2{margin:0 0 3px; font-size:16px;}
+.mhead p{margin:0; font-size:11px; color:var(--muted); line-height:1.8;}
+.mhead p b{color:var(--green);}
+.mbanner{padding:12px 14px; font-size:12px; font-weight:700; color:var(--green); border-color:rgba(86,224,176,.4); background:rgba(86,224,176,.08); animation:mbIn .5s cubic-bezier(.2,.9,.25,1.1);}
+@keyframes mbIn{from{opacity:0; transform:translateY(-8px) scale(.97)}to{opacity:1; transform:none}}
+.mcard{padding:14px; border-radius:20px; background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02)); border:1px solid rgba(255,255,255,.12); margin-bottom:10px; display:flex; flex-direction:column; gap:11px;}
+.mcard.done{border-color:rgba(154,114,255,.75); background:linear-gradient(160deg,rgba(154,114,255,.22),rgba(84,52,193,.1)); box-shadow:0 0 26px -12px rgba(154,114,255,.85);}
+.mtop{display:flex; align-items:center; gap:11px;}
+.mic{width:46px; height:46px; border-radius:15px; flex:none; display:flex; align-items:center; justify-content:center; font-size:23px; background:linear-gradient(145deg,rgba(154,114,255,.45),rgba(84,52,193,.45)); border:1px solid rgba(255,255,255,.18);}
+.mtx{flex:1; min-width:0;}
+.mtx b{display:block; font-size:13.5px;}
+.mtx span{display:block; font-size:10.5px; color:var(--muted); margin-top:2px; line-height:1.6;}
+.mstars{display:flex; gap:5px; flex:none; direction:ltr;}
+.ms{display:flex; flex-direction:column; align-items:center; gap:1px;}
+.ms small{font-size:8.5px; color:var(--muted);}
+.st-on{fill:#ffd98a; stroke:#ffb938; stroke-width:1.2; filter:drop-shadow(0 0 5px rgba(255,200,80,.85));}
+.st-off{fill:rgba(255,255,255,.06); stroke:rgba(255,255,255,.28); stroke-width:1.4;}
+.mbar{height:8px; border-radius:99px; background:rgba(255,255,255,.09); overflow:hidden;}
+.mbar i{display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#8c68ff,#c4a8ff);}
+.mcard.done .mbar i{background:linear-gradient(90deg,#9a72ff,#d9c8ff);}
+.mfoot{display:flex; justify-content:space-between; font-size:10.5px; color:var(--muted);}
+.mfoot em{font-style:normal; color:#cdbbff;}
+.mfoot em.ok{color:var(--green); font-weight:800;}
+.mt-card{display:flex; flex-direction:column; gap:10px;}
+.fb-btn.ban.pend, #mtReset.ban{border-color:rgba(255,125,156,.7); background:rgba(255,125,156,.18);}
+.mt-info{font-size:11px; color:var(--muted); line-height:1.9;}
+.mt-info b{color:#fff;}
 /* ---------- unhide PIN pad ---------- */
 .pin-modal{position:fixed; inset:0; z-index:9500; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(4,3,10,.78); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); visibility:hidden; opacity:0; transition:opacity .22s ease, visibility 0s linear .25s;}
 .pin-modal.show{visibility:visible; opacity:1; transition:opacity .22s ease, visibility 0s;}
@@ -760,6 +792,14 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
         <input type="file" id="bkFile" accept=".json,application/json" hidden>
         <div class="bk-box" id="bkBox"></div>
       </div>
+      <div class="card mt-card" id="missionTeacherCard">
+        <div class="rm-head"><b>ماموریت‌های دانش‌آموز</b><small id="mtState"></small></div>
+        <div class="mt-info" id="mtInfo"></div>
+        <div class="bk-btns">
+          <button type="button" class="fb-btn" id="mtToggle">خاموش کردن</button>
+          <button type="button" class="fb-btn" id="mtReset">حذف همه‌ی جایزه‌ها</button>
+        </div>
+      </div>
       <div class="card" id="manageList" style="padding:10px;"></div>
     </section>
     <div class="tiny-footer">create by Mehdizadeh</div>
@@ -818,6 +858,10 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
       </div>
       <div class="talent-grid" id="studentTalentGrid"></div>
     </section>
+
+    <section class="tabsection" id="st-missions">
+      <div id="student-missions"></div>
+    </section>
     <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
 
@@ -826,6 +870,7 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
     <button data-tab="absence"><i><svg viewBox="0 0 24 24" fill="currentColor"><rect class="fillable" x="4" y="7" width="16" height="13" rx="2.6"/><rect class="fillable" x="7.3" y="3.3" width="2.2" height="4.8" rx="1.1"/><rect class="fillable" x="14.5" y="3.3" width="2.2" height="4.8" rx="1.1"/></svg></i>غیبت‌ها</button>
     <button data-tab="report"><i><svg viewBox="0 0 24 24" fill="currentColor"><rect class="fillable" x="3.8" y="3.8" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="13" y="3.8" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="3.8" y="13" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="13" y="13" width="7.2" height="7.2" rx="2"/></svg></i>کارنامه</button>
     <button data-tab="talent"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6-4.6-4.1 6.1-.6L12 3.5z"/></svg></i>استعداد</button>
+    <button data-tab="missions"><i><svg viewBox="0 0 24 24" fill="currentColor"><circle class="fillable" cx="12" cy="9" r="5.6"/><path class="fillable" d="M8.4 13.4 6.6 20.5 12 18l5.4 2.5-1.8-7.1z"/></svg></i>ماموریت</button>
   </nav></div>
 </div>
 
@@ -911,6 +956,8 @@ function normalize(){
   if(!state.students) state.students = [];
   if(!Array.isArray(state.roles)) state.roles = [];
   if(!state.seen || typeof state.seen!=='object' || Array.isArray(state.seen)) state.seen = {};
+  if(!state.missions || typeof state.missions!=='object' || Array.isArray(state.missions)) state.missions = {};
+  if(typeof state.missionsOn!=='boolean') state.missionsOn = true;
   { const ids = new Set(state.students.map(s=>s.id));
     const clean = a => Array.isArray(a) ? [...new Set(a.filter(id=>ids.has(id)))] : [];
     state.footballBan = clean(state.footballBan);
@@ -941,7 +988,7 @@ function dailyNetMap(history){
   history.forEach(h=>{ byDate[h.date] = (byDate[h.date]||0) + h.delta; });
   return byDate;
 }
-function todayDelta(s){ return s.history.filter(h=>h.date===todayISO()).reduce((a,h)=>a+h.delta,0); }
+function todayDelta(s){ return s.history.filter(h=>h.date===todayISO() && !h.m).reduce((a,h)=>a+h.delta,0); }
 function genCode(){
   let c;
   do { c = String(Math.floor(1000+Math.random()*9000)); }
@@ -1033,7 +1080,7 @@ function classActivityLast7(){
     const d = new Date(); d.setDate(d.getDate()-i);
     const iso = isoFromDate(d);
     let sum=0;
-    state.students.forEach(s=> s.history.forEach(h=>{ if(h.date===iso) sum+=h.delta; }));
+    state.students.forEach(s=> s.history.forEach(h=>{ if(h.date===iso && !h.m) sum+=h.delta; }));
     days.push({date:d, count:sum});
   }
   return days;
@@ -1627,6 +1674,7 @@ function applyBulkDelete(){
   persist();
 }
 function renderManage(){
+  renderMissionTeacher();
   renderRoleMgr();
   document.getElementById('manageList').classList.toggle('role-mode', !!activeRoleId && !selectMode);
   const listEl = document.getElementById('manageList');
@@ -2001,9 +2049,192 @@ function runTeamLottery(){
 }
 
 /* ============================================================
+   MISSIONS (ماموریت‌ها): پیشرفت از روی داده‌های واقعی حساب می‌شود
+   هر ستاره = ۵۰ امتیاز (کل یک ماموریت = ۱۵۰) و خودکار به سابقه‌ی امتیاز اضافه می‌شود.
+   رکورد هر ستاره در state.missions[studentId][missionId] ذخیره می‌شود تا فقط یک‌بار پاداش داده شود.
+   ============================================================ */
+const MISSION_STAR_POINTS = 50;
+const MISSIONS = [
+  {id:'pts',    icon:'🏔️', title:'کوه امتیاز',          desc:'مجموع امتیازت (بدون جایزه‌ی ماموریت‌ها)',  th:[500,1000,2000], val:f=>f.organic},
+  {id:'streak', icon:'🔥', title:'روزهای پشت‌سرهم',     desc:'روز مدرسه‌ی پشت‌سرهم با امتیاز مثبت (رکوردت)', th:[3,7,10],     val:f=>f.bestStreak},
+  {id:'great',  icon:'📘', title:'ستاره‌ی کارنامه',      desc:'تعداد نمره‌های «خیلی خوب»',                th:[8,15,25],       val:f=>f.greatTotal},
+  {id:'step',   icon:'🪜', title:'پله‌ی پیشرفت',         desc:'بار بهتر شدن نسبت به نمره‌ی قبلی',          th:[5,10,15],       val:f=>f.steps},
+  {id:'s_math', icon:'🧮', title:'درخشش در ریاضی',       desc:'نمره‌ی «خیلی خوب» در ریاضی',               th:[2,4,7],         val:f=>f.subGreat['ریاضی']||0},
+  {id:'s_fa',   icon:'📖', title:'درخشش در فارسی',       desc:'نمره‌ی «خیلی خوب» در فارسی',               th:[2,4,7],         val:f=>f.subGreat['فارسی']||0},
+  {id:'s_sci',  icon:'🔬', title:'درخشش در علوم',        desc:'نمره‌ی «خیلی خوب» در علوم',                th:[2,4,7],         val:f=>f.subGreat['علوم']||0},
+  {id:'s_soc',  icon:'🌍', title:'درخشش در مطالعات',     desc:'نمره‌ی «خیلی خوب» در مطالعات اجتماعی',     th:[2,4,7],         val:f=>f.subGreat['مطالعات اجتماعی']||0},
+  {id:'attend', icon:'🗓️', title:'حاضر همیشه',           desc:'هفته‌ی پشت‌سرهم بدون غیبت (رکوردت)',        th:[2,4,8],         val:f=>f.cleanWeeks},
+  {id:'talent', icon:'💎', title:'گنجینه‌ی استعدادها',   desc:'استعدادی که توانایی‌اش بالای ۷ است',       th:[1,2,3],         val:f=>f.talents}
+];
+function missionStars(m, val){ return m.th.filter(x=>val>=x).length; }
+function missionIsSchoolDay(d){ const g = d.getDay(); return g===6 || g===0 || g===1 || g===2 || g===3; }   /* شنبه تا چهارشنبه */
+
+function missionFacts(s, todayIso){
+  const hist = (s.history||[]);
+  const organicHist = hist.filter(h=>!h.m);
+  const organic = organicHist.reduce((a,h)=>a+h.delta,0);
+
+  /* بهترین رشته‌ی روزهای مدرسه با امتیاز مثبت */
+  const byDay = {};
+  organicHist.forEach(h=>{ byDay[h.date] = (byDay[h.date]||0) + h.delta; });
+  const dayKeys = Object.keys(byDay).filter(d=>d<=todayIso).sort();
+  let bestStreak = 0;
+  if(dayKeys.length){
+    let d = parseISOLocal(dayKeys[0]); const end = parseISOLocal(todayIso); let run = 0, guard = 0;
+    while(d<=end && guard++<800){
+      const iso = isoFromDate(d);
+      if(missionIsSchoolDay(d)){
+        const net = byDay[iso];
+        if(net>0){ run++; if(run>bestStreak) bestStreak = run; }
+        else if(iso===todayIso && net===undefined){ /* امروز هنوز امتیازی نیست: رشته نمی‌شکند */ }
+        else run = 0;
+      }
+      d.setDate(d.getDate()+1);
+    }
+  }
+
+  /* نمره‌ها */
+  let greatTotal = 0, steps = 0; const subGreat = {};
+  SUBJECTS.forEach(sub=>{
+    const arr = (s.grades && s.grades[sub] || []).map((g,i)=>({g,i,lv:levelByKey(g.level)}))
+      .filter(x=>x.lv && x.lv.value!==null && x.g.date && x.g.date<=todayIso)
+      .sort((a,b)=> a.g.date.localeCompare(b.g.date) || a.i-b.i);
+    let prev = null, gc = 0;
+    arr.forEach(x=>{
+      if(x.lv.value===4) gc++;
+      if(prev!==null && (x.lv.value>prev || (x.lv.value===4 && prev===4))) steps++;   /* خیلی خوب بعد از خیلی خوب هم پیشرفت حساب می‌شود */
+      prev = x.lv.value;
+    });
+    subGreat[sub] = gc; greatTotal += gc;
+  });
+
+  /* هفته‌های پشت‌سرهم بدون غیبت (هفته: شنبه تا جمعه؛ فقط هفته‌ی تمام‌شده، یعنی بعد از چهارشنبه) */
+  let cleanWeeks = 0;
+  const dates = [];
+  hist.forEach(h=>h.date && dates.push(h.date));
+  Object.keys(s.grades||{}).forEach(k=> (s.grades[k]||[]).forEach(g=>g.date && dates.push(g.date)));
+  (s.absences||[]).forEach(a=>a.date && dates.push(a.date));
+  const valid = dates.filter(d=>d<=todayIso).sort();
+  if(valid.length){
+    let ws = parseISOLocal(valid[0]);
+    ws.setDate(ws.getDate() - ((ws.getDay()+1) % 7));           /* برگشت به شنبه‌ی همان هفته */
+    const today = parseISOLocal(todayIso); let run = 0, guard = 0;
+    const absSet = new Set((s.absences||[]).map(a=>a.date));
+    while(guard++<200){
+      const wed = new Date(ws); wed.setDate(wed.getDate()+4);
+      if(!(today>wed)) break;                                    /* هفته هنوز تمام نشده */
+      let clean = true;
+      for(let k=0;k<7;k++){ const x = new Date(ws); x.setDate(x.getDate()+k); if(absSet.has(isoFromDate(x))){ clean = false; break; } }
+      if(clean){ run++; if(run>cleanWeeks) cleanWeeks = run; } else run = 0;
+      ws.setDate(ws.getDate()+7);
+    }
+  }
+
+  /* استعدادها: توانایی بالای ۷ */
+  let talents = 0;
+  TALENTS.forEach(t=>{ const v = s.talents && s.talents[t.key]; if(v && Number(v.ability)>7) talents++; });
+
+  return {organic, bestStreak, greatTotal, steps, subGreat, cleanWeeks, talents};
+}
+function missionProgress(s, todayIso){
+  const f = missionFacts(s, todayIso || todayISO());
+  const got = (state.missions && state.missions[s.id]) || {};
+  return MISSIONS.map(m=>{
+    const val = Math.max(0, m.val(f)), stars = missionStars(m, val);
+    return {m, val, stars, awarded: got[m.id]||0};
+  });
+}
+
+/* ثبت جایزه‌ها: با transaction تا حتی با دو گوشی هم‌زمان، هر ستاره فقط یک‌بار پاداش بدهد */
+let missionBusy = false;
+async function missionAward(s){
+  if(missionBusy || !s || state.missionsOn===false) return null;
+  const todayIso = todayISO();
+  const prog = missionProgress(s, todayIso).filter(p=>p.stars>p.awarded);
+  if(!prog.length) return null;
+  missionBusy = true;
+  try{
+    const items = prog.map(p=>({id:p.m.id, title:p.m.title, stars:p.stars}));
+    const res = await db.runTransaction(async tx=>{
+      const snap = await tx.get(stateRef);
+      if(!snap.exists) return null;
+      const d = snap.data();
+      if(d.missionsOn===false) return null;
+      const stu = (d.students||[]).find(x=>x.id===s.id); if(!stu) return null;
+      if(!d.missions || typeof d.missions!=='object') d.missions = {};
+      const mine = d.missions[s.id] = d.missions[s.id] || {};
+      if(!Array.isArray(stu.history)) stu.history = [];
+      const applied = [];
+      items.forEach(it=>{
+        const have = mine[it.id]||0;
+        if(it.stars>have){
+          for(let k=have+1;k<=it.stars;k++) stu.history.push({date:todayIso, delta:MISSION_STAR_POINTS, m:1, note:`جایزه‌ی ماموریت: ${it.title} (ستاره‌ی ${k})`});
+          mine[it.id] = it.stars; applied.push({id:it.id, title:it.title, from:have, to:it.stars});
+        }
+      });
+      if(!applied.length) return {applied, history:stu.history, missions:d.missions};
+      tx.update(stateRef, {students:d.students, missions:d.missions});
+      return {applied, history:stu.history, missions:d.missions};
+    });
+    if(res){
+      const local = state.students.find(x=>x.id===s.id);
+      if(local) local.history = res.history;
+      state.missions = res.missions;
+      return res.applied;
+    }
+  }catch(e){ console.error('mission award failed', e); }
+  finally{ missionBusy = false; }
+  return null;
+}
+
+/* ---------- UI ---------- */
+let missionBanner = null;
+function missionStarSvg(on){
+  return `<svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 3.2l2.7 5.7 6.2.7-4.6 4.2 1.3 6.1L12 16.8 6.4 19.9l1.3-6.1L3.1 9.6l6.2-.7L12 3.2z" class="${on?'st-on':'st-off'}" stroke-linejoin="round"/></svg>`;
+}
+function renderStudentMissions(){
+  const s = state.students.find(x=>x.id===currentStudentId);
+  const box = document.getElementById('student-missions');
+  if(!s || !box) return;
+  if(state.missionsOn===false){
+    box.innerHTML = '<div class="card"><div class="empty-note">ماموریت‌ها فعلاً غیرفعال است</div></div>';
+    return;
+  }
+  const prog = missionProgress(s);
+  const totalStars = prog.reduce((a,p)=>a+p.stars,0), maxStars = prog.length*3;
+  const R=30, C=2*Math.PI*R;
+  const earnedPts = (s.history||[]).filter(h=>h.m).reduce((a,h)=>a+h.delta,0);
+  const head = `<div class="card mhead">
+    <div class="mring"><svg viewBox="0 0 74 74"><circle cx="37" cy="37" r="${R}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="7"/><circle cx="37" cy="37" r="${R}" fill="none" stroke="var(--purple)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-totalStars/maxStars)).toFixed(1)}"/></svg><b>${faNum(totalStars)}/${faNum(maxStars)}</b></div>
+    <div><h2>ماموریت‌ها</h2><p>ستاره‌هایی که جمع کرده‌ای<br>امتیاز گرفته‌شده از ماموریت‌ها: <b>+${faNum(earnedPts)}</b> از ${faNum(maxStars*MISSION_STAR_POINTS)}</p></div></div>`;
+  const ban = missionBanner ? `<div class="card mbanner">🎉 ${missionBanner}</div>` : '';
+  const cards = prog.map(p=>{
+    const m = p.m, th = m.th, got = p.stars, done = got===3;
+    const next = th.find(x=>p.val<x), prevT = got ? th[got-1] : 0;
+    const pct = done ? 100 : Math.max(4, Math.min(100, Math.round((p.val-prevT)/(next-prevT)*100)));
+    const stars = [0,1,2].map(i=>`<div class="ms">${missionStarSvg(i<got)}<small>${faNum(th[i])}</small></div>`).join('');
+    const foot = done
+      ? `<em class="ok">✓ کامل شد · ${faNum(3*MISSION_STAR_POINTS)} امتیاز گرفتی</em>`
+      : `<span>${faNum(Math.min(p.val,next))} از ${faNum(next)}</span><em>ستاره‌ی بعد: +${faNum(MISSION_STAR_POINTS)} امتیاز</em>`;
+    return `<div class="mcard${done?' done':''}"><div class="mtop"><div class="mic">${m.icon}</div><div class="mtx"><b>${m.title}</b><span>${m.desc}</span></div><div class="mstars">${stars}</div></div>
+      <div class="mbar"><i style="width:${pct}%"></i></div><div class="mfoot">${foot}</div></div>`;
+  }).join('');
+  box.innerHTML = head + ban + cards;
+}
+async function runMissionsFor(s, fromTab){
+  const applied = await missionAward(s);
+  if(applied && applied.length){
+    const pts = applied.reduce((a,x)=>a+(x.to-x.from)*MISSION_STAR_POINTS,0);
+    missionBanner = `+${faNum(pts)} امتیاز به حسابت اضافه شد: ` + applied.map(x=>x.title).join('، ');
+    if(currentView==='view-student' && currentStudentId===s.id && currentStudentTab==='missions') renderStudentMissions();
+  }
+}
+
+/* ============================================================
    STUDENT APP
    ============================================================ */
 function showStudentTab(tab){
+  if(tab!=='missions') missionBanner = null;
   currentStudentTab = tab;
   document.querySelectorAll('#view-student .tabsection').forEach(s=>s.classList.remove('active'));
   document.getElementById('st-'+tab).classList.add('active');
@@ -2016,6 +2247,7 @@ function renderStudentTab(tab){
   else if(tab==='absence') renderStudentAbsences();
   else if(tab==='report') renderStudentReport();
   else if(tab==='talent') renderStudentTalent();
+  else if(tab==='missions'){ renderStudentMissions(); const ms = state.students.find(x=>x.id===currentStudentId); if(ms) runMissionsFor(ms, true); }
 }
 function buildLineChart(values){
   if(values.length<2) return '<div style="font-size:10.5px;color:var(--muted);padding:6px 2px;">برای نمودار حداقل ۲ ثبت لازم است</div>';
@@ -3179,6 +3411,7 @@ function renderStudentDashboard(){
   streakEl.innerHTML = `<span class="em">${msg.emoji||'✨'}</span><div><b>${escapeHtml(msg.title)}</b>${msg.sub?`<span>${escapeHtml(msg.sub)}</span>`:''}</div>`;
   streakEl.style.display='flex';
   renderRoleRow(s);
+  setTimeout(()=>{ if(currentView==='view-student' && currentStudentId===s.id) runMissionsFor(s, false); }, 1800);
 
   const sorted=[...s.history].sort((a,b)=>a.date.localeCompare(b.date));
   let sum=0; const cum = sorted.map(h=>{sum+=h.delta; return sum;});
@@ -3192,7 +3425,8 @@ function renderStudentDashboard(){
     hist.innerHTML = days.slice(0,30).map(d=>{
       const net = dayMap[d];
       const cls = net>0?'var(--green)':'var(--danger)';
-      return `<div class="hist-line"><span>${faDate(d)}</span><span style="color:${cls}; font-weight:800;">${net>0?'+':''}${faNum(net)}</span></div>`;
+      const mp = s.history.filter(h=>h.date===d && h.m).reduce((a,h)=>a+h.delta,0);
+      return `<div class="hist-line"><span>${faDate(d)}${mp?` <small style="color:var(--muted); font-size:10px;">(شامل ${faNum(mp)} امتیاز ماموریت)</small>`:''}</span><span style="color:${cls}; font-weight:800;">${net>0?'+':''}${faNum(net)}</span></div>`;
     }).join('');
   }
 }
@@ -3348,6 +3582,36 @@ document.getElementById('btn-teacher-exit').addEventListener('click', ()=>{
   show('view-landing');
 });
 document.getElementById('btn-select-mode').addEventListener('click', toggleSelectMode);
+/* ---------- ماموریت‌ها: کنترل معلم ---------- */
+let mtResetPending = false, mtResetTimer = null;
+function renderMissionTeacher(){
+  const el = document.getElementById('mtInfo'); if(!el) return;
+  const on = state.missionsOn !== false;
+  let pts = 0, n = 0;
+  state.students.forEach(s=>{ const x = (s.history||[]).filter(h=>h.m).reduce((a,h)=>a+h.delta,0); if(x){ pts += x; n++; } });
+  document.getElementById('mtState').textContent = on ? 'روشن' : 'خاموش';
+  document.getElementById('mtToggle').textContent = on ? 'خاموش کردن' : 'روشن کردن';
+  el.innerHTML = `جایزه‌ی ماموریت‌ها تا حالا: <b>${faNum(pts)}</b> امتیاز برای <b>${faNum(n)}</b> دانش‌آموز` + (on ? '' : '<br>تا وقتی خاموش است، جایزه‌ی تازه‌ای ثبت نمی‌شود.');
+  const rb = document.getElementById('mtReset');
+  rb.textContent = mtResetPending ? 'مطمئنی؟ دوباره بزن' : 'حذف همه‌ی جایزه‌ها';
+  rb.classList.toggle('ban', mtResetPending);
+}
+function mtToggle(){
+  state.missionsOn = state.missionsOn === false ? true : false;
+  renderMissionTeacher(); persist();
+}
+function mtReset(){
+  if(!mtResetPending){
+    mtResetPending = true; renderMissionTeacher();
+    clearTimeout(mtResetTimer); mtResetTimer = setTimeout(()=>{ mtResetPending = false; renderMissionTeacher(); }, 4000);
+    return;
+  }
+  clearTimeout(mtResetTimer); mtResetPending = false;
+  state.students.forEach(s=>{ s.history = (s.history||[]).filter(h=>!h.m); });
+  state.missions = {};
+  state.missionsOn = false;           /* برای اینکه دوباره خودکار ثبت نشوند؛ معلم می‌تواند دوباره روشن کند */
+  renderMissionTeacher(); persist();
+}
 /* ---------- BACKUP / RESTORE ---------- */
 const BK_APP = 'kelas-ma';
 function bkLastText(){
@@ -3550,6 +3814,8 @@ document.getElementById('btn-export-reports').addEventListener('click', exportRe
 document.getElementById('btn-export-scores').addEventListener('click', exportScoresPDF);
 initLottery();
 document.getElementById('teamLotteryBtn').addEventListener('click', runTeamLottery);
+document.getElementById('mtToggle').addEventListener('click', mtToggle);
+document.getElementById('mtReset').addEventListener('click', mtReset);
 document.getElementById('bkSave').addEventListener('click', bkDownload);
 document.getElementById('bkLoad').addEventListener('click', ()=>{ const f = document.getElementById('bkFile'); f.value = ''; f.click(); });
 document.getElementById('bkFile').addEventListener('change', e=> bkFilePicked(e.target.files && e.target.files[0]));
