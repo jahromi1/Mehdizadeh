@@ -553,10 +553,12 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
 .sk-oval.off{background:rgba(10,6,26,.35); border:1px solid rgba(154,114,255,.3); box-shadow:inset 0 3px 7px rgba(0,0,0,.65), inset 0 -1px 0 rgba(255,255,255,.07);}
 .sk-lbl{font-size:9px; color:var(--muted); font-weight:700; white-space:nowrap;}
 .sk-lbl.bad{color:var(--danger);}
-.row-btns{display:flex; align-items:center; gap:6px; flex:none;}
-.sk-btn{width:auto; height:auto; white-space:nowrap; padding:8px 12px; border-radius:11px; border:1px solid rgba(255,193,92,.45); background:rgba(255,193,92,.12); color:#ffd98a; font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit;}
+.row-btns{display:flex; align-items:center; gap:5px; flex:none;}
+.sk-btn{width:46px; height:34px; padding:0; white-space:nowrap; border-radius:11px; border:1px solid rgba(255,193,92,.45); background:rgba(255,193,92,.12); color:#ffd98a; font-size:12px; font-weight:800; cursor:pointer; font-family:inherit; direction:ltr;}
 .sk-btn.full{border-color:rgba(255,125,156,.5); background:rgba(255,125,156,.14); color:var(--danger); cursor:default;}
-.sk-undo{width:30px; height:32px; padding:0; border-radius:11px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:var(--muted); font-size:14px; cursor:pointer; font-family:inherit;}
+.sk-undo{width:34px; height:34px; padding:0; display:flex; align-items:center; justify-content:center; border-radius:11px; border:1px solid rgba(255,255,255,.4); background:linear-gradient(150deg,rgba(201,168,255,.5),rgba(154,114,255,.3) 50%,rgba(108,67,232,.25)); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); box-shadow:inset 0 1px 0 rgba(255,255,255,.45), 0 4px 12px -5px rgba(154,114,255,.9); color:#fff; cursor:pointer; font-family:inherit;}
+.sk-undo:active{transform:scale(.92);}
+.sk-undo.idle{visibility:hidden; pointer-events:none;}
 .sal-card{padding:12px; margin-bottom:12px;}
 .sal-card .fb-btn.pend{border-color:rgba(255,125,156,.7); background:rgba(255,125,156,.18);}
 .sal-info{font-size:10.5px; color:var(--muted); line-height:1.8; margin-bottom:10px;}
@@ -1739,8 +1741,8 @@ function renderManage(){
         <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${faNum(idx+1)}</div>
         <div class="info"><div class="nm"><span class="seen-dot${(state.seen&&state.seen[s.id]===todayISO())?' on':''}" title="ورود امروز"></span><strong>${escapeHtml(s.name)}</strong>${strikesUsed(s)>=3?'<span class="rtag bad">بدون حقوق</span>':''}${(s.roles||[]).map(id=>{const r=state.roles.find(x=>x.id===id);return r?`<span class="rtag">${escapeHtml(r.name)}</span>`:'';}).join('')}</div><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
         <div class="row-btns">
-          ${strikesUsed(s)>0?`<button class="sk-undo" data-skundo="${s.id}" title="برگرداندن یک خطا">↩</button>`:''}
-          <button class="sk-btn${strikesUsed(s)>=3?' full':''}" data-sk="${s.id}">خطا ${faNum(strikesUsed(s))}/${faNum(3)}</button>
+          <button class="sk-undo${strikesUsed(s)>0?'':' idle'}" data-skundo="${s.id}" title="برگرداندن یک خطا" ${strikesUsed(s)>0?'':'tabindex="-1"'}><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg></button>
+          <button class="sk-btn${strikesUsed(s)>=3?' full':''}" data-sk="${s.id}">${faNum(strikesUsed(s))}/${faNum(3)}</button>
           <button class="del-btn" data-del="${s.id}">${pendingDeleteId===s.id?'مطمئنی؟':'حذف'}</button>
         </div>
       </div>`;
