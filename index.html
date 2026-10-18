@@ -178,6 +178,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .mfoot em.ok{color:var(--green); font-weight:800;}
 .mt-card{display:flex; flex-direction:column; gap:10px;}
 .fb-btn.ban.pend, #mtReset.ban{border-color:rgba(255,125,156,.7); background:rgba(255,125,156,.18);}
+.mt-card .fb-btn{white-space:normal; line-height:1.4; min-height:44px; padding:8px 4px; font-size:11.5px; text-align:center;}
 .mt-info{font-size:11px; color:var(--muted); line-height:1.9;}
 .mt-info b{color:#fff;}
 .mt-editor{display:flex; flex-direction:column; gap:9px; margin-top:4px;}
@@ -320,12 +321,15 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .del-btn{width:auto; height:auto; white-space:nowrap; padding:8px 14px; border-radius:11px; border:1px solid rgba(255,125,156,.35); background:rgba(255,125,156,.1); color:var(--danger); font-size:11.5px; font-weight:700; cursor:pointer; font-family:inherit;}
 
 .subj-list{display:grid; gap:8px;}
-.subj-row{padding:2px; border-radius:18px; border:1px solid transparent; transition:background .55s ease, border-color .55s ease, box-shadow .65s ease;}
+.subj-row{padding:2px; border-radius:18px; border:1px solid transparent; transition:background .25s ease, border-color .25s ease;}
 .subj-head{display:flex; align-items:center; gap:9px; padding:9px 10px; border-radius:13px; background:rgba(255,255,255,.035); cursor:pointer;}
 .dot{width:8px; height:8px; border-radius:50%; flex:none; box-shadow:0 0 12px currentColor;}
 .subj-head b{font-size:11.5px; flex:1; font-weight:700;}
 .subj-detail{display:none; padding:0 6px;}
 .subj-detail.open{display:flow-root;}
+.subj-detail.sl-in .subj-inner{animation:slIn .32s ease-out both;}
+@keyframes slIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+html.lite *{backdrop-filter:none!important; -webkit-backdrop-filter:none!important;}
 .lvl-choices{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;}
 .lvl-btn{padding:7px 12px; border-radius:10px; font-size:10.5px; font-weight:700; color:#0b0710; border:none; cursor:pointer; font-family:inherit;}
 .note-input{margin-bottom:8px !important; height:38px; font-size:12.5px !important;}
@@ -818,6 +822,7 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
       </div>
       <div class="card bk-card" id="bkCard">
         <div class="rm-head"><b>پشتیبان‌گیری</b><small id="bkLast"></small></div>
+        <div id="bkSize" style="font-size:10.5px;color:var(--muted);padding:2px 4px 6px;"></div>
         <div class="bk-btns">
           <button type="button" class="fb-btn" id="bkSave">دانلود پشتیبان</button>
           <button type="button" class="fb-btn" id="bkLoad">بازگردانی</button>
@@ -1033,7 +1038,7 @@ function dailyNetMap(history){
   history.forEach(h=>{ byDate[h.date] = (byDate[h.date]||0) + h.delta; });
   return byDate;
 }
-function todayDelta(s){ return s.history.filter(h=>h.date===todayISO() && !h.m).reduce((a,h)=>a+h.delta,0); }
+function todayDelta(s){ return s.history.filter(h=>h.date===todayISO() && !h.m && !h.sal).reduce((a,h)=>a+h.delta,0); }
 function genCode(){
   let c;
   do { c = String(Math.floor(1000+Math.random()*9000)); }
@@ -1074,6 +1079,7 @@ function rerenderCurrentView(){
    ============================================================ */
 function showTeacherTab(tab){
   currentTeacherTab = tab;
+  if(tab==='manage' && typeof bkLastText==='function') bkLastText();
   document.querySelectorAll('#view-teacher .tabsection').forEach(s=>s.classList.remove('active'));
   document.getElementById('tt-'+tab).classList.add('active');
   document.querySelectorAll('#tabbar-teacher button').forEach(b=> b.classList.toggle('active', b.dataset.tab===tab));
@@ -1125,7 +1131,7 @@ function classActivityLast7(){
     const d = new Date(); d.setDate(d.getDate()-i);
     const iso = isoFromDate(d);
     let sum=0;
-    state.students.forEach(s=> s.history.forEach(h=>{ if(h.date===iso && !h.m) sum+=h.delta; }));
+    state.students.forEach(s=> s.history.forEach(h=>{ if(h.date===iso && !h.m && !h.sal) sum+=h.delta; }));
     days.push({date:d, count:sum});
   }
   return days;
@@ -1534,30 +1540,20 @@ function buildAcademicChart(arr){
 const openSubj = new Set(); let openSubjFor = null;
 const __reduceMotion = ()=>{ try{ return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){ return false; } };
 function slideOpen(el){
-  const wasBusy = !!el._busy;                       // mid-animation (e.g. fast re-click): continue from the current height
-  clearTimeout(el._t);
-  el.classList.add('open');
+  clearTimeout(el._t); el.classList.add('open');
   if(__reduceMotion()) return;
-  const startH = wasBusy ? el.offsetHeight : 0;     // a closed panel always starts from 0, never from its full height
-  const startO = wasBusy ? getComputedStyle(el).opacity : '0';
-  const h = el.scrollHeight;
-  el._busy = true;
-  el.style.transition = 'none'; el.style.overflow = 'hidden'; el.style.height = startH+'px'; el.style.opacity = startO;
-  void el.offsetHeight;
-  el.style.transition = 'height .85s cubic-bezier(.34,1.4,.64,1), opacity .55s ease';
-  el.style.height = h+'px'; el.style.opacity = '1';
-  el._t = setTimeout(()=>{ el._busy = false; el.style.height=''; el.style.transition=''; el.style.opacity=''; el.style.overflow=''; }, 900);
+  el.classList.add('sl-in');                         // light compositor-only fade/slide (no per-frame layout of the page)
+  el._t=setTimeout(()=>{ el.classList.remove('sl-in'); }, 360);
 }
 function slideClose(el){
   clearTimeout(el._t);
-  if(__reduceMotion()){ el.classList.remove('open'); return; }
-  el._busy = true;
-  el.style.overflow = 'hidden'; el.style.transition = 'none'; el.style.height = el.offsetHeight+'px';
-  void el.offsetHeight;
-  el.style.transition = 'height .6s cubic-bezier(.4,0,.2,1), opacity .6s ease-in';
-  el.style.height = '0px'; el.style.opacity = '0';
-  el._t = setTimeout(()=>{ el._busy = false; el.classList.remove('open'); el.style.height=''; el.style.transition=''; el.style.opacity=''; el.style.overflow=''; }, 620);
+  el.classList.remove('open','sl-in');
 }
+/* weak-device detection: drop the costly blur layers (looks nearly identical, much cheaper) */
+(function(){ try{
+  const weak = (navigator.hardwareConcurrency && navigator.hardwareConcurrency<=4) || (navigator.deviceMemory && navigator.deviceMemory<=3);
+  if(weak) document.documentElement.classList.add('lite');
+}catch(e){} })();
 function wireAccordion(box){
   box.querySelectorAll('[data-toggle]').forEach(h=>{
     const id = h.dataset.toggle, panel = document.getElementById(id), row = h.closest('.subj-row');
@@ -2122,11 +2118,12 @@ const MISSIONS = [
   {id:'attend', icon:'🗓️', title:'حاضر همیشه',           desc:'هفته‌ی پشت‌سرهم بدون غیبت (رکوردت)',        th:[2,4,8],         val:f=>f.cleanWeeks},
   {id:'talent', icon:'💎', title:'گنجینه‌ی استعدادها',   desc:'استعدادی که توانایی‌اش بالای ۷ است',       th:[1,2,3],         val:f=>f.talents}
 ];
-function missionTh(m){
-  const c = state.missionCfg && state.missionCfg[m.id];
+function missionThFrom(cfg, m){
+  const c = cfg && cfg[m.id];
   if(Array.isArray(c) && c.length===3 && c.every(x=>Number.isInteger(x) && x>=1) && c[0]<c[1] && c[1]<c[2]) return c;
   return m.th;
 }
+function missionTh(m){ return missionThFrom(state.missionCfg, m); }
 function missionStars(m, val){ return missionTh(m).filter(x=>val>=x).length; }
 function missionIsSchoolDay(d){ const g = d.getDay(); return g===6 || g===0 || g===1 || g===2 || g===3; }   /* شنبه تا چهارشنبه */
 
@@ -2137,7 +2134,7 @@ function missionFacts(s, todayIso){
 
   /* بهترین رشته‌ی روزهای مدرسه با امتیاز مثبت */
   const byDay = {};
-  organicHist.forEach(h=>{ byDay[h.date] = (byDay[h.date]||0) + h.delta; });
+  organicHist.forEach(h=>{ if(!h.sal) byDay[h.date] = (byDay[h.date]||0) + h.delta; });   /* حقوق ماهیانه جزو «روز امتیاز گرفتن» حساب نمی‌شود */
   const dayKeys = Object.keys(byDay).filter(d=>d<=todayIso).sort();
   let bestStreak = 0;
   if(dayKeys.length){
@@ -2215,7 +2212,7 @@ async function missionAward(s){
   if(!prog.length) return null;
   missionBusy = true;
   try{
-    const items = prog.map(p=>({id:p.m.id, title:p.m.title, stars:p.stars}));
+    const items = prog.map(p=>({id:p.m.id, title:p.m.title, stars:p.stars, val:p.val}));
     const res = await db.runTransaction(async tx=>{
       const snap = await tx.get(stateRef);
       if(!snap.exists) return null;
@@ -2228,6 +2225,10 @@ async function missionAward(s){
       const applied = [];
       items.forEach(it=>{
         const have = mine[it.id]||0;
+        /* آستانه‌ها را از نسخه‌ی سرور می‌خوانیم تا گوشیِ قدیمی بعد از «سخت‌تر کردن» ستاره‌ی پس‌گرفته‌شده را دوباره ندهد */
+        const mdef = MISSIONS.find(x=>x.id===it.id);
+        const cap = mdef ? missionThFrom(d.missionCfg, mdef).filter(x=>it.val>=x).length : it.stars;
+        it.stars = Math.min(it.stars, cap);
         if(it.stars>have){
           for(let k=have+1;k<=it.stars;k++) stu.history.push({date:todayIso, delta:MISSION_STAR_POINTS, m:1, note:`جایزه‌ی ماموریت: ${it.title} (ستاره‌ی ${k})`});
           mine[it.id] = it.stars; applied.push({id:it.id, title:it.title, from:have, to:it.stars});
@@ -3383,14 +3384,16 @@ function undoStrike(id){
   renderManage(); persist();
 }
 let pendingSalary = false, pendingSalaryTimer = null;
+let salaryFlash = '', salaryFlashTimer = null;
+function salaryPaidThisMonth(){ return !!(state.lastSalary && state.lastSalary.month===monthKey()); }
 function renderSalaryCard(){
   const btn = document.getElementById('btn-salary'); if(!btn) return;
   btn.classList.toggle('pend', pendingSalary);
-  btn.textContent = pendingSalary ? 'مطمئنی؟' : 'حقوق ماهیانه';
+  btn.textContent = salaryFlash ? salaryFlash : pendingSalary ? (salaryPaidThisMonth() ? 'این ماه داده شده؛ دوباره؟' : 'مطمئنی؟') : 'حقوق ماهیانه';
 }
 function giveSalary(){
   if(!pendingSalary){
-    pendingSalary = true; renderSalaryCard();
+    pendingSalary = true; salaryFlash = ''; clearTimeout(salaryFlashTimer); renderSalaryCard();
     clearTimeout(pendingSalaryTimer);
     pendingSalaryTimer = setTimeout(()=>{ pendingSalary = false; renderSalaryCard(); }, 3500);
     return;
@@ -3399,9 +3402,11 @@ function giveSalary(){
   const today = todayISO(); let paid = 0, skipped = 0;
   state.students.forEach(s=>{
     if(strikesUsed(s)>=MAX_STRIKES){ skipped++; }
-    else { s.history.push({date:today, delta:SALARY_POINTS}); paid++; }
+    else { s.history.push({date:today, delta:SALARY_POINTS, sal:1, note:'حقوق ماهیانه'}); paid++; }
   });
   state.lastSalary = {month:monthKey(), date:today, paid, skipped};
+  salaryFlash = `✓ ${faNum(paid)} نفر` + (skipped?` · ${faNum(skipped)} بدون حقوق`:'');
+  clearTimeout(salaryFlashTimer); salaryFlashTimer = setTimeout(()=>{ salaryFlash=''; renderSalaryCard(); }, 3500);
   renderManage(); persist();
 }
 
@@ -3486,7 +3491,7 @@ function renderRoleRow(s){
   card.innerHTML = '<div class="rl-main"><div class="rl-title">مسئولیت من</div>' + (role
     ? `<div class="rl-name" style="font-size:${role.name.length>26?12.5:role.name.length>14?15.5:19}px">${escapeHtml(role.name)}</div>`
     : '<div class="rl-empty">فعلاً مسئولیتی نداری</div>') + '</div>'
-    + `<div class="sk-wrap" title="هر ماه ۳ فرصت داری؛ با تمام شدن فرصت‌ها حقوق آن ماه داده نمی‌شود"><div class="sk-ovals">${ovals}</div></div>`;
+    + `<div class="sk-wrap" title="هر ماه ۳ فرصت داری؛ با تمام شدن فرصت‌ها حقوق آن ماه داده نمی‌شود"><div class="sk-ovals">${ovals}</div><div class="sk-lbl${used>=MAX_STRIKES?' bad':''}">${used>=MAX_STRIKES?'فرصتی نمانده':faNum(MAX_STRIKES-used)+' فرصت'}</div></div>`;
   const cd = document.getElementById('cdCard');
   const m = monthCountdown();
   if(!m){ cd.style.display='none'; return; }
@@ -3807,6 +3812,11 @@ const BK_APP = 'kelas-ma';
 function bkLastText(){
   let t = null; try{ t = localStorage.getItem('cm_last_backup'); }catch(e){}
   const el = document.getElementById('bkLast'); if(!el) return;
+  try{
+    const kb = Math.round(new Blob([JSON.stringify(state)]).size/1024), pct = Math.round(kb/1024*100);
+    const st = document.getElementById('bkSize');
+    if(st){ st.textContent = 'حجم اطلاعات: ' + faNum(kb) + ' کیلوبایت از ۱۰۲۴ (' + faNum(pct) + '٪)' + (pct>=70 ? ' — به سقف نزدیک می‌شوی؛ پشتیبان بگیر و تاریخچهٔ قدیمی را پاک کن' : ''); st.style.color = pct>=70 ? '#ff8a8a' : ''; }
+  }catch(e){}
   el.textContent = t ? ('آخرین پشتیبان: ' + new Date(Number(t)).toLocaleDateString('fa-IR') + ' ' + new Date(Number(t)).toLocaleTimeString('fa-IR',{hour:'2-digit',minute:'2-digit'})) : 'هنوز پشتیبان نگرفته‌ای';
 }
 function bkDownload(){
