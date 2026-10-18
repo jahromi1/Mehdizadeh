@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>کلاس ما</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -351,22 +353,23 @@ html.lite *{backdrop-filter:none!important; -webkit-backdrop-filter:none!importa
 @media (prefers-reduced-motion: reduce){ .tabsection.active{animation:none;} }
 .sub{display:none;} .sub.active{display:block;}
 
-@property --sweep-angle{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
 .tabbar-wrap{
   position:fixed; left:0; right:0; bottom:0; z-index:50;
   max-width:440px; margin:0 auto; border-radius:24px 24px 0 0;
 }
 .sweep-border{
   position:absolute; inset:-1px; border-radius:inherit; padding:2.5px;
-  background:conic-gradient(from var(--sweep-angle), transparent 0%, transparent 62%, rgba(154,114,255,.5) 74%, #fff 84%, rgba(154,114,255,.5) 94%, transparent 100%);
   -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite:xor; mask-composite:exclude;
-  animation:sweep-spin 9s linear infinite;
-  pointer-events:none;
+  pointer-events:none; overflow:hidden;
   filter:drop-shadow(0 0 4px rgba(200,180,255,.9));
 }
-@keyframes sweep-spin{ to{ --sweep-angle:360deg; } }
-@media (prefers-reduced-motion: reduce){ .sweep-border{animation:none;} }
+/* گرادیانت از قبل رسم‌شده و فقط با transform می‌چرخد (روی کارت گرافیک، بدون رسم دوباره‌ی هر فریم) */
+.sweep-border>i{position:absolute; left:50%; top:50%; width:480px; height:480px; margin:-240px 0 0 -240px; pointer-events:none;
+  background:conic-gradient(from 0deg, transparent 0%, transparent 62%, rgba(154,114,255,.5) 74%, #fff 84%, rgba(154,114,255,.5) 94%, transparent 100%);
+  animation:ringRot 9s linear infinite; will-change:transform;}
+@keyframes ringRot{ to{ transform:rotate(360deg); } }
+@media (prefers-reduced-motion: reduce){ .sweep-border>i{animation:none;} }
 .tabbar{
   position:relative; overflow:visible;
   display:flex; justify-content:space-around; padding:12px 4px calc(12px + var(--safe-b));
@@ -458,7 +461,6 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
 .talent-ability-tag{position:absolute; bottom:9px; right:10px; font-size:10px; font-weight:800; direction:ltr;
   color:#8ecbff; background:rgba(60,120,230,.14); border:1px solid rgba(80,150,255,.25); padding:2px 7px; border-radius:8px;}
 /* ===== RARITY CARD ===== */
-@property --rc-ang{syntax:'<angle>';inherits:false;initial-value:0deg;}
 .score-hero{--c1:#8c879d;--c2:#d9d6e6;--c3:#3a3748;--glow:rgba(140,135,157,.35);
   perspective:700px;padding:22px 16px 20px;border:0;isolation:isolate;
   background:radial-gradient(120% 90% at 50% 0%,color-mix(in srgb,var(--c1) 34%,transparent),transparent 62%),linear-gradient(180deg,rgba(255,255,255,.07),rgba(0,0,0,.28)),#0d0b1c;
@@ -468,18 +470,21 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
 .score-hero[data-tier="legendary"]{--c1:#ff9f1c;--c2:#ffe39a;--c3:#7a3500;--glow:rgba(255,159,28,.65);}
 .score-hero[data-tier="epic"]{--c1:#a56bff;--c2:#e3d0ff;--c3:#341678;--glow:rgba(165,107,255,.6);}
 .score-hero[data-tier="rare"]{--c1:#3fa9ff;--c2:#c4e8ff;--c3:#093a85;--glow:rgba(63,169,255,.55);}
-.score-hero::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:2.5px;z-index:3;pointer-events:none;
-  background:conic-gradient(from var(--rc-ang),transparent 0 62%,var(--c2) 80%,#fff 88%,var(--c1) 94%,transparent 100%),linear-gradient(var(--c1),var(--c1));
-  background-blend-mode:normal;
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;
-  animation:rcSpin 3.4s linear infinite;}
-.score-hero[data-tier="common"]::before{opacity:.5;animation-duration:6s}
-@keyframes rcSpin{to{--rc-ang:360deg}}
+.score-hero.rc-off *{animation-play-state:paused!important}
+.rc-ring{position:absolute;inset:0;border-radius:inherit;padding:2.5px;z-index:3;pointer-events:none;overflow:hidden;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;}
+.rc-ring>i{position:absolute;left:50%;top:50%;width:560px;height:560px;margin:-280px 0 0 -280px;pointer-events:none;
+  background:conic-gradient(from 0deg,transparent 0 62%,var(--c2) 80%,#fff 88%,var(--c1) 94%,transparent 100%),linear-gradient(var(--c1),var(--c1));
+  animation:ringRot 3.4s linear infinite;will-change:transform;}
+.score-hero[data-tier="common"] .rc-ring{opacity:.5}
+.score-hero[data-tier="common"] .rc-ring>i{animation-duration:6s}
 /* foil shimmer */
 .rc-foil{position:absolute;inset:0;z-index:1;pointer-events:none;border-radius:inherit;opacity:.5;mix-blend-mode:screen;
+  overflow:hidden;}
+.rc-foil>i{position:absolute;left:0;top:0;width:250%;height:100%;pointer-events:none;
   background:linear-gradient(115deg,transparent 30%,color-mix(in srgb,var(--c2) 45%,transparent) 45%,rgba(255,255,255,.35) 50%,color-mix(in srgb,var(--c2) 45%,transparent) 55%,transparent 70%);
-  background-size:250% 100%;animation:rcFoil 4.2s ease-in-out infinite;}
-@keyframes rcFoil{0%{background-position:130% 0}60%,100%{background-position:-60% 0}}
+  transform:translateX(-78%);animation:rcFoil 4.2s ease-in-out infinite;will-change:transform}
+@keyframes rcFoil{0%{transform:translateX(-78%)}60%,100%{transform:translateX(36%)}}
 .rc-rays{position:absolute;left:50%;top:118px;width:300px;height:300px;margin:-150px 0 0 -150px;z-index:0;pointer-events:none;opacity:.55;border-radius:50%;
   background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--c1) 55%,transparent) 0 6deg,transparent 6deg 20deg);
   -webkit-mask:radial-gradient(circle,#000 8%,transparent 66%);mask:radial-gradient(circle,#000 8%,transparent 66%);animation:rcRays 18s linear infinite;}
@@ -513,9 +518,10 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
 @keyframes rcRise{0%{opacity:0;transform:translateY(0) scale(.5)}20%{opacity:1}100%{opacity:0;transform:translateY(-150px) translateX(var(--dx,0)) scale(1.1)}}
 .score-hero .lbl{z-index:4;margin-top:2px;text-shadow:0 2px 12px var(--glow)}
 .rc-plate{position:relative;z-index:4;display:inline-block;margin:10px auto 8px;padding:3px;border-radius:22px}
-.rc-plate::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:2px;
-  background:conic-gradient(from var(--rc-ang),transparent 0 55%,var(--c1) 72%,#fff 86%,var(--c2) 92%,transparent);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:rcSpin 2.4s linear infinite}
+.rc-plate>.rc-pring{position:absolute;inset:0;border-radius:inherit;padding:2px;overflow:hidden;pointer-events:none;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.rc-pring>i{position:absolute;left:50%;top:50%;width:240px;height:240px;margin:-120px 0 0 -120px;pointer-events:none;
+  background:conic-gradient(from 0deg,transparent 0 55%,var(--c1) 72%,#fff 86%,var(--c2) 92%,transparent);animation:ringRot 2.4s linear infinite;will-change:transform}
 .rc-plate-in{padding:6px 26px 4px;border-radius:19px;background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(0,0,0,.4));backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .score-hero .score-num-big{margin:0;font-size:52px;line-height:1.15;background:linear-gradient(170deg,#fff,var(--c2) 45%,var(--c1));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 14px var(--glow))}
 .score-hero .rank-chip{z-index:4;color:#fff;background:rgba(0,0,0,.35);border:1px solid color-mix(in srgb,var(--c1) 60%,transparent);margin-top:4px}
@@ -856,7 +862,7 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
     <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
 
-  <div class="tabbar-wrap"><div class="sweep-border"></div><nav class="tabbar" id="tabbar-teacher">
+  <div class="tabbar-wrap"><div class="sweep-border"><i></i></div><nav class="tabbar" id="tabbar-teacher">
     <button data-tab="dashboard" class="active"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M4 11.5 12 4l8 7.5V19a2 2 0 0 1-2 2h-3v-6H9v6H6a2 2 0 0 1-2-2v-7.5z"/></svg></i>داشبورد</button>
     <button data-tab="scoring"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M9.5 4h5v5.5H20v5h-5.5V20h-5v-5.5H4v-5h5.5V4z"/></svg></i>امتیازدهی</button>
     <button data-tab="absence"><i><svg viewBox="0 0 24 24" fill="currentColor"><rect class="fillable" x="4" y="7" width="16" height="13" rx="2.6"/><rect class="fillable" x="7.3" y="3.3" width="2.2" height="4.8" rx="1.1"/><rect class="fillable" x="14.5" y="3.3" width="2.2" height="4.8" rx="1.1"/></svg></i>غیبت</button>
@@ -916,7 +922,7 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
     <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
 
-  <div class="tabbar-wrap"><div class="sweep-border"></div><nav class="tabbar" id="tabbar-student">
+  <div class="tabbar-wrap"><div class="sweep-border"><i></i></div><nav class="tabbar" id="tabbar-student">
     <button data-tab="dashboard" class="active"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M4 11.5 12 4l8 7.5V19a2 2 0 0 1-2 2h-3v-6H9v6H6a2 2 0 0 1-2-2v-7.5z"/></svg></i>داشبورد</button>
     <button data-tab="absence"><i><svg viewBox="0 0 24 24" fill="currentColor"><rect class="fillable" x="4" y="7" width="16" height="13" rx="2.6"/><rect class="fillable" x="7.3" y="3.3" width="2.2" height="4.8" rx="1.1"/><rect class="fillable" x="14.5" y="3.3" width="2.2" height="4.8" rx="1.1"/></svg></i>غیبت‌ها</button>
     <button data-tab="report"><i><svg viewBox="0 0 24 24" fill="currentColor"><rect class="fillable" x="3.8" y="3.8" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="13" y="3.8" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="3.8" y="13" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="13" y="13" width="7.2" height="7.2" rx="2"/></svg></i>کارنامه</button>
@@ -1056,7 +1062,8 @@ function rankColor(rank, count){
   return `hsl(${150-t*150},78%,58%)`;
 }
 function sortedByScore(){ return [...state.students].sort((a,b)=>total(b)-total(a)); }
-function sortedByName(){ return [...state.students].sort((a,b)=>a.name.localeCompare(b.name,'fa')); }
+const FA_COLLATOR = (()=>{ try{ return new Intl.Collator('fa'); }catch(e){ return null; } })();
+function sortedByName(){ return [...state.students].sort((a,b)=> FA_COLLATOR ? FA_COLLATOR.compare(a.name,b.name) : a.name.localeCompare(b.name,'fa')); }
 function lastLevel(s, subject){
   const arr = s.grades[subject];
   return arr.length ? levelByKey(arr[arr.length-1].level) : null;
@@ -1065,6 +1072,13 @@ function rankColorOf(studentId){
   const ranked = sortedByScore();
   const idx = ranked.findIndex(x=>x.id===studentId);
   return rankColor(idx+1, ranked.length || 1);
+}
+/* نسخه‌ی سریع برای لیست‌ها: رتبه‌ها یک بار محاسبه می‌شوند، نه برای هر ردیف از نو (خروجی دقیقاً همان است) */
+function rankColorFn(){
+  const ranked = sortedByScore(), m = {};
+  ranked.forEach((x,i)=>{ m[x.id] = i+1; });
+  const n = ranked.length || 1;
+  return id => rankColor(m[id]||0, n);
 }
 
 function show(id){
@@ -1263,15 +1277,32 @@ function renderScoring(){
       <button class="bplus" id="btnBulkScorePlus">+</button>
     </div>`;
   }
+  /* اگر همان ردیف‌ها (با همان ترتیب) روی صفحه است، فقط عددها و رنگ‌ها به‌روز می‌شوند؛ کل لیست از نو ساخته نمی‌شود */
+  const sig = list.map(s=>s.id+'~'+s.name+'~'+s.code).join(',') + '|' + (selectMode?1:0) + '|' + (streamerMode?1:0) + '|' + selectedIds.size;
+  if(list.length && listEl.__sig === sig && listEl.querySelector('.student-row[data-rid]')){
+    const rc = rankColorFn(), byId = {};
+    state.students.forEach(s=>{ byId[s.id] = s; });
+    listEl.querySelectorAll('.student-row[data-rid]').forEach(row=>{
+      const s = byId[row.dataset.rid]; if(!s) return;
+      const t = total(s), tag = row.querySelector('.score-tag'), av = row.querySelector('.av');
+      const txt = streamerMode ? '•••' : faNum(t), clr = t>=0 ? 'var(--green)' : 'var(--danger)';
+      if(tag.textContent !== txt) tag.textContent = txt;
+      if(tag.style.color !== clr) tag.style.color = clr;
+      const bg = rc(s.id); if(av.__bg !== bg){ av.style.background = bg; av.__bg = bg; }
+    });
+    return;
+  }
+  listEl.__sig = sig;
+  const rcFast = rankColorFn();
   if(list.length===0){ listEl.innerHTML = bar + '<div class="empty-note">دانش‌آموزی پیدا نشد</div>'; }
   else{
     listEl.innerHTML = bar + list.map(s=>{
       const t = total(s);
-      const color = rankColorOf(s.id);
+      const color = rcFast(s.id);
       const codeDisplay = streamerMode ? '••••' : s.code;
       const totalDisplay = streamerMode ? '•••' : faNum(t);
       const checked = selectedIds.has(s.id) ? 'checked' : '';
-      return `<div class="student-row">
+      return `<div class="student-row" data-rid="${s.id}">
         ${selectMode?`<input type="checkbox" class="row-check" data-id="${s.id}" ${checked}>`:''}
         <div class="av" style="background:${color};">${initials(s.name)}</div>
         <div class="info"><strong>${escapeHtml(s.name)}</strong><span class="code">کد: ${codeDisplay}</span></div>
@@ -2227,6 +2258,7 @@ async function missionAward(s){
   if(!prog.length) return null;
   missionBusy = true;
   try{
+    await persistNow();                       /* تغییرهای ذخیره‌نشده اول روی سرور بروند */
     const items = prog.map(p=>({id:p.m.id, title:p.m.title, stars:p.stars, val:p.val}));
     const res = await db.runTransaction(async tx=>{
       const snap = await tx.get(stateRef);
@@ -3306,65 +3338,109 @@ const __GEM=(function(){
   const ctx=cv.getContext('2d');let pal=__PAL.common,col=[__hx(pal[0]),__hx(pal[1]),__hx(pal[2])];
   const mix=(a,b,t)=>a.map((x,i)=>x+(b[i]-x)*t);
   const rot=(p,cy,sy,cx,sx)=>{let x=p[0]*cy+p[2]*sy,z=-p[0]*sy+p[2]*cy,y=p[1];return [x,y*cx-z*sx,y*sx+z*cx];};
-  function collect(out,ox,oy,oz,sc,spin,tilt,full,glints){
+  /* نسخه‌ی بهینه‌ی رسم: همان محاسبات و همان خروجی، ولی بدون ساختن آرایه‌ی تازه در هر فریم (روی گوشی ضعیف خیلی سبک‌تر) */
+  const NV=V.length, NF=F.length, MAXP=NF*3+8;
+  const Lk=(()=>{const L=[-.4,.7,.6],l=Math.hypot(...L);return L.map(x=>x/l);})();
+  const L2k=(()=>{const L=[.75,-.25,.5],l=Math.hypot(...L);return L.map(x=>x/l);})();
+  const Hk=(()=>{const Hh=[Lk[0],Lk[1],Lk[2]+1],h=Math.hypot(...Hh);return Hh.map(x=>x/h);})();
+  const PX=new Float64Array(NV),PY=new Float64Array(NV),PZ=new Float64Array(NV);
+  const pZ=new Float64Array(MAXP),pA=new Float64Array(MAXP),pR=new Float64Array(MAXP),pG=new Float64Array(MAXP),pB=new Float64Array(MAXP),pN=new Uint8Array(MAXP);
+  const pPX=new Float64Array(MAXP*8),pPY=new Float64Array(MAXP*8),pPZ=new Float64Array(MAXP*8);
+  const pStroke=new Array(MAXP), order=new Array(MAXP);
+  let np=0;
+  const FV=F.map(f=>f.v), FT=F.map(f=>!!f.table);
+  function collect(ox,oy,oz,sc,spin,tilt,full,glints){
     const cy=Math.cos(spin),sy=Math.sin(spin),cx=Math.cos(tilt),sx=Math.sin(tilt);
-    const L=[-.4,.7,.6],ln=Math.hypot(...L),Lk=L.map(x=>x/ln);
-    const L2=[.75,-.25,.5],l2=Math.hypot(...L2),L2k=L2.map(x=>x/l2);
-    const Hh=[Lk[0],Lk[1],Lk[2]+1],hn=Math.hypot(...Hh),Hk=Hh.map(x=>x/hn);
-    const P=V.map(v=>{const r=rot([v[0],v[1]+.2,v[2]],cy,sy,cx,sx);return [r[0]*sc+ox,r[1]*sc+oy,r[2]*sc+oz];});
-    F.forEach(f=>{
-      const n=rot(f.n,cy,sy,cx,sx);const front=n[2]>0;
-      const pts=f.v.map(k=>P[k]);const z=pts.reduce((s,p)=>s+p[2],0)/pts.length;
-      let rgb,alpha=1,stroke;
+    for(let i=0;i<NV;i++){
+      const v=V[i],px=v[0],py=v[1]+.2,pz=v[2];
+      const x=px*cy+pz*sy, z=-px*sy+pz*cy;
+      PX[i]=x*sc+ox; PY[i]=(py*cx-z*sx)*sc+oy; PZ[i]=(py*sx+z*cx)*sc+oz;
+    }
+    const c0=col[0],c1=col[1],c2=col[2];
+    for(let fi=0;fi<NF;fi++){
+      const f=F[fi],fn=f.n;
+      const nx0=fn[0]*cy+fn[2]*sy, nz0=-fn[0]*sy+fn[2]*cy, ny0=fn[1];
+      const nx=nx0, ny=ny0*cx-nz0*sx, nz=ny0*sx+nz0*cx;
+      const front=nz>0, vs=FV[fi], len=vs.length;
+      const id=np++; pN[id]=len;
+      let zs=0;
+      for(let k=0;k<len;k++){const vi=vs[k];pPX[id*8+k]=PX[vi];pPY[id*8+k]=PY[vi];pPZ[id*8+k]=PZ[vi];zs+=PZ[vi];}
+      pZ[id]=zs/len;
       if(front){
-        const d=Math.max(0,n[0]*Lk[0]+n[1]*Lk[1]+n[2]*Lk[2]),d2=Math.max(0,n[0]*L2k[0]+n[1]*L2k[1]+n[2]*L2k[2]);
-        const sp=Math.pow(Math.max(0,n[0]*Hk[0]+n[1]*Hk[1]+n[2]*Hk[2]),f.table?40:60);
-        const rim=1-n[2];
-        rgb=mix(col[2],col[0],Math.min(1,.28+d*.95));
-        rgb=mix(rgb,col[1],Math.min(1,Math.pow(d,2.2)*.75+d2*.28+rim*.12));
-        rgb=mix(rgb,[255,255,255],Math.min(.8,sp*.85));
-        stroke='rgba(255,255,255,'+(.28+sp*.4).toFixed(2)+')';
-        if(glints&&sp>.55){const q=f.v.map(k=>P[k]).reduce((s,p)=>[s[0]+p[0]/f.v.length,s[1]+p[1]/f.v.length,0],[0,0,0]);glints.push([q[0],q[1],Math.min(1,sp)]);}
-      }else{rgb=mix(col[2],col[0],.35);alpha=.6;stroke='rgba(255,255,255,.12)';}
-      out.push({z,pts,rgb,alpha,stroke});
-    });
+        const d=Math.max(0,nx*Lk[0]+ny*Lk[1]+nz*Lk[2]), d2=Math.max(0,nx*L2k[0]+ny*L2k[1]+nz*L2k[2]);
+        const sp=Math.pow(Math.max(0,nx*Hk[0]+ny*Hk[1]+nz*Hk[2]),FT[fi]?40:60);
+        const rim=1-nz;
+        let t=Math.min(1,.28+d*.95);
+        let r=c2[0]+(c0[0]-c2[0])*t, g=c2[1]+(c0[1]-c2[1])*t, b=c2[2]+(c0[2]-c2[2])*t;
+        t=Math.min(1,Math.pow(d,2.2)*.75+d2*.28+rim*.12);
+        r=r+(c1[0]-r)*t; g=g+(c1[1]-g)*t; b=b+(c1[2]-b)*t;
+        t=Math.min(.8,sp*.85);
+        r=r+(255-r)*t; g=g+(255-g)*t; b=b+(255-b)*t;
+        pR[id]=r;pG[id]=g;pB[id]=b;pA[id]=1;
+        pStroke[id]='rgba(255,255,255,'+(.28+sp*.4).toFixed(2)+')';
+        if(glints&&sp>.55){let qx=0,qy=0;for(let k=0;k<len;k++){qx+=PX[vs[k]]/len;qy+=PY[vs[k]]/len;}glints.push([qx,qy,Math.min(1,sp)]);}
+      }else{
+        pR[id]=c2[0]+(c0[0]-c2[0])*.35;pG[id]=c2[1]+(c0[1]-c2[1])*.35;pB[id]=c2[2]+(c0[2]-c2[2])*.35;pA[id]=.6;pStroke[id]='rgba(255,255,255,.12)';
+      }
+    }
   }
+  const byZ=(a,b)=>pZ[a]-pZ[b];
   function draw(t){
-    const s=t/1000,S=62*pal[3],D=5.2,out=[],gl=[];
+    const s=t/1000,S=62*pal[3],D=5.2,gl=[];
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
     const spin=s*.95,tilt=.42+Math.sin(s*.8)*.08;
-    collect(out,0,0,0,1,spin,tilt,true,gl);
-    // flatten main gem into unit space; minis orbit
-    const minis=[];
-    for(let m=0;m<pal[4];m++){const a=s*(m?-.9:1.15)+m*Math.PI;minis.push([Math.cos(a)*1.32,Math.sin(a*1.0)*.18-.05+(m?-.35:.3),Math.sin(a)*1.1]);}
-    const polys=out.slice();
-    minis.forEach((q,m)=>collect(polys,q[0],q[1],q[2],.2,s*(m?-2.1:2.6),.5,false,null));
-    polys.sort((a,b)=>a.z-b.z);
-    polys.forEach(p=>{
+    np=0;
+    collect(0,0,0,1,spin,tilt,true,gl);
+    for(let m=0;m<pal[4];m++){const a=s*(m?-.9:1.15)+m*Math.PI;
+      collect(Math.cos(a)*1.32,Math.sin(a*1.0)*.18-.05+(m?-.35:.3),Math.sin(a)*1.1,.2,s*(m?-2.1:2.6),.5,false,null);}
+    order.length=np;for(let i=0;i<np;i++)order[i]=i;
+    order.sort(byZ);
+    for(let oi=0;oi<np;oi++){
+      const id=order[oi],len=pN[id];
       ctx.beginPath();
-      p.pts.forEach((q,i)=>{const k=D/(D-q[2]);const x=W/2+q[0]*S*k,y=H/2+6-q[1]*S*k;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
-      ctx.closePath();ctx.globalAlpha=p.alpha;ctx.fillStyle='rgb('+p.rgb.map(Math.round).join(',')+')';ctx.fill();
-      ctx.globalAlpha=1;ctx.lineWidth=.8;ctx.strokeStyle=p.stroke;ctx.stroke();
-    });
-    gl.slice(0,2).forEach(g=>{const k=D/(D-0),x=W/2+g[0]*S*k,y=H/2+6-g[1]*S*k,r=7+g[2]*9;
+      for(let i=0;i<len;i++){const z=pPZ[id*8+i],k=D/(D-z);const x=W/2+pPX[id*8+i]*S*k,y=H/2+6-pPY[id*8+i]*S*k;i?ctx.lineTo(x,y):ctx.moveTo(x,y);}
+      ctx.closePath();ctx.globalAlpha=pA[id];ctx.fillStyle='rgb('+Math.round(pR[id])+','+Math.round(pG[id])+','+Math.round(pB[id])+')';ctx.fill();
+      ctx.globalAlpha=1;ctx.lineWidth=.8;ctx.strokeStyle=pStroke[id];ctx.stroke();
+    }
+    for(let gi=0;gi<gl.length&&gi<2;gi++){const g=gl[gi];const k=D/(D-0),x=W/2+g[0]*S*k,y=H/2+6-g[1]*S*k,r=7+g[2]*9;
       ctx.save();ctx.translate(x,y);ctx.globalAlpha=g[2];ctx.fillStyle='#fff';ctx.shadowColor='#fff';ctx.shadowBlur=10;
-      ctx.beginPath();ctx.moveTo(0,-r);ctx.quadraticCurveTo(1,-1,r,0);ctx.quadraticCurveTo(1,1,0,r);ctx.quadraticCurveTo(-1,1,-r,0);ctx.quadraticCurveTo(-1,-1,0,-r);ctx.fill();ctx.restore();});
+      ctx.beginPath();ctx.moveTo(0,-r);ctx.quadraticCurveTo(1,-1,r,0);ctx.quadraticCurveTo(1,1,0,r);ctx.quadraticCurveTo(-1,1,-r,0);ctx.quadraticCurveTo(-1,-1,0,-r);ctx.fill();ctx.restore();}
   }
-  function loop(t){requestAnimationFrame(loop);if(!cv.isConnected||!cv.offsetParent)return;draw(t);}
-  requestAnimationFrame(loop);
+  /* رسم فقط وقتی الماس روی صفحه دیده می‌شود (نه وقتی صفحه عوض شده یا پایین‌تر اسکرول شده)؛
+     روی گوشی ضعیف خودکار ۳۰ فریم در ثانیه (چرخش بر پایه‌ی زمان است، پس سرعت و ظاهرش فرقی نمی‌کند) */
+  let vis=false, running=false, skip=false, tick=0, lastT=0, gapAvg=16.7, nGap=0, retryAt=0, retryWait=6000;
+  function loop(t){
+    if(!vis||document.hidden){ running=false; lastT=0; return; }
+    requestAnimationFrame(loop);
+    if(skip){
+      if(t>retryAt){ skip=false; gapAvg=16.7; nGap=0; lastT=0; }          /* هر چند ثانیه دوباره ۶۰ فریم را امتحان می‌کند */
+      else if(tick++ & 1) return;
+    }else{
+      if(lastT){ const g=Math.min(100,t-lastT); gapAvg=gapAvg*.88+g*.12; nGap++; }
+      lastT=t;
+      if(nGap>24 && gapAvg>21){ skip=true; tick=0; retryAt=t+retryWait; retryWait=Math.min(60000,retryWait*2); }   /* گوشی به ۶۰ فریم نمی‌رسد: ۳۰ فریم در ثانیه */
+    }
+    draw(t);
+  }
+  function kick(){ if(vis && !running && !document.hidden){ running=true; requestAnimationFrame(loop); } }
+  try{
+    new IntersectionObserver(es=>{ vis=es[es.length-1].isIntersecting; kick(); },{threshold:0}).observe(cv);
+    document.addEventListener('visibilitychange',kick);
+  }catch(e){ vis=true; kick(); }
   return {cv,set(tier){pal=__PAL[tier];col=[__hx(pal[0]),__hx(pal[1]),__hx(pal[2])];}};
 })();
 function applyRarity(hero,rank,name,count){
   const tier=__tierOf(rank);
   hero.dataset.tier=tier;
   let sparks='';for(let i=0;i<__SPARKS[tier];i++){sparks+='<i class="rc-spark" style="left:'+(8+Math.random()*84)+'%;bottom:'+(8+Math.random()*50)+'%;--d:'+(2.4+Math.random()*2.4).toFixed(1)+'s;--dl:'+(Math.random()*3).toFixed(1)+'s;--dx:'+((Math.random()*40-20)|0)+'px"></i>';}
-  hero.innerHTML='<div class="rc-foil"></div><div class="rc-rays"></div>'+sparks
+  hero.innerHTML='<div class="rc-ring"><i></i></div><div class="rc-foil"><i></i></div><div class="rc-rays"></div>'+sparks
    +'<div class="rc-top"><div class="rank-chip" id="student-rank-label"></div></div>'
    +'<div class="rc-gemwrap"></div>'
    +'<div class="lbl" id="student-name-label"></div>'
-   +'<div class="rc-plate"><div class="rc-plate-in"><div class="score-num-big" id="student-total-label">0</div></div></div>'
+   +'<div class="rc-plate"><div class="rc-pring"><i></i></div><div class="rc-plate-in"><div class="score-num-big" id="student-total-label">0</div></div></div>'
    +'<div class="rc-hint">'+(tier==='common'?'برای گرفتن کارت رنگی، به ۳۰ نفر اول برس':'')+'</div>';
   __GEM.set(tier);hero.querySelector('.rc-gemwrap').appendChild(__GEM.cv);
+  try{ if(!hero.__io){ hero.__io=new IntersectionObserver(es=>{ hero.classList.toggle('rc-off', !es[es.length-1].isIntersecting); },{threshold:0}); hero.__io.observe(hero); } }catch(e){}
   document.getElementById('student-name-label').textContent=name;
   document.getElementById('student-rank-label').textContent=rank.toLocaleString('fa-IR')+'/'+count.toLocaleString('fa-IR');
 }
@@ -3675,12 +3751,25 @@ function markStudentSeen(id){
     if(p && p.catch) p.catch(e=>{ suppressNextSnapshot = false; console.error('seen failed', e); });
   }catch(e){ suppressNextSnapshot = false; }
 }
-async function persist(){
+/* ذخیره‌ی گروهی: چند تغییر پشت‌سرهم (مثلاً چند امتیاز پشت‌سرهم) فقط یک بار روی سرور نوشته می‌شود.
+   وقتی صفحه بسته یا مخفی شود، فوراً ذخیره می‌شود تا چیزی از دست نرود. */
+let __pTimer = null, __pDirty = false;
+function persist(){
+  __pDirty = true;
+  clearTimeout(__pTimer);
+  __pTimer = setTimeout(persistNow, 300);
+}
+async function persistNow(){
+  clearTimeout(__pTimer); __pTimer = null;
+  if(!__pDirty) return;
+  __pDirty = false;
   try{
     suppressNextSnapshot = true;
     await stateRef.set(state);
-  } catch(e){ console.error('save failed', e); }
+  } catch(e){ console.error('save failed', e); __pDirty = true; suppressNextSnapshot = false; }
 }
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden) persistNow(); });
+window.addEventListener('pagehide', ()=>{ persistNow(); });
 
 /* ============================================================
    EVENT WIRING
@@ -3974,7 +4063,7 @@ async function bkApply(){
     state.pin = keepPin || state.pin;
     normalize();
     bkPending = null;
-    await persist();
+    persist(); await persistNow();
     box.innerHTML = `بازگردانی انجام شد: <b>${faNum(state.students.length)}</b> دانش‌آموز.`;
     selectedIds = new Set(); selectMode = false; activeRoleId = null; pendingDeleteId = null;
     renderTeacherTab(currentTeacherTab, true);
@@ -4204,6 +4293,7 @@ stateRef.onSnapshot({includeMetadataChanges:true}, (snap)=>{
   }
 
   if(suppressNextSnapshot){ suppressNextSnapshot = false; if(booted) return; }
+  if(__pDirty && booted) return;          /* تغییر ذخیره‌نشده‌ی خودم در راه است؛ نسخه‌ی قدیمی سرور رویش نمی‌نشیند */
 
   if(fromCache && !snap.exists && !booted){ return; }
 
