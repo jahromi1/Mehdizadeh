@@ -327,6 +327,7 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .subj-head b{font-size:11.5px; flex:1; font-weight:700;}
 .subj-detail{display:none; padding:0 6px;}
 .subj-detail.open{display:flow-root;}
+.mini-x.arm{background:rgba(255,107,129,.22); color:#ffb3c0!important; border-radius:8px;}
 .subj-detail.sl-in .subj-inner{animation:slIn .32s ease-out both;}
 @keyframes slIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 html.lite *{backdrop-filter:none!important; -webkit-backdrop-filter:none!important;}
@@ -706,6 +707,7 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
         <h1 id="teacher-welcome"></h1>
         <div class="date" id="teacher-date"></div>
       </div>
+      <div class="card" id="sizeWarn" style="display:none; border-color:rgba(255,138,138,.5); background:rgba(255,107,129,.1); font-size:12px; line-height:1.7; padding:12px 14px;"></div>
       <div class="card hero">
         <div class="pdf-row">
           <button class="pdf-btn" id="btn-export-absences">غیبت هفتگی</button>
@@ -1019,6 +1021,7 @@ function normalize(){
     if(!s.absences) s.absences = [];
     s.absences.forEach(a=>{ if(typeof a.excused !== 'boolean') a.excused = false; });
     if(!s.history) s.history = [];
+    if(!Array.isArray(s.monthly)) s.monthly = [];
     s.roles = Array.isArray(s.roles) ? s.roles.filter(id=>__rids.has(id)).slice(0,1) : [];
     if(!s.talents) s.talents = {};
     TALENTS.forEach(t=>{ if(!s.talents[t.key]) s.talents[t.key] = {interest:0, ability:0}; });
@@ -1032,7 +1035,9 @@ function parseISOLocal(iso){ const [y,m,d] = iso.split('-').map(Number); return 
 function todayISO(){ return isoFromDate(new Date()); }
 function todayFa(){ return new Date().toLocaleDateString('fa-IR', {weekday:'long', day:'numeric', month:'long'}); }
 function faDate(iso){ return parseISOLocal(iso).toLocaleDateString('fa-IR'); }
-function total(s){ return s.history.reduce((a,h)=>a+h.delta,0); }
+function monthlyBase(s){ return (s.monthly||[]).reduce((a,r)=>a+(r.p||0)+(r.m||0)+(r.sal||0),0); }
+function monthlyField(s,f){ return (s.monthly||[]).reduce((a,r)=>a+(r[f]||0),0); }
+function total(s){ return s.history.reduce((a,h)=>a+h.delta,0) + monthlyBase(s); }
 function dailyNetMap(history){
   const byDate = {};
   history.forEach(h=>{ byDate[h.date] = (byDate[h.date]||0) + h.delta; });
@@ -1166,6 +1171,8 @@ function countUp(el, target, duration){
   requestAnimationFrame(step);
 }
 function renderTeacherDashboard(){
+  maybeCompact();
+  renderSizeWarn();
   updateFootballInfo();
   if(typeof fbKind!=='undefined' && fbKind) fbRenderList();
   document.getElementById('teacher-welcome').textContent = 'سلام 👋';
@@ -1631,6 +1638,12 @@ function renderReportDetail(s){
   });
   box.querySelectorAll('[data-delsub]').forEach(b=>{
     b.addEventListener('click', ()=>{
+      if(!b.classList.contains('arm')){      /* تأیید دوباره: ضربه‌ی اول فقط آماده می‌کند */
+        box.querySelectorAll('[data-delsub].arm').forEach(x=>{ x.classList.remove('arm'); x.textContent='حذف'; });
+        b.classList.add('arm'); b.textContent='مطمئنی؟';
+        clearTimeout(b._t); b._t = setTimeout(()=>{ b.classList.remove('arm'); b.textContent='حذف'; }, 3500);
+        return;
+      }
       s.grades[b.dataset.delsub].splice(parseInt(b.dataset.delidx),1);
       renderReportDetail(s);
       persist();
@@ -2130,7 +2143,7 @@ function missionIsSchoolDay(d){ const g = d.getDay(); return g===6 || g===0 || g
 function missionFacts(s, todayIso){
   const hist = (s.history||[]);
   const organicHist = hist.filter(h=>!h.m);
-  const organic = organicHist.reduce((a,h)=>a+h.delta,0);
+  const organic = organicHist.reduce((a,h)=>a+h.delta,0) + monthlyField(s,'p') + monthlyField(s,'sal');
 
   /* بهترین رشته‌ی روزهای مدرسه با امتیاز مثبت */
   const byDay = {};
@@ -2170,6 +2183,7 @@ function missionFacts(s, todayIso){
   let cleanWeeks = 0;
   const dates = [];
   hist.forEach(h=>h.date && dates.push(h.date));
+  (s.monthly||[]).forEach(r=>r.fd && dates.push(r.fd));
   Object.keys(s.grades||{}).forEach(k=> (s.grades[k]||[]).forEach(g=>g.date && dates.push(g.date)));
   (s.absences||[]).forEach(a=>a.date && dates.push(a.date));
   const valid = dates.filter(d=>d<=todayIso).sort();
@@ -2192,6 +2206,7 @@ function missionFacts(s, todayIso){
   let talents = 0;
   TALENTS.forEach(t=>{ const v = s.talents && s.talents[t.key]; if(v && Number(v.ability)>7) talents++; });
 
+  (s.monthly||[]).forEach(r=>{ if((r.bs||0)>bestStreak) bestStreak = r.bs; });   /* بهترین رشته‌ی ماه‌های فشرده‌شده */
   return {organic, bestStreak, greatTotal, steps, subGreat, cleanWeeks, talents};
 }
 function missionProgress(s, todayIso){
@@ -2265,7 +2280,7 @@ function renderStudentMissions(){
   const prog = missionProgress(s);
   const totalStars = prog.reduce((a,p)=>a+p.stars,0), maxStars = prog.length*3;
   const R=30, C=2*Math.PI*R;
-  const earnedPts = (s.history||[]).filter(h=>h.m).reduce((a,h)=>a+h.delta,0);
+  const earnedPts = (s.history||[]).filter(h=>h.m).reduce((a,h)=>a+h.delta,0) + monthlyField(s,'m');
   const head = `<div class="card mhead">
     <div class="mring"><svg viewBox="0 0 74 74"><circle cx="37" cy="37" r="${R}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="7"/><circle cx="37" cy="37" r="${R}" fill="none" stroke="var(--purple)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-totalStars/maxStars)).toFixed(1)}"/></svg><b>${faNum(totalStars)}/${faNum(maxStars)}</b></div>
     <div><h2>ماموریت‌ها</h2><p>ستاره‌هایی که جمع کرده‌ای<br>امتیاز گرفته‌شده از ماموریت‌ها: <b>+${faNum(earnedPts)}</b> از ${faNum(maxStars*MISSION_STAR_POINTS)}</p></div></div>`;
@@ -3044,8 +3059,8 @@ function msgFacts(s, todayIso){
     events.push({day:latestDay, w:3, kind:'grade', sig:`gr:${latestDay}:${pick.g.subject}:${pick.g.level}:${pick.up?1:0}`, bank, vars:{s:pick.g.subject}});
   }
   const hist = s.history||[];
-  const tot = hist.reduce((a,h)=>a+h.delta,0);
-  const before = hist.filter(h=>h.date<yIso).reduce((a,h)=>a+h.delta,0);
+  const tot = total(s);
+  const before = monthlyBase(s) + hist.filter(h=>h.date<yIso).reduce((a,h)=>a+h.delta,0);
   const crossed = Math.floor(tot/100)>Math.floor(before/100) && tot>0 && before>=0 ? Math.floor(tot/100)*100 : 0;
   if(crossed){
     const lastTouch = hist.some(h=>h.date===todayIso) ? todayIso : yIso;
@@ -3491,7 +3506,7 @@ function renderRoleRow(s){
   card.innerHTML = '<div class="rl-main"><div class="rl-title">مسئولیت من</div>' + (role
     ? `<div class="rl-name" style="font-size:${role.name.length>26?12.5:role.name.length>14?15.5:19}px">${escapeHtml(role.name)}</div>`
     : '<div class="rl-empty">فعلاً مسئولیتی نداری</div>') + '</div>'
-    + `<div class="sk-wrap" title="هر ماه ۳ فرصت داری؛ با تمام شدن فرصت‌ها حقوق آن ماه داده نمی‌شود"><div class="sk-ovals">${ovals}</div><div class="sk-lbl${used>=MAX_STRIKES?' bad':''}">${used>=MAX_STRIKES?'فرصتی نمانده':faNum(MAX_STRIKES-used)+' فرصت'}</div></div>`;
+    + `<div class="sk-wrap" title="هر ماه ۳ فرصت داری؛ با تمام شدن فرصت‌ها حقوق آن ماه داده نمی‌شود"><div class="sk-ovals">${ovals}</div></div>`;
   const cd = document.getElementById('cdCard');
   const m = monthCountdown();
   if(!m){ cd.style.display='none'; return; }
@@ -3530,7 +3545,7 @@ function renderStudentDashboard(){
   setTimeout(()=>{ if(currentView==='view-student' && currentStudentId===s.id) runMissionsFor(s, false); }, 1800);
 
   const sorted=[...s.history].sort((a,b)=>a.date.localeCompare(b.date));
-  let sum=0; const cum = sorted.map(h=>{sum+=h.delta; return sum;});
+  let sum=monthlyBase(s); const cum = sorted.map(h=>{sum+=h.delta; return sum;});
   document.getElementById('student-chart').innerHTML = buildLineChart(cum);
 
   const hist = document.getElementById('student-history');
@@ -3543,6 +3558,14 @@ function renderStudentDashboard(){
       const cls = net>0?'var(--green)':'var(--danger)';
       const mp = s.history.filter(h=>h.date===d && h.m).reduce((a,h)=>a+h.delta,0);
       return `<div class="hist-line"><span>${faDate(d)}${mp?` <small style="color:var(--muted); font-size:10px;">(شامل ${faNum(mp)} امتیاز ماموریت)</small>`:''}</span><span style="color:${cls}; font-weight:800;">${net>0?'+':''}${faNum(net)}</span></div>`;
+    }).join('');
+  }
+  const mrows = [...(s.monthly||[])].sort((a,b)=>b.k.localeCompare(a.k));
+  if(mrows.length){
+    hist.innerHTML += `<div style="margin:12px 2px 4px; font-size:10.5px; color:var(--muted); font-weight:700;">ماه‌های گذشته (جمع ماه):</div>` + mrows.map(r=>{
+      const net = (r.p||0)+(r.m||0)+(r.sal||0);
+      const cls = net>0?'var(--green)':net<0?'var(--danger)':'var(--muted)';
+      return `<div class="hist-line"><span>${monthLabelFromKey(r.k)} <small style="color:var(--muted); font-size:10px;">(${faNum(r.n||0)} ثبت)</small></span><span style="color:${cls}; font-weight:800;">${net>0?'+':''}${faNum(net)}</span></div>`;
     }).join('');
   }
 }
@@ -3704,7 +3727,7 @@ function renderMissionTeacher(){
   const el = document.getElementById('mtInfo'); if(!el) return;
   const on = state.missionsOn !== false;
   let pts = 0, n = 0;
-  state.students.forEach(s=>{ const x = (s.history||[]).filter(h=>h.m).reduce((a,h)=>a+h.delta,0); if(x){ pts += x; n++; } });
+  state.students.forEach(s=>{ const x = (s.history||[]).filter(h=>h.m).reduce((a,h)=>a+h.delta,0) + monthlyField(s,'m'); if(x){ pts += x; n++; } });
   document.getElementById('mtState').textContent = on ? 'روشن' : 'خاموش';
   document.getElementById('mtToggle').textContent = on ? 'خاموش کردن' : 'روشن کردن';
   el.innerHTML = `جایزه‌ی ماموریت‌ها تا حالا: <b>${faNum(pts)}</b> امتیاز برای <b>${faNum(n)}</b> دانش‌آموز` + (on ? '' : '<br>تا وقتی خاموش است، جایزه‌ی تازه‌ای ثبت نمی‌شود.');
@@ -3723,7 +3746,7 @@ function mtReset(){
     return;
   }
   clearTimeout(mtResetTimer); mtResetPending = false;
-  state.students.forEach(s=>{ s.history = (s.history||[]).filter(h=>!h.m); });
+  state.students.forEach(s=>{ s.history = (s.history||[]).filter(h=>!h.m); (s.monthly||[]).forEach(r=>{ r.m = 0; }); });
   state.missions = {};
   state.missionsOn = false;           /* برای اینکه دوباره خودکار ثبت نشوند؛ معلم می‌تواند دوباره روشن کند */
   renderMissionTeacher(); persist();
@@ -3807,6 +3830,85 @@ function mteSave(){
   msg.textContent = done.stars>0 ? `ذخیره شد. ${faNum(done.stars)} ستاره پس گرفته شد (${faNum(done.pts)}- امتیاز).` : 'ذخیره شد.';
   renderMissionTeacher(); persist();
 }
+/* ---------- فشرده‌سازی ماهانه‌ی تاریخچه‌ی امتیاز ---------- */
+const COMPACT_GRACE_DAYS = 14;      /* ماه گذشته تا ۱۴ روز بعد از شروع ماه جدید روزبه‌روز می‌ماند (برای رشته‌ها و ماموریت‌ها) */
+const JMONTHS = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+function jMonthKeyOf(iso){
+  const p = jalaliParts(parseISOLocal(iso));
+  if(isNaN(p.y)||isNaN(p.m)) return iso.slice(0,7);
+  return p.y+'-'+pad2(p.m);
+}
+function monthLabelFromKey(k){
+  const m = /^(\d+)-(\d+)$/.exec(k||''); if(!m) return k||'';
+  const mi = parseInt(m[2],10);
+  return (JMONTHS[mi-1]||m[2]) + ' ' + parseInt(m[1],10).toLocaleString('fa-IR',{useGrouping:false});
+}
+function bestRunOfDays(byDay){
+  const keys = Object.keys(byDay).sort(); if(!keys.length) return 0;
+  let d = parseISOLocal(keys[0]); const end = parseISOLocal(keys[keys.length-1]); let run=0, best=0, guard=0;
+  while(d<=end && guard++<400){
+    if(missionIsSchoolDay(d)){ const net = byDay[isoFromDate(d)]; if(net>0){ run++; if(run>best) best=run; } else run=0; }
+    d.setDate(d.getDate()+1);
+  }
+  return best;
+}
+/* تاریخچه‌ی هر دانش‌آموز را برمی‌گرداند: {history, monthly} جدید؛ چیزی را عوض نمی‌کند */
+function compactStudent(s, cutKey){
+  const keep = [], groups = {};
+  (s.history||[]).forEach(h=>{
+    if(!h || !h.date) { keep.push(h); return; }
+    const k = jMonthKeyOf(h.date);
+    if(k >= cutKey){ keep.push(h); return; }
+    (groups[k] = groups[k] || []).push(h);
+  });
+  const keys = Object.keys(groups); if(!keys.length) return null;
+  const monthly = (s.monthly||[]).map(r=>({...r}));
+  keys.forEach(k=>{
+    const hs = groups[k]; const byDay = {}; let p=0, m=0, sal=0, fd = hs[0].date;
+    hs.forEach(h=>{
+      if(h.date<fd) fd = h.date;
+      if(h.m) m += h.delta; else if(h.sal) sal += h.delta; else { p += h.delta; byDay[h.date] = (byDay[h.date]||0) + h.delta; }
+    });
+    let r = monthly.find(x=>x.k===k);
+    if(!r){ r = {k, p:0, m:0, sal:0, n:0, bs:0, fd}; monthly.push(r); }
+    r.p += p; r.m += m; r.sal += sal; r.n += hs.length;
+    r.bs = Math.max(r.bs||0, bestRunOfDays(byDay));
+    if(fd < (r.fd||fd)) r.fd = fd;
+  });
+  monthly.sort((a,b)=>a.k.localeCompare(b.k));
+  return {history: keep, monthly};
+}
+/* برمی‌گرداند چند ثبت فشرده شد. اگر جمع کل هر دانش‌آموز یک عدد هم فرق کند، هیچ‌چیز اعمال نمی‌شود. */
+function compactHistory(todayIso){
+  const cutoff = parseISOLocal(todayIso); cutoff.setDate(cutoff.getDate()-COMPACT_GRACE_DAYS);
+  const cutKey = jMonthKeyOf(isoFromDate(cutoff));
+  const plan = [];
+  for(const s of state.students){
+    const r = compactStudent(s, cutKey); if(!r) continue;
+    const before = total(s);
+    const after = r.history.reduce((a,h)=>a+h.delta,0) + r.monthly.reduce((a,x)=>a+(x.p||0)+(x.m||0)+(x.sal||0),0);
+    if(before !== after) return 0;
+    plan.push({s, r, n: (s.history||[]).length - r.history.length});
+  }
+  let n = 0;
+  plan.forEach(x=>{ x.s.history = x.r.history; x.s.monthly = x.r.monthly; n += x.n; });
+  return n;
+}
+let __compactedDay = null;
+function maybeCompact(){
+  const t = todayISO(); if(__compactedDay === t) return;
+  __compactedDay = t;
+  try{ if(compactHistory(t) > 0) persist(); }catch(e){ console.error('compact', e); }
+}
+function stateSizeKB(){ try{ return Math.round(new Blob([JSON.stringify(state)]).size/1024); }catch(e){ return 0; } }
+function renderSizeWarn(){
+  const el = document.getElementById('sizeWarn'); if(!el) return;
+  const kb = stateSizeKB(), pct = Math.round(kb/1024*100);
+  if(pct < 70){ el.style.display='none'; return; }
+  el.style.display='block';
+  el.innerHTML = `⚠️ حجم اطلاعات <b>${faNum(pct)}٪</b> ظرفیت شده (${faNum(kb)} از ۱۰۲۴ کیلوبایت). از «پنل مدیریت» پشتیبان بگیر و اطلاعات قدیمی را پاک کن، وگرنه ذخیره‌سازی متوقف می‌شود.`;
+}
+
 /* ---------- BACKUP / RESTORE ---------- */
 const BK_APP = 'kelas-ma';
 function bkLastText(){
