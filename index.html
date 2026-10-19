@@ -1026,7 +1026,10 @@ const LEVELS = [
   {key:'weak',  label:'نیاز به تلاش', color:'#ff7d9c', value:1},
   {key:'absent',label:'غایب',      color:'#8c879d', value:null}
 ];
-function levelByKey(k){ return LEVELS.find(l=>l.key===k); }
+const __LV_UNKNOWN = {key:'unknown', label:'نامشخص', color:'#8c879d', value:null};
+function levelByKey(k){ return LEVELS.find(l=>l.key===k) || __LV_UNKNOWN; }   /* سطح ناشناخته (داده‌ی خراب) نباید صفحه را بشکند */
+/* رقم‌های فارسی/عربی را به لاتین برمی‌گرداند و فاصله‌ی پنهان را حذف می‌کند (برای کد ورود و پین) */
+function enDigits(v){ return String(v==null?'':v).replace(/[۰-۹]/g,d=>String(d.charCodeAt(0)-1776)).replace(/[٠-٩]/g,d=>String(d.charCodeAt(0)-1632)).replace(/[\s\u200c\u200b\u200e\u200f\u202a-\u202e]/g,''); }
 function escapeHtml(str){ return String(str).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function initials(name){ return (name||'').trim().charAt(0) || '?'; }
 function faNum(n){ return Number(n||0).toLocaleString('fa-IR'); }
@@ -1062,6 +1065,8 @@ function normalize(){
   if(typeof state.missionsOn!=='boolean') state.missionsOn = true;
   if(!state.missionCfg || typeof state.missionCfg!=='object' || Array.isArray(state.missionCfg)) state.missionCfg = {};
   { const ids = new Set(state.students.map(s=>s.id));
+    Object.keys(state.seen).forEach(k=>{ if(!ids.has(k)) delete state.seen[k]; });          /* باقی‌مانده‌ی دانش‌آموزان حذف‌شده */
+    Object.keys(state.missions).forEach(k=>{ if(!ids.has(k)) delete state.missions[k]; });
     const clean = a => Array.isArray(a) ? [...new Set(a.filter(id=>ids.has(id)))] : [];
     state.footballBan = clean(state.footballBan);
     state.footballTop = clean(state.footballTop).filter(id=>!state.footballBan.includes(id)); }
@@ -3963,7 +3968,7 @@ document.getElementById('btn-pin-back').addEventListener('click', ()=> show('vie
 document.getElementById('btn-student-back').addEventListener('click', ()=> show('view-landing'));
 
 document.getElementById('btn-pin-submit').addEventListener('click', ()=>{
-  const v = document.getElementById('pin-input').value.trim();
+  const v = enDigits(document.getElementById('pin-input').value);
   if(v === state.pin){
     try{ localStorage.setItem('teacherUnlocked','yes'); }catch(e){}
     showTeacherTab('dashboard');
@@ -3973,7 +3978,7 @@ document.getElementById('btn-pin-submit').addEventListener('click', ()=>{
   } else document.getElementById('pin-msg').textContent = 'پین اشتباه است';
 });
 document.getElementById('btn-student-submit').addEventListener('click', ()=>{
-  const v = document.getElementById('student-code-input').value.trim();
+  const v = enDigits(document.getElementById('student-code-input').value);
   const s = state.students.find(x=>x.code===v);
   if(s){
     currentStudentId = s.id;
