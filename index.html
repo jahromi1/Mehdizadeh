@@ -121,6 +121,11 @@ input[type=text],input[type=number]{width:100%; padding:12px; border-radius:12px
 .today-dot{width:8px; height:8px; border-radius:50%; flex:none; display:inline-block; margin-right:7px; box-shadow:0 0 8px currentColor;}
 .today-dot.on{background:var(--green); color:var(--green);}
 .today-dot.off{background:rgba(255,255,255,.14); color:transparent;}
+.today-dot.l1{background:#56e0b0; color:#56e0b0;}   /* نمره‌ی اول امروز: سبز */
+.today-dot.l2{background:#4da3ff; color:#4da3ff;}   /* دوم: آبی */
+.today-dot.l3{background:#ff4d6a; color:#ff4d6a;}   /* سوم: قرمز */
+.today-dot.l4{background:#a67cff; color:#a67cff;}   /* چهارم: بنفش */
+.today-dot.l5{background:#ffd23f; color:#ffd23f;}   /* پنجم و بیشتر: زرد */
 .hidden-banner{display:flex; align-items:center; gap:8px; padding:12px 15px; margin-bottom:14px; font-weight:700; font-size:12.5px; color:var(--yellow); background:rgba(255,217,138,.08); border:1px solid rgba(255,217,138,.26) !important;}
 
 .topbar{display:flex; align-items:center; gap:10px; margin-bottom:14px;}
@@ -1137,6 +1142,10 @@ function rerenderCurrentView(){
    TEACHER APP
    ============================================================ */
 function showTeacherTab(tab){
+  if(tab!==currentTeacherTab){            /* انتخاب‌های یک تب نباید به تب دیگر (مثلاً «حذف») نشت کند */
+    selectedIds.clear();
+    if(selectMode){ selectMode = false; const sb = document.getElementById('btn-select-mode'); if(sb) sb.classList.remove('on'); }
+  }
   currentTeacherTab = tab;
   if(tab==='manage' && typeof bkLastText==='function') bkLastText();
   document.querySelectorAll('#view-teacher .tabsection').forEach(s=>s.classList.remove('active'));
@@ -1566,6 +1575,12 @@ function gradedToday(s){
   const t = todayISO();
   return SUBJECTS.some(sub => (s.grades[sub]||[]).some(g=>g.date===t));
 }
+/* تعداد نمره‌هایی که امروز برای این دانش‌آموز ثبت شده؛ ویرایش یک نمره چیزی اضافه نمی‌کند، فقط ثبت تازه می‌شمارد */
+function gradesTodayCount(s){
+  const t = todayISO(); let n = 0;
+  SUBJECTS.forEach(sub => (s.grades[sub]||[]).forEach(g=>{ if(g.date===t) n++; }));
+  return n;
+}
 function renderReportList(){
   reportListMode = true;
   document.getElementById('tt-report-detail').classList.remove('active');
@@ -1575,10 +1590,11 @@ function renderReportList(){
   const listEl = document.getElementById('reportStudentList');
   if(list.length===0){ listEl.innerHTML = '<div class="empty-note">دانش‌آموزی پیدا نشد</div>'; return; }
   listEl.innerHTML = list.map(s=>{
-    const graded = gradedToday(s);
+    const gn = gradesTodayCount(s);
+    const lamp = gn<=0 ? 'off' : 'l'+Math.min(gn,5);
     return `<div class="student-row" data-open="${s.id}" style="cursor:pointer;">
       <div class="av" style="background:linear-gradient(145deg,#9c7aff,#5434c1);">${initials(s.name)}</div>
-      <div class="info"><strong>${escapeHtml(s.name)}<span class="today-dot ${graded?'on':'off'}" title="${graded?'امروز نمره گرفته':'امروز نمره نگرفته'}"></span></strong><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
+      <div class="info"><strong>${escapeHtml(s.name)}<span class="today-dot ${lamp}" title="${gn>0?('امروز '+faNum(gn)+' نمره ثبت شده'):'امروز نمره‌ای ثبت نشده'}"></span></strong><span class="code">کد: ${streamerMode?'••••':s.code}</span></div>
       <span style="color:var(--muted); font-size:13px;">›</span>
     </div>`;
   }).join('');
@@ -1792,8 +1808,18 @@ function renderTalentDetail(s){
 }
 
 /* ---------- MANAGEMENT ---------- */
+let __bulkDelArmed = false, __bulkDelTimer = null, __bulkDelN = 0;
 function applyBulkDelete(){
   if(selectedIds.size===0) return;
+  const btn = document.getElementById('btnBulkDelete');
+  if(!__bulkDelArmed || __bulkDelN!==selectedIds.size){   /* ضربه‌ی اول (یا تغییر انتخاب) فقط آماده می‌کند */
+    __bulkDelArmed = true; __bulkDelN = selectedIds.size;
+    if(btn) btn.textContent = 'مطمئنی؟ ' + faNum(selectedIds.size) + ' نفر حذف می‌شوند';
+    clearTimeout(__bulkDelTimer);
+    __bulkDelTimer = setTimeout(()=>{ __bulkDelArmed = false; const b = document.getElementById('btnBulkDelete'); if(b) b.textContent = 'حذف انتخاب‌شده‌ها'; }, 3500);
+    return;
+  }
+  clearTimeout(__bulkDelTimer); __bulkDelArmed = false;
   state.students = state.students.filter(s=> !selectedIds.has(s.id));
   selectedIds.clear();
   renderManage();
