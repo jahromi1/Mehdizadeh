@@ -504,6 +504,9 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
 .score-hero[data-tier="epic"]{--c1:#a56bff;--c2:#e3d0ff;--c3:#341678;--glow:rgba(165,107,255,.6);}
 .score-hero[data-tier="rare"]{--c1:#3fa9ff;--c2:#c4e8ff;--c3:#093a85;--glow:rgba(63,169,255,.55);}
 .score-hero.rc-off *{animation-play-state:paused!important}
+/* حالت سبک حرکت (گوشی ضعیف): الماس ۳۰ فریم، نصف جرقه‌ها، پرتوها ثابت؛ بقیه‌ی جلوه‌ها همان‌طور که هست */
+.lite-motion .score-hero .rc-spark:nth-of-type(even){display:none}
+.lite-motion .score-hero .rc-rays{animation-play-state:paused}
 .rc-ring{position:absolute;inset:0;border-radius:inherit;padding:2.5px;z-index:3;pointer-events:none;overflow:hidden;
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;}
 .rc-ring>i{position:absolute;left:50%;top:50%;width:560px;height:560px;margin:-280px 0 0 -280px;pointer-events:none;
@@ -1626,7 +1629,9 @@ function slideClose(el){
 /* weak-device detection: drop the costly blur layers (looks nearly identical, much cheaper) */
 (function(){ try{
   const weak = (navigator.hardwareConcurrency && navigator.hardwareConcurrency<=4) || (navigator.deviceMemory && navigator.deviceMemory<=3);
+  let prev = false; try{ prev = localStorage.getItem('cm_lite_motion')==='1'; }catch(e){}
   if(weak) document.documentElement.classList.add('lite');
+  if(weak || prev) document.documentElement.classList.add('lite-motion');
 }catch(e){} })();
 function wireAccordion(box){
   box.querySelectorAll('[data-toggle]').forEach(h=>{
@@ -3529,7 +3534,7 @@ const __GEM=(function(){
   }
   const byZ=(a,b)=>pZ[a]-pZ[b];
   function draw(t){
-    const s=t/1000,S=62*pal[3],D=5.2,gl=[];
+    const s=t/2000,S=62*pal[3],D=5.2,gl=[];
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
     const spin=s*.95,tilt=.42+Math.sin(s*.8)*.08;
     np=0;
@@ -3551,7 +3556,7 @@ const __GEM=(function(){
   }
   /* رسم فقط وقتی الماس روی صفحه دیده می‌شود (نه وقتی صفحه عوض شده یا پایین‌تر اسکرول شده)؛
      روی گوشی ضعیف خودکار ۳۰ فریم در ثانیه (چرخش بر پایه‌ی زمان است، پس سرعت و ظاهرش فرقی نمی‌کند) */
-  let vis=false, running=false, skip=false, tick=0, lastT=0, gapAvg=16.7, nGap=0, retryAt=0, retryWait=6000;
+  let vis=false, running=false, skip=document.documentElement.classList.contains('lite-motion'), tick=0, lastT=0, gapAvg=16.7, nGap=0, retryAt=0, retryWait=6000;
   function loop(t){
     if(!vis||document.hidden){ running=false; lastT=0; return; }
     requestAnimationFrame(loop);
@@ -3561,7 +3566,8 @@ const __GEM=(function(){
     }else{
       if(lastT){ const g=Math.min(100,t-lastT); gapAvg=gapAvg*.88+g*.12; nGap++; }
       lastT=t;
-      if(nGap>24 && gapAvg>21){ skip=true; tick=0; retryAt=t+retryWait; retryWait=Math.min(60000,retryWait*2); }   /* گوشی به ۶۰ فریم نمی‌رسد: ۳۰ فریم در ثانیه */
+      if(nGap>24 && gapAvg>21){ skip=true; tick=0; retryAt=t+retryWait; retryWait=Math.min(60000,retryWait*2);
+        document.documentElement.classList.add('lite-motion'); try{ localStorage.setItem('cm_lite_motion','1'); }catch(e){} }   /* گوشی به ۶۰ فریم نمی‌رسد: ۳۰ فریم در ثانیه */
     }
     draw(t);
   }
