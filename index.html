@@ -18,8 +18,8 @@
 html,body{height:100%;}
 body{margin:0; font-family:Vazirmatn,Arial,sans-serif; color:var(--text); background:var(--bg); overflow-x:hidden;}
 body::before,body::after{content:""; position:fixed; z-index:-2; border-radius:50%; filter:blur(80px); opacity:.5; pointer-events:none; transform:translateZ(0); will-change:transform;}
-body::before{width:75vw; height:75vw; top:-30vw; right:-22vw; background:#6236d7;}
-body::after{width:65vw; height:65vw; bottom:-28vw; left:-20vw; background:#172d83;}
+body::before{width:75vw; height:75vw; top:-30vw; right:-22vw; background:var(--glow1,#6236d7);}
+body::after{width:65vw; height:65vw; bottom:-28vw; left:-20vw; background:var(--glow2,#172d83);}
 .hidden{display:none !important;}
 
 .wrap{max-width:440px; margin:0 auto; padding:14px 14px calc(96px + var(--safe-b)); padding-top:calc(14px + var(--safe-t));}
@@ -883,6 +883,7 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
         <button type="button" data-mg="roleMgr"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c.6-3.6 3.5-5.4 7-5.4s6.4 1.8 7 5.4"/></svg>مسئولیت‌ها</button>
         <button type="button" data-mg="bkCard"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5v10.5M7.8 10l4.2 4.2 4.2-4.2"/><path d="M4.5 15.5v3a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-3"/></svg>پشتیبان‌گیری</button>
         <button type="button" data-mg="missionTeacherCard"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r=".9" fill="currentColor"/></svg>ماموریت‌ها</button>
+        <button type="button" data-mg="ordersCard"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-1 11.2a1.8 1.8 0 0 1-1.8 1.6H8.8A1.8 1.8 0 0 1 7 19.2L6 8z"/><path d="M9 8V6.6a3 3 0 0 1 6 0V8"/></svg>درخواست‌ها<span class="ord-badge" hidden></span></button>
       </div>
       <div class="card role-mgr lottery-card mg-panel" id="roleMgr">
         <div class="lottery-title">مسئولیت‌ها</div>
@@ -903,6 +904,11 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
         </div>
         <input type="file" id="bkFile" accept=".json,application/json" hidden>
         <div class="bk-box" id="bkBox"></div>
+      </div>
+      <div class="card orders-card lottery-card mg-panel" id="ordersCard">
+        <div class="lottery-title">درخواست‌های خرید<small id="ordersState" style="font-size:10.5px; color:var(--muted); font-weight:700;"></small></div>
+        <div class="rm-hint" id="ordersMsg"></div>
+        <div id="ordersList"></div>
       </div>
       <div class="card mt-card lottery-card mg-panel" id="missionTeacherCard">
         <div class="lottery-title">ماموریت‌های دانش‌آموز<small id="mtState" style="font-size:10.5px; color:var(--muted); font-weight:700;"></small></div>
@@ -934,7 +940,7 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
     <button data-tab="absence"><i><svg viewBox="0 0 24 24" fill="currentColor"><rect class="fillable" x="4" y="7" width="16" height="13" rx="2.6"/><rect class="fillable" x="7.3" y="3.3" width="2.2" height="4.8" rx="1.1"/><rect class="fillable" x="14.5" y="3.3" width="2.2" height="4.8" rx="1.1"/></svg></i>غیبت</button>
     <button data-tab="report"><i><svg viewBox="0 0 24 24" fill="currentColor"><rect class="fillable" x="3.8" y="3.8" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="13" y="3.8" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="3.8" y="13" width="7.2" height="7.2" rx="2"/><rect class="fillable" x="13" y="13" width="7.2" height="7.2" rx="2"/></svg></i>کارنامه</button>
     <button data-tab="talent"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M12 3.5l2.6 5.6 6.1.6-4.6 4.1 1.4 6-5.5-3.3-5.5 3.3 1.4-6-4.6-4.1 6.1-.6L12 3.5z"/></svg></i>استعداد</button>
-    <button data-tab="manage"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M12 3 20 6.5v5.5c0 5-3.5 8-8 9.5-4.5-1.5-8-4.5-8-9.5V6.5L12 3z"/></svg></i>مدیریت</button>
+    <button data-tab="manage"><i><svg viewBox="0 0 24 24" fill="currentColor"><path class="fillable" d="M12 3 20 6.5v5.5c0 5-3.5 8-8 9.5-4.5-1.5-8-4.5-8-9.5V6.5L12 3z"/></svg></i>مدیریت<span class="ord-badge tb-badge" hidden></span></button>
   </nav></div>
 </div>
 
@@ -983,7 +989,10 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
     </section>
 
     <section class="tabsection" id="st-missions">
+      <div class="seg" id="msSeg"><button type="button" class="on" data-ms="missions">ماموریت‌ها</button><button type="button" data-ms="shop">فروشگاه</button><button type="button" data-ms="perks">شخصی‌سازی</button></div>
       <div id="student-missions"></div>
+      <div id="student-shop" style="display:none"></div>
+      <div id="student-perks" style="display:none"></div>
     </section>
     <div class="tiny-footer">create by Mehdizadeh</div>
   </div>
@@ -1104,6 +1113,7 @@ function normalize(){
     TALENTS.forEach(t=>{ if(!s.talents[t.key]) s.talents[t.key] = {interest:0, ability:0}; });
     delete s.homework;
   });
+  ensureShop();
 }
 
 function pad2(n){ return String(n).padStart(2,'0'); }
@@ -1112,7 +1122,8 @@ function parseISOLocal(iso){ const [y,m,d] = iso.split('-').map(Number); return 
 function todayISO(){ return isoFromDate(new Date()); }
 function todayFa(){ return new Date().toLocaleDateString('fa-IR', {weekday:'long', day:'numeric', month:'long'}); }
 function faDate(iso){ return parseISOLocal(iso).toLocaleDateString('fa-IR'); }
-function monthlyBase(s){ return (s.monthly||[]).reduce((a,r)=>a+(r.p||0)+(r.m||0)+(r.sal||0),0); }
+function monthNet(r){ return (r.p||0)+(r.m||0)+(r.sal||0)+(r.sh||0); }       /* sh = خرج‌کردن امتیاز در فروشگاه */
+function monthlyBase(s){ return (s.monthly||[]).reduce((a,r)=>a+monthNet(r),0); }
 function monthlyField(s,f){ return (s.monthly||[]).reduce((a,r)=>a+(r[f]||0),0); }
 function total(s){ return s.history.reduce((a,h)=>a+h.delta,0) + monthlyBase(s); }
 function dailyNetMap(history){
@@ -1120,7 +1131,7 @@ function dailyNetMap(history){
   history.forEach(h=>{ byDate[h.date] = (byDate[h.date]||0) + h.delta; });
   return byDate;
 }
-function todayDelta(s){ return s.history.filter(h=>h.date===todayISO() && !h.m && !h.sal).reduce((a,h)=>a+h.delta,0); }
+function todayDelta(s){ return s.history.filter(h=>h.date===todayISO() && !h.m && !h.sal && !h.shop).reduce((a,h)=>a+h.delta,0); }
 function genCode(){
   let c;
   do { c = String(Math.floor(1000+Math.random()*9000)); }
@@ -1154,12 +1165,14 @@ function rankColorFn(){
 
 function show(id){
   currentView = id;
+  if(id!=='view-student') clearStudentLook();
   ['view-loading','view-landing','view-teacher-pin','view-teacher','view-student-login','view-student'].forEach(v=>{
     document.getElementById(v).classList.toggle('hidden', v!==id);
   });
 }
 
 function rerenderCurrentView(){
+  if(typeof updateOrderBadges==='function') updateOrderBadges();
   if(currentView==='view-teacher') renderTeacherTab(currentTeacherTab, true);
   else if(currentView==='view-student') renderStudentTab(currentStudentTab, true);
 }
@@ -1173,6 +1186,7 @@ function showTeacherTab(tab){
     if(selectMode){ selectMode = false; const sb = document.getElementById('btn-select-mode'); if(sb) sb.classList.remove('on'); }
   }
   currentTeacherTab = tab;
+  if(typeof updateOrderBadges==='function') updateOrderBadges();
   if(tab==='manage' && typeof bkLastText==='function') bkLastText();
   document.querySelectorAll('#view-teacher .tabsection').forEach(s=>s.classList.remove('active'));
   document.getElementById('tt-'+tab).classList.add('active');
@@ -1225,7 +1239,7 @@ function classActivityLast7(){
     const d = new Date(); d.setDate(d.getDate()-i);
     const iso = isoFromDate(d);
     let sum=0;
-    state.students.forEach(s=> s.history.forEach(h=>{ if(h.date===iso && !h.m && !h.sal) sum+=h.delta; }));
+    state.students.forEach(s=> s.history.forEach(h=>{ if(h.date===iso && !h.m && !h.sal && !h.shop) sum+=h.delta; }));
     days.push({date:d, count:sum});
   }
   return days;
@@ -1717,11 +1731,12 @@ function renderReportDetail(s){
       <div class="subj-head" data-toggle="rep-${sub}">
         <span class="dot" style="background:${lv?lv.color:'#4a465c'}; color:${lv?lv.color:'#4a465c'};"></span>
         <b>${sub}</b>
-        <span class="badge" style="${lv?`color:${lv.color}; background:${lv.color}22;`:'color:var(--muted);'}">${lv?lv.label:'بدون نمره'}</span>
+        <span class="badge" style="${lv?`color:${lv.color}; background:${lv.color}22;`:'color:var(--muted);'}">${lv?lv.label:'بدون نمره'}</span>${vipCount(s,sub)?`<span class="vip-chip">⭐ VIP ×${faNum(vipCount(s,sub))}</span>`:''}
         <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </div>
       <div class="subj-detail" id="rep-${sub}"><div class="subj-inner">
         <div class="subj-title"><span class="dot" style="background:${lv?lv.color:'#4a465c'}; color:${lv?lv.color:'#4a465c'};"></span>نمره‌های درس <b>${sub}</b></div>
+        ${vipInfoHtml(s,sub,true)}
         <input type="text" class="note-input" data-notesub="${sub}" placeholder="توضیح اختیاری، مثلاً: امتحان فصل ۲">
         <div class="lvl-choices">${LEVELS.map(l=>`<button class="lvl-btn" style="background:${l.color};" data-sub="${sub}" data-lvl="${l.key}">${l.label}</button>`).join('')}</div>
         <div style="margin:10px 0 6px; font-size:10.5px; color:var(--muted); font-weight:700;">روند نمرات:</div>
@@ -1769,6 +1784,20 @@ function renderReportDetail(s){
       editingGrade = null;
       renderReportDetail(s);
       persist();
+    });
+  });
+  box.querySelectorAll('[data-vipcancel]').forEach(b=>{        /* لغو یک کارت VIP و برگرداندن امتیازش */
+    b.addEventListener('click', async ()=>{
+      if(!b.classList.contains('arm')){
+        b.classList.add('arm'); b.textContent = 'مطمئنی؟';
+        clearTimeout(b._t); b._t = setTimeout(()=>{ b.classList.remove('arm'); b.textContent = 'لغو و برگرداندن امتیاز'; }, 3500);
+        return;
+      }
+      const sub = b.dataset.vipcancel;
+      await shopRun(d=> cancelVipIn(d, s.id, sub));
+      const fresh = state.students.find(x=>x.id===s.id);
+      if(fresh) renderReportDetail(fresh);
+      updateOrderBadges();
     });
   });
 }
@@ -1864,7 +1893,7 @@ function renderManage(){
   renderMissionTeacher();
   renderSalaryCard();
   renderRoleMgr();
-  applyMgTabs();
+  applyMgTabs(); renderOrdersPanel(); updateOrderBadges();
   document.getElementById('manageList').classList.toggle('role-mode', !!activeRoleId && !selectMode);
   const listEl = document.getElementById('manageList');
   let bar = '';
@@ -1974,9 +2003,10 @@ function exportMyReportPDF(){
     const vals = arr.map(g=> levelByKey(g.level).value).filter(v=>v!==null);
     if(!vals.length) return `<tr><td class="sb">${escapeHtml(sub)}</td><td><span class="none">بدون نمره</span></td><td class="cnt">—</td></tr>`;
     const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
-    const l = levelFromAverageUp(avg);
-    const dark = (l.key==='weak') ? '#fff' : '#20320f';
-    return `<tr><td class="sb">${escapeHtml(sub)}</td><td><span class="lv" style="background:${l.color};color:${dark};">${l.label}</span></td><td class="cnt">${faNum(vals.length)}</td></tr>`;
+    const base = levelFromAverageUp(avg), vn = vipCount(s,sub), up = vn ? raisedLevel(base, vn) : null;
+    const l = up || base, dark = (l.key==='weak') ? '#fff' : '#20320f';
+    const vipNote = (vn && up && up.key!==base.key) ? `<small class="vipn">⭐ با کارت VIP ×${faNum(vn)} (از «${base.label}»)</small>` : (vn ? `<small class="vipn">⭐ کارت VIP ×${faNum(vn)}</small>` : '');
+    return `<tr><td class="sb">${escapeHtml(sub)}</td><td><span class="lv" style="background:${l.color};color:${dark};">${l.label}</span>${vipNote}</td><td class="cnt">${faNum(vals.length)}</td></tr>`;
   }).join('');
   const html = `<!DOCTYPE html><html lang="fa" dir="rtl"><head><meta charset="UTF-8"><title>کارنامه ${escapeHtml(s.name)}</title>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1987,7 +2017,7 @@ function exportMyReportPDF(){
     ${PDF_META_CSS}
     table{width:100%;border-collapse:collapse;margin-top:6px;} th{font-size:12px;color:#8a8078;font-weight:700;text-align:right;padding:8px 12px;border-bottom:2px solid #e7e1d8;}
     td{padding:12px;border-bottom:1px solid #e7e1d8;font-size:14px;} td.sb{font-weight:800;} td.cnt{color:#8a8078;font-weight:700;width:90px;}
-    .lv{display:inline-block;font-size:12.5px;font-weight:800;padding:5px 14px;border-radius:999px;} .none{color:#a89e92;font-size:12.5px;font-weight:600;}
+    .lv{display:inline-block;font-size:12.5px;font-weight:800;padding:5px 14px;border-radius:999px;} .vipn{display:block;margin-top:4px;color:#9a6b00;font-size:10.5px;font-weight:700;} .none{color:#a89e92;font-size:12.5px;font-weight:600;}
     tr{page-break-inside:avoid;} .note{margin-top:18px;color:#8a8078;font-size:11.5px;line-height:1.9;}
     .footer{margin-top:30px;text-align:center;color:#a89e92;font-size:11px;border-top:1px solid #e7e1d8;padding-top:14px;}
     @media print{ body{padding:14px;} .lv{-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
@@ -1997,7 +2027,7 @@ function exportMyReportPDF(){
     ${pdfMetaLine()}
     <div class="subtitle">${new Date().toLocaleDateString('fa-IR',{day:'numeric',month:'long',year:'numeric'})}</div></div>
     <table><thead><tr><th>درس</th><th>میانگین نمره‌ها</th><th>تعداد نمره</th></tr></thead><tbody>${rows}</tbody></table>
-    <div class="note">میانگین هر درس از همه‌ی نمره‌های ثبت‌شده‌ی آن درس حساب شده است (غیبت در امتحان حساب نمی‌شود). اگر میانگین بین دو سطح باشد، سطح بالاتر نوشته می‌شود.</div>
+    <div class="note">میانگین هر درس از همه‌ی نمره‌های ثبت‌شده‌ی آن درس حساب شده است (غیبت در امتحان حساب نمی‌شود). اگر میانگین بین دو سطح باشد، سطح بالاتر نوشته می‌شود. هر کارت VIP یک سطح به نمره‌ی همان درس اضافه می‌کند.</div>
     <div class="footer">کلاس ما</div></body></html>`;
   openPrintWindow(html);
 }
@@ -2068,12 +2098,18 @@ function exportReportCardsPDF(){
   const rows = sortedByName().map(s=>{
     const subjBlocks = SUBJECTS.map(sub=>{
       const arr = (s.grades[sub]||[]).filter(g=>{ const d = parseISOLocal(g.date); return d.getFullYear()===y && d.getMonth()===m; });
-      if(arr.length===0) return '';
+      const vn = vipCount(s,sub);
+      if(arr.length===0 && !vn) return '';
       const entries = arr.map(g=>{
         const l = levelByKey(g.level);
         return `<span class="s-badge" style="background:${l.color};color:${l.key==='weak'||l.key==='absent'?'#fff':'#20320f'};">${faDate(g.date)} — ${l.label}</span>`;
       }).join('');
-      return `<div class="subj-block"><b>${escapeHtml(sub)}</b><div class="stu-badges">${entries}</div></div>`;
+      let vipHtml = '';
+      if(vn){
+        const lv = lastLevel(s,sub), up = raisedLevel(lv,vn);
+        vipHtml = `<span class="s-badge vip">⭐ کارت VIP ×${faNum(vn)}</span>` + (lv && up ? `<span class="s-badge vip">نمره‌ی نهایی با کارت VIP: ${lv.label} ← ${up.label}</span>` : '');
+      }
+      return `<div class="subj-block"><b>${escapeHtml(sub)}</b><div class="stu-badges">${entries}${vipHtml}</div></div>`;
     }).filter(Boolean).join('');
     if(!subjBlocks) return '';
     return `<div class="stu-block"><div class="stu-name">${escapeHtml(s.name)}</div>${subjBlocks}</div>`;
@@ -2089,7 +2125,7 @@ function exportReportCardsPDF(){
     .subj-block{margin-bottom:10px;} .subj-block:last-child{margin-bottom:0;}
     .subj-block>b{display:block;font-size:12px;color:#6c43e8;margin-bottom:6px;}
     .stu-badges{display:flex;flex-wrap:wrap;gap:7px;}
-    .s-badge{font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;}
+    .s-badge{font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px;} .s-badge.vip{background:#ffe08a;color:#5a3d00;border:1px solid #e6b800;}
     .footer{margin-top:30px;text-align:center;color:#a89e92;font-size:11px;border-top:1px solid #e7e1d8;padding-top:14px;}
     @media print{ body{padding:14px;} .s-badge{-webkit-print-color-adjust:exact;print-color-adjust:exact;} }
     </style></head><body>
@@ -2318,7 +2354,7 @@ function missionIsSchoolDay(d){ const g = d.getDay(); return g===6 || g===0 || g
 
 function missionFacts(s, todayIso){
   const hist = (s.history||[]);
-  const organicHist = hist.filter(h=>!h.m);
+  const organicHist = hist.filter(h=>!h.m && !h.shop);          /* خرید و برگشت خرید جزو «امتیاز کسب‌شده» نیست */
   const organic = organicHist.reduce((a,h)=>a+h.delta,0) + monthlyField(s,'p') + monthlyField(s,'sal');
 
   /* بهترین رشته‌ی روزهای مدرسه با امتیاز مثبت */
@@ -2446,6 +2482,280 @@ let missionBanner = null;
 function missionStarSvg(on){
   return `<svg viewBox="0 0 24 24" width="22" height="22"><path d="M12 3.2l2.7 5.7 6.2.7-4.6 4.2 1.3 6.1L12 16.8 6.4 19.9l1.3-6.1L3.1 9.6l6.2-.7L12 3.2z" class="${on?'st-on':'st-off'}" stroke-linejoin="round"/></svg>`;
 }
+/* ============================================================
+   SHOP (فروشگاه خریدنی) و PERKS (شخصی‌سازی قفل‌دار با امتیاز)
+   ============================================================ */
+const RARITY = {common:{n:'معمولی',c:'#9aa8c4'}, rare:{n:'کمیاب',c:'#5aa8ff'}, epic:{n:'حماسی',c:'#b57bff'}, legendary:{n:'افسانه‌ای',c:'#ffc94d'}};
+const RARITY_ORDER = ['legendary','epic','rare','common'];
+const VIP_MAX = 3;
+const DEFAULT_SHOP_ITEMS = [
+  {id:'tt_king',  kind:'title',   rarity:'epic',   icon:'👑', name:'پادشاه کلاس',     price:500},
+  {id:'tt_eng',   kind:'title',   rarity:'rare',   icon:'🛠️', name:'مهندس کلاس',      price:350},
+  {id:'tt_foot',  kind:'title',   rarity:'rare',   icon:'⚽', name:'فوتبالیست کلاس',  price:300},
+  {id:'tt_star',  kind:'title',   rarity:'rare',   icon:'⭐', name:'ستاره‌ی کلاس',    price:250},
+  {id:'tt_brain', kind:'title',   rarity:'rare',   icon:'🧠', name:'مغز متفکر',       price:300},
+  {id:'tt_book',  kind:'title',   rarity:'common', icon:'📚', name:'کتاب‌خوان',       price:150},
+  {id:'sv_vipseat',kind:'service',rarity:'epic',   icon:'💺', name:'صندلی VIP',       price:400},
+  {id:'sv_seat',  kind:'service', rarity:'rare',   icon:'🪑', name:'تعویض جا',        price:200},
+  {id:'sv_role',  kind:'service', rarity:'rare',   icon:'🔄', name:'تعویض مسئولیت',   price:200},
+  {id:'sv_cap',   kind:'service', rarity:'common', icon:'🏅', name:'کاپیتان ورزشی',   price:150},
+  {id:'sv_dict',  kind:'service', rarity:'common', icon:'🎤', name:'خواندن املا برای کلاس', price:150},
+  {id:'sv_read',  kind:'service', rarity:'common', icon:'📖', name:'روخوانی درس‌ها یک روز کامل', price:100}
+];
+const SHOP_VIP_PRICE = 1000, PERK_ORB_AT = 500, PERK_SITE_AT = 1000;
+function ensureShop(d){
+  d = d || state;
+  d.shop = {items: DEFAULT_SHOP_ITEMS, vipPrice: SHOP_VIP_PRICE};     /* قیمت‌ها ثابت‌اند و داخل دیتابیس ذخیره نمی‌شوند */
+  d.perks = {orb: PERK_ORB_AT, site: PERK_SITE_AT};
+  if(!Array.isArray(d.orders)) d.orders = [];
+  if(d.orders.length>200){                                              /* درخواست‌های رسیدگی‌شده‌ی قدیمی پاک می‌شوند تا حجم بالا نرود */
+    const rest = d.orders.filter(o=>o.status!=='pending').slice(-120);
+    d.orders = d.orders.filter(o=>o.status==='pending' || rest.includes(o));
+  }
+  (d.students||[]).forEach(s=>{
+    if(!Array.isArray(s.owned)) s.owned = [];
+    if(!s.look || typeof s.look!=='object' || Array.isArray(s.look)) s.look = {};
+    if(!s.vip || typeof s.vip!=='object' || Array.isArray(s.vip)) s.vip = {};
+    if(!Array.isArray(s.vipLog)) s.vipLog = [];
+    if(!Array.isArray(s.history)) s.history = [];
+    delete s.equip; delete s.look.frame;
+    if(s.look.title && !s.owned.includes(s.look.title)) delete s.look.title;
+    const pk = peakScore(s); if(pk > (s.peak||0)) s.peak = pk;
+  });
+}
+function shopItem(id){ return (state.shop && state.shop.items || []).find(x=>x.id===id); }
+function shopStudent(){ return state.students.find(x=>x.id===currentStudentId); }
+/* بالاترین امتیازی که دانش‌آموز تا حالا داشته؛ چیزی که یک‌بار باز شد دوباره قفل نمی‌شود و خرج‌کردن روی آن اثر ندارد */
+function peakScore(s){
+  let run = monthlyBase(s), peak = Math.max(0, run, s.peak||0);   /* s.peak: رکوردی که قبل از فشرده‌شدن ماه‌های قدیمی ذخیره شده */
+  [...s.history].sort((a,b)=>a.date.localeCompare(b.date)).forEach(h=>{ run += h.delta; if(run>peak) peak = run; });
+  return peak;
+}
+function perkOn(s,k){ return !!s && peakScore(s) >= ((state.perks && state.perks[k])||0); }
+/* کارت VIP نمره */
+function vipCount(s,sub){ return Math.max(0, Math.min(VIP_MAX, (s.vip && s.vip[sub]) || 0)); }
+function raisedLevel(lv,n){ if(!lv || lv.value==null || !n) return null; const v = Math.min(4, lv.value + n); return LEVELS.find(l=>l.value===v) || null; }
+function vipInfoHtml(s,sub,teacher){
+  const n = vipCount(s,sub); if(!n) return '';
+  const lv = lastLevel(s,sub), up = raisedLevel(lv,n);
+  return `<div class="vip-line"><span>⭐ کارت VIP ×${faNum(n)} خریداری شده${up && lv ? ` — نمره‌ی نهایی: ${lv.label} ← <b>${up.label}</b>` : ''}</span>${teacher?`<button type="button" class="mini-x" data-vipcancel="${sub}">لغو و برگرداندن امتیاز</button>`:''}</div>`;
+}
+/* ظاهر */
+function applyStudentLook(){
+  const r = document.documentElement.style, s = shopStudent();
+  if(s && perkOn(s,'site') && typeof s.look.hue==='number'){
+    const l = s.look.light==null ? 52 : s.look.light;
+    r.setProperty('--glow1', `hsl(${s.look.hue} 82% ${l}%)`); r.setProperty('--glow2', `hsl(${s.look.hue} 70% ${Math.round(l*.4)}%)`);
+  } else clearStudentLook();
+}
+function clearStudentLook(){ const r = document.documentElement.style; r.removeProperty('--glow1'); r.removeProperty('--glow2'); }
+function titleChipHtml(s){
+  const it = s && s.look && s.look.title && s.owned && s.owned.includes(s.look.title) && shopItem(s.look.title);
+  return it ? `<div class="ttl-chip" style="--rc:${(RARITY[it.rarity]||RARITY.common).c}">${it.icon} ${escapeHtml(it.name)}</div>` : '';
+}
+let msMode = 'missions', shopMsg = '', pendingBuy = null, pendingBuyTimer = null;
+function armBuy(key){
+  if(pendingBuy!==key){
+    pendingBuy = key; shopMsg = ''; clearTimeout(pendingBuyTimer);
+    pendingBuyTimer = setTimeout(()=>{ pendingBuy = null; if(msMode==='shop') renderShop(); }, 3000);
+    renderShop(); return false;
+  }
+  clearTimeout(pendingBuyTimer); pendingBuy = null; return true;
+}
+async function buyItem(id){
+  const s = shopStudent(), it = shopItem(id); if(!s || !it) return;
+  if(it.kind==='title' && s.owned.includes(id)) return;
+  if(total(s) < it.price){ pendingBuy = null; shopMsg = 'امتیازت برای این یکی کافی نیست'; renderShop(); return; }
+  if(!armBuy(id)) return;
+  const out = await shopRun(d=>{
+    const st = d.students.find(x=>x.id===s.id), dit = d.shop.items.find(x=>x.id===id);
+    if(!st || !dit) return {err:'این مورد دیگر در دسترس نیست'};
+    if(dit.kind==='title' && st.owned.includes(id)) return {err:'این لقب را قبلاً گرفته‌ای'};
+    if(total(st) < dit.price) return {err:'امتیازت برای این یکی کافی نیست'};
+    st.history.push({date:todayISO(), delta:-dit.price, shop:id, note:'خرید: '+dit.name});
+    if(dit.kind==='service'){
+      d.orders.push({id:newOrderId(), sid:st.id, iid:id, name:dit.name, icon:dit.icon, price:dit.price, date:todayISO(), status:'pending'});
+      return {msg:`«${dit.name}» برای معلم ثبت شد`};
+    }
+    st.owned.push(id); st.look.title = id;
+    return {msg:`«${dit.name}» مال توست و فعال شد`};
+  });
+  shopMsg = out && out.err ? out.err : (out && out.msg) || '';
+  renderShop();
+}
+async function buyVip(sub){
+  const s = shopStudent(); if(!s || !SUBJECTS.includes(sub)) return;
+  const price = state.shop.vipPrice, n = vipCount(s,sub);
+  if(n>=VIP_MAX) return;
+  if(total(s) < price){ pendingBuy = null; shopMsg = 'امتیازت برای کارت VIP کافی نیست'; renderShop(); return; }
+  if(!armBuy('vip:'+sub)) return;
+  const out = await shopRun(d=>{
+    const st = d.students.find(x=>x.id===s.id); if(!st) return {err:'حساب پیدا نشد'};
+    const cnt = vipCount(st,sub), p = d.shop.vipPrice;
+    if(cnt>=VIP_MAX) return {err:'برای این درس کارت کامل است'};
+    if(total(st) < p) return {err:'امتیازت برای کارت VIP کافی نیست'};
+    st.history.push({date:todayISO(), delta:-p, shop:'vip', note:`خرید: کارت VIP ${sub}`});
+    st.vip[sub] = cnt+1; st.vipLog.push({sub, price:p, date:todayISO()});
+    d.orders.push({id:newOrderId(), kind:'vip', sub, sid:st.id, iid:'vip', name:`کارت VIP ${sub}`, icon:'⭐', price:p, date:todayISO(), status:'pending'});
+    return {msg:`کارت VIP درس ${sub} گرفته شد`};
+  });
+  shopMsg = out && out.err ? out.err : (out && out.msg) || '';
+  renderShop();
+}
+async function equipTitle(id){
+  const s = shopStudent(); if(!s || !s.owned.includes(id)) return;
+  await shopRun(d=>{ const st = d.students.find(x=>x.id===s.id); if(!st || !st.owned.includes(id)) return {err:'نشد'}; st.look.title = (st.look.title===id) ? null : id; return {}; });
+  renderShop();
+}
+/* فقط چند فیلدِ «ظاهر» همین دانش‌آموز روی سرور عوض می‌شود (null یعنی پاک شود) */
+function saveLook(patch){
+  const s = shopStudent(); if(!s) return Promise.resolve();
+  return shopRun(d=>{ const st = d.students.find(x=>x.id===s.id); if(!st) return {err:'نشد'};
+    Object.keys(patch).forEach(k=>{ if(patch[k]===null) delete st.look[k]; else st.look[k] = patch[k]; }); return {}; });
+}
+function renderShop(){
+  const box = document.getElementById('student-shop'), s = shopStudent(); if(!box || !s) return;
+  ensureShop();
+  const bal = total(s), vp = state.shop.vipPrice;
+  const card = it=>{
+    const rc = (RARITY[it.rarity]||RARITY.common).c, owned = it.kind==='title' && s.owned.includes(it.id), on = owned && s.look.title===it.id;
+    let btn;
+    if(owned) btn = `<button class="si-btn${on?' on':' alt'}" data-equip="${it.id}">${on?'فعال ✓':'استفاده'}</button>`;
+    else if(pendingBuy===it.id) btn = `<button class="si-btn sure" data-buy="${it.id}">مطمئنی؟</button>`;
+    else btn = `<button class="si-btn${bal<it.price?' low':''}" data-buy="${it.id}">${faNum(it.price)} امتیاز</button>`;
+    return `<div class="shop-item${on?' on':''}" style="--rc:${rc}"><div class="si-ic">${it.icon}</div><b>${escapeHtml(it.name)}</b><small>${it.kind==='title'?'لقب':'خدمت'}</small>${btn}</div>`;
+  };
+  const vipCard = ()=>`<div class="card vip-card" style="--rc:${RARITY.legendary.c}"><div class="pk-top"><span class="pk-ic">⭐</span><div><b>کارت VIP نمره</b><small>هر کارت نمره‌ی همان درس را در کارنامه یک سطح بالا می‌برد و برای همیشه می‌ماند. برای هر درس تا ${faNum(VIP_MAX)} کارت.</small></div></div>
+    ${SUBJECTS.map(sub=>{
+      const n = vipCount(s,sub), pips = [0,1,2].map(i=>`<i class="${i<n?'on':''}"></i>`).join('');
+      const btn = n>=VIP_MAX ? '<span class="vip-max">کامل ✓</span>' : pendingBuy==='vip:'+sub ? `<button class="si-btn sure" data-vip="${sub}">مطمئنی؟</button>` : `<button class="si-btn${bal<vp?' low':''}" data-vip="${sub}">${faNum(vp)}</button>`;
+      return `<div class="vip-row"><b>${sub}</b><span class="pips">${pips}</span>${btn}</div>`;
+    }).join('')}</div>`;
+  const secs = RARITY_ORDER.map(r=>{
+    const items = state.shop.items.filter(i=>i.rarity===r), vip = r==='legendary' ? vipCard() : '';
+    if(!items.length && !vip) return '';
+    return `<div class="shop-sec" style="--rc:${RARITY[r].c}"><i></i>${RARITY[r].n}</div>${vip}${items.length?`<div class="shop-grid">${items.map(card).join('')}</div>`:''}`;
+  }).join('');
+  const mine = state.orders.filter(o=>o.sid===s.id).slice(-6).reverse(), stl = {pending:'در انتظار معلم', done:'تحویل شد ✓', refunded:'لغو شد، امتیاز برگشت'}, stv = {pending:'در انتظار معلم', done:'تأیید شد ✓', refunded:'لغو شد، امتیاز برگشت'};
+  box.innerHTML = `<div class="card pk-head"><div><small>امتیاز تو</small><b>${faNum(bal)}</b></div><p>${shopMsg || 'با خرید، از امتیاز اصلی‌ات کم می‌شود'}</p></div>${secs}`
+    + (mine.length ? `<div class="shop-sec" style="--rc:#9aa8c4"><i></i>درخواست‌های من</div><div class="card shop-orders">${mine.map(o=>`<div class="so-row"><span>${o.icon} ${escapeHtml(o.name)}</span><em class="${o.status}">${(o.kind==='vip'?stv:stl)[o.status]||''}</em></div>`).join('')}</div>` : '');
+}
+function renderPerks(){
+  const box = document.getElementById('student-perks'), s = shopStudent(); if(!box || !s) return;
+  ensureShop();
+  const peak = peakScore(s), P = state.perks;
+  const lock = (ic,title,desc,need)=>`<div class="card perk locked"><div class="pk-top"><span class="pk-ic">🔒</span><div><b>${title}</b><small>${desc}</small></div></div><div class="pk-bar"><i style="width:${Math.min(100,Math.round(peak/Math.max(1,need)*100))}%"></i></div><div class="pk-foot">با رسیدن به ${faNum(need)} امتیاز خودبه‌خود باز می‌شود · ${faNum(Math.min(peak,need))} از ${faNum(need)}</div></div>`;
+  const oh = typeof s.look.orbHue==='number' ? s.look.orbHue : 262;
+  const orbCard = perkOn(s,'orb')
+    ? `<div class="card perk"><div class="pk-top"><span class="pk-sw" id="pkOrbSw" style="background:hsl(${oh} 80% 58%)"></span><div><b>رنگ دایره‌ی سطح</b><small>رنگ دایره‌ی سطحت در داشبورد</small></div></div>
+        <input type="range" class="pk-range hue" id="pkOrbHue" min="0" max="360" value="${oh}">
+        <button type="button" class="si-btn alt" id="pkOrbReset">برگرداندن به رنگ اصلی</button></div>`
+    : lock('🎨','رنگ دایره‌ی سطح','رنگ دایره‌ی سطحت را خودت بساز',P.orb);
+  const hue = typeof s.look.hue==='number' ? s.look.hue : 262, light = s.look.light==null ? 52 : s.look.light;
+  const siteCard = perkOn(s,'site')
+    ? `<div class="card perk"><div class="pk-top"><span class="pk-sw" id="pkSw" style="background:hsl(${hue} 82% ${light}%)"></span><div><b>رنگ کل سایت</b><small>رنگ نور پس‌زمینه‌ی سایت، فقط برای خودت</small></div></div>
+        <div class="pk-lbl">رنگ</div><input type="range" class="pk-range hue" id="pkHue" min="0" max="360" value="${hue}">
+        <div class="pk-lbl">روشنی</div><input type="range" class="pk-range lite" id="pkLight" min="28" max="68" value="${light}">
+        <button type="button" class="si-btn alt" id="pkReset">برگرداندن به رنگ اصلی</button></div>`
+    : lock('🌈','رنگ کل سایت','رنگ مورد علاقه‌ات را بساز و کل سایت با آن بدرخشد',P.site);
+  const order = [[P.orb,orbCard],[P.site,siteCard]].sort((a,b)=>a[0]-b[0]);
+  box.innerHTML = `<div class="card pk-head"><div><small>بالاترین امتیاز تو</small><b>${faNum(peak)}</b></div><p>این‌ها خریدنی نیستند؛ با رسیدن به امتیاز خودبه‌خود باز می‌شوند.</p></div>` + order.map(x=>x[1]).join('');
+  const oEl = document.getElementById('pkOrbHue');
+  if(oEl){
+    oEl.addEventListener('input', ()=>{ s.look.orbHue = Number(oEl.value); document.getElementById('pkOrbSw').style.background = `hsl(${s.look.orbHue} 80% 58%)`; });
+    oEl.addEventListener('change', ()=>{ saveLook({orbHue: Number(oEl.value)}); });
+    document.getElementById('pkOrbReset').addEventListener('click', async ()=>{ await saveLook({orbHue:null}); renderPerks(); });
+  }
+  const hEl = document.getElementById('pkHue'), lEl = document.getElementById('pkLight');
+  if(hEl){
+    const live = ()=>{ s.look.hue = Number(hEl.value); s.look.light = Number(lEl.value); applyStudentLook(); document.getElementById('pkSw').style.background = `hsl(${s.look.hue} 82% ${s.look.light}%)`; };
+    hEl.addEventListener('input', live); lEl.addEventListener('input', live);
+    const commit = ()=>{ saveLook({hue: Number(hEl.value), light: Number(lEl.value)}); };
+    hEl.addEventListener('change', commit); lEl.addEventListener('change', commit);
+    document.getElementById('pkReset').addEventListener('click', async ()=>{ await saveLook({hue:null, light:null}); applyStudentLook(); renderPerks(); });
+  }
+}
+
+/* ---------- اجرای امن روی سرور (تراکنش) ----------
+   هر کار از آخرین نسخه‌ی سرور شروع می‌شود؛ پس اگر چند دانش‌آموز یا معلم هم‌زمان کار کنند هیچ‌کدام دیگری را پاک نمی‌کند. */
+function newOrderId(){ return 'o'+Date.now()+Math.floor(Math.random()*9999); }
+let shopChain = Promise.resolve();
+function shopRun(fn){
+  const p = shopChain.then(()=>shopRunOnce(fn));
+  shopChain = p.catch(()=>{});
+  return p;
+}
+async function shopRunOnce(fn){
+  let out = null;
+  try{
+    await persistNow();
+    out = await db.runTransaction(async tx=>{
+      const snap = await tx.get(stateRef);
+      if(!snap.exists) return {err:'اتصال برقرار نیست'};
+      const d = snap.data();
+      if(!Array.isArray(d.students)) return {err:'اطلاعات پیدا نشد'};
+      ensureShop(d);
+      const r = fn(d) || {};
+      if(r.err) return r;
+      tx.update(stateRef, {students:d.students, orders:d.orders});
+      r.data = d; return r;
+    });
+  }catch(e){ console.error('shop transaction failed', e); out = {err:'ثبت نشد؛ اینترنت را چک کن و دوباره امتحان کن'}; }
+  if(out && !out.err && out.data){
+    state.students = out.data.students; state.orders = out.data.orders;
+    normalize();
+  }
+  return out;
+}
+/* لغو یک کارت VIP: کارت پس گرفته می‌شود و امتیازش برمی‌گردد */
+function cancelVipIn(d, sid, sub, order){
+  const st = d.students.find(x=>x.id===sid); if(!st) return {err:'دانش‌آموز پیدا نشد'};
+  const n = vipCount(st, sub); if(!n) return {err:'این کارت VIP قبلاً لغو شده'};
+  let li = -1; for(let i=st.vipLog.length-1;i>=0;i--){ if(st.vipLog[i].sub===sub){ li = i; break; } }
+  const price = li>=0 ? st.vipLog[li].price : d.shop.vipPrice;
+  if(li>=0) st.vipLog.splice(li,1);
+  st.vip[sub] = n-1;
+  st.history.push({date:todayISO(), delta:price, shop:'vip', refund:true, note:`برگشت امتیاز: کارت VIP ${sub}`});
+  const o = order || [...d.orders].reverse().find(x=>x.kind==='vip' && x.sid===sid && x.sub===sub && x.status==='pending');
+  if(o) o.status = 'refunded';
+  return {price};
+}
+/* ---------- درخواست‌های خرید (معلم) ---------- */
+function pendingOrders(){ return (state.orders||[]).filter(o=>o.status==='pending'); }
+function updateOrderBadges(){
+  const n = pendingOrders().length, txt = n>99 ? '۹۹+' : faNum(n);
+  document.querySelectorAll('.ord-badge').forEach(b=>{ b.textContent = txt; b.hidden = n===0; });
+}
+let ordersMsg = '', pendingOrderRef = null, pendingOrderRefTimer = null;
+function renderOrdersPanel(){
+  const box = document.getElementById('ordersList'); if(!box) return;
+  const nameOf = id=>{ const st = state.students.find(x=>x.id===id); return st ? st.name : '—'; };
+  const pend = pendingOrders().slice().reverse();
+  const done = (state.orders||[]).filter(o=>o.status!=='pending').slice(-4).reverse();
+  const st = document.getElementById('ordersState'); if(st) st.textContent = pend.length ? `${faNum(pend.length)} منتظر` : '';
+  const hint = document.getElementById('ordersMsg'); if(hint) hint.textContent = ordersMsg || (pend.length ? 'با «لغو»، امتیاز به دانش‌آموز برمی‌گردد' : '');
+  const row = (o,isPend)=>`<div class="shop-row${isPend?'':' dim'}"><span class="sr-ic">${o.icon||'🎁'}</span>
+      <span class="sr-nm">${escapeHtml(nameOf(o.sid))}<small>${escapeHtml(o.name)} · ${faNum(o.price)} امتیاز · ${faDate(o.date)}${o.kind==='vip'?' · اعمال شده':''}</small></span>
+      ${isPend ? `<button type="button" class="sr-ok" data-odone="${o.id}">تأیید</button><button type="button" class="sr-x${pendingOrderRef===o.id?' sure':''}" data-oref="${o.id}">${pendingOrderRef===o.id?'مطمئنی؟':'لغو'}</button>`
+               : `<em class="so-st ${o.status}">${o.status==='done'?'تأیید شد':'لغو شد'}</em>`}</div>`;
+  box.innerHTML = (pend.length ? pend.map(o=>row(o,true)).join('') : '<div class="empty-note" style="padding:10px 6px;">درخواستی منتظر تأیید نیست ✓</div>')
+    + (done.length ? `<div class="shop-sec" style="--rc:#9aa8c4;margin:14px 2px 8px;"><i></i>آخرین‌ها</div>` + done.map(o=>row(o,false)).join('') : '');
+}
+async function orderAction(oid, act){
+  clearTimeout(pendingOrderRefTimer); pendingOrderRef = null;
+  const out = await shopRun(d=>{
+    const o = d.orders.find(x=>x.id===oid);
+    if(!o || o.status!=='pending') return {err:'این درخواست قبلاً رسیدگی شده'};
+    if(act==='done'){ o.status = 'done'; return {}; }
+    if(o.kind==='vip'){ const r = cancelVipIn(d, o.sid, o.sub, o); if(r.err){ o.status = 'refunded'; return {}; } return {}; }
+    const st = d.students.find(x=>x.id===o.sid);
+    if(st) st.history.push({date:todayISO(), delta:o.price, shop:o.iid, refund:true, note:'برگشت امتیاز: '+o.name});
+    o.status = 'refunded'; return {};
+  });
+  ordersMsg = out && out.err ? out.err : '';
+  renderOrdersPanel(); updateOrderBadges();
+}
+
 function renderStudentMissions(){
   const s = state.students.find(x=>x.id===currentStudentId);
   const box = document.getElementById('student-missions');
@@ -2497,11 +2807,12 @@ function showStudentTab(tab){
   renderStudentTab(tab, false);
 }
 function renderStudentTab(tab){
+  applyStudentLook();
   if(tab==='dashboard') renderStudentDashboard();
   else if(tab==='absence') renderStudentAbsences();
   else if(tab==='report') renderStudentReport();
   else if(tab==='talent') renderStudentTalent();
-  else if(tab==='missions'){ renderStudentMissions(); const ms = state.students.find(x=>x.id===currentStudentId); if(ms) runMissionsFor(ms, true); }
+  else if(tab==='missions'){ if(msMode==='shop') renderShop(); else if(msMode==='perks') renderPerks(); renderStudentMissions(); const ms = state.students.find(x=>x.id===currentStudentId); if(ms) runMissionsFor(ms, true); }
 }
 /* ================= نمودارهای شیشه‌ای ================= */
 function __monoPath(P){                       /* منحنی نرم بدون بیش‌افتادگی (monotone cubic) */
@@ -2592,7 +2903,7 @@ function scoreChartHtml(s){
   const dm = dailyNetMap(s.history);
   const pts = []; let sum = 0;
   (s.monthly||[]).slice().sort((a,b)=>a.k.localeCompare(b.k)).forEach(r=>{
-    sum += (r.p||0)+(r.m||0)+(r.sal||0);
+    sum += monthNet(r);
     pts.push({v:sum, lab:monthLabelFromKey(r.k).split(' ')[0], tip:monthLabelFromKey(r.k)});
   });
   Object.keys(dm).filter(d=>dm[d]!==0).sort().forEach(d=>{
@@ -3859,7 +4170,7 @@ function studentLevel(s){
 function levelOrbHtml(s){
   let L; try{ L = studentLevel(s); }catch(e){ return ''; }
   const C = 2*Math.PI*32, f = Math.min(1, L.lvl/L.max);
-  return `<div class="lvl-orb"><svg viewBox="0 0 72 72"><circle class="lvl-bg" cx="36" cy="36" r="32"/><circle class="lvl-ring" cx="36" cy="36" r="32" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-f)).toFixed(1)}"/></svg><div class="lvl-core"><small>سطح</small><b>${faNum(L.lvl)}</b></div></div>`;
+  return `<div class="lvl-orb ${(perkOn(s,'orb')&&s.look&&typeof s.look.orbHue==='number')?'orb-custom':''}" ${(perkOn(s,'orb')&&s.look&&typeof s.look.orbHue==='number')?`style="--oh:${s.look.orbHue}"`:''}><svg viewBox="0 0 72 72"><circle class="lvl-bg" cx="36" cy="36" r="32"/><circle class="lvl-ring" cx="36" cy="36" r="32" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-f)).toFixed(1)}"/></svg><div class="lvl-core"><small>سطح</small><b>${faNum(L.lvl)}</b></div></div>`;
 }
 function renderStudentDashboard(){
   const s = state.students.find(x=>x.id===currentStudentId);
@@ -3877,7 +4188,7 @@ function renderStudentDashboard(){
 
   const streakEl = document.getElementById('streakCard');
   const msg = buildStudentMessage(s);
-  streakEl.innerHTML = `<span class="em">${msg.emoji||'✨'}</span><div><b>${escapeHtml(msg.title)}</b>${msg.sub?`<span>${escapeHtml(msg.sub)}</span>`:''}</div>` + levelOrbHtml(s);
+  streakEl.innerHTML = `<span class="em">${msg.emoji||'✨'}</span><div>${titleChipHtml(s)}<b>${escapeHtml(msg.title)}</b>${msg.sub?`<span>${escapeHtml(msg.sub)}</span>`:''}</div>` + levelOrbHtml(s);
   streakEl.style.display='flex';
   renderRoleRow(s);
   setTimeout(()=>{ if(currentView==='view-student' && currentStudentId===s.id) runMissionsFor(s, false); }, 1800);
@@ -3892,14 +4203,14 @@ function renderStudentDashboard(){
     hist.innerHTML = days.slice(0,30).map(d=>{
       const net = dayMap[d];
       const cls = net>0?'var(--green)':'var(--danger)';
-      const mp = s.history.filter(h=>h.date===d && h.m).reduce((a,h)=>a+h.delta,0);
-      return `<div class="hist-line"><span>${faDate(d)}${mp?` <small style="color:var(--muted); font-size:10px;">(شامل ${faNum(mp)} امتیاز ماموریت)</small>`:''}</span><span style="color:${cls}; font-weight:800;">${net>0?'+':''}${faNum(net)}</span></div>`;
+      const mp = s.history.filter(h=>h.date===d && h.m).reduce((a,h)=>a+h.delta,0), sp = s.history.filter(h=>h.date===d && h.shop).reduce((a,h)=>a+h.delta,0);
+      return `<div class="hist-line"><span>${faDate(d)}${mp?` <small style="color:var(--muted); font-size:10px;">(شامل ${faNum(mp)} امتیاز ماموریت)</small>`:''}${sp?` <small style="color:var(--muted); font-size:10px;">(فروشگاه: ${sp>0?'+':''}${faNum(sp)})</small>`:''}</span><span style="color:${cls}; font-weight:800;">${net>0?'+':''}${faNum(net)}</span></div>`;
     }).join('');
   }
   const mrows = [...(s.monthly||[])].sort((a,b)=>b.k.localeCompare(a.k));
   if(mrows.length){
     hist.innerHTML += `<div style="margin:12px 2px 4px; font-size:10.5px; color:var(--muted); font-weight:700;">ماه‌های گذشته (جمع ماه):</div>` + mrows.map(r=>{
-      const net = (r.p||0)+(r.m||0)+(r.sal||0);
+      const net = monthNet(r);
       const cls = net>0?'var(--green)':net<0?'var(--danger)':'var(--muted)';
       return `<div class="hist-line"><span>${monthLabelFromKey(r.k)} <small style="color:var(--muted); font-size:10px;">(${faNum(r.n||0)} ثبت)</small></span><span style="color:${cls}; font-weight:800;">${net>0?'+':''}${faNum(net)}</span></div>`;
     }).join('');
@@ -3947,12 +4258,12 @@ function renderStudentReport(){
       <div class="subj-head" data-toggle="stu-${sub}">
         <span class="dot" style="background:${dotColor}; color:${dotColor};"></span>
         <b>${sub}</b>
-        <span class="badge" style="${lv?`color:${lv.color}; background:${lv.color}22;`:'color:var(--muted);'}">${lv?lv.label:'—'}</span>
+        <span class="badge" style="${lv?`color:${lv.color}; background:${lv.color}22;`:'color:var(--muted);'}">${lv?lv.label:'—'}</span>${vipCount(s,sub)?`<span class="vip-chip">⭐ VIP ×${faNum(vipCount(s,sub))}</span>`:''}
         <svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </div>
       <div class="subj-detail" id="stu-${sub}"><div class="subj-inner">
         <div class="subj-title"><span class="dot" style="background:${dotColor}; color:${dotColor};"></span>نمره‌های درس <b>${sub}</b></div>
-        ${buildAcademicChart(arr)}${histHtml}</div></div>
+        ${vipInfoHtml(s,sub,false)}${buildAcademicChart(arr)}${histHtml}</div></div>
     </div>`;
   }).join('');
   wireAccordion(box);
@@ -4220,14 +4531,14 @@ function compactStudent(s, cutKey){
   const keys = Object.keys(groups); if(!keys.length) return null;
   const monthly = (s.monthly||[]).map(r=>({...r}));
   keys.forEach(k=>{
-    const hs = groups[k]; const byDay = {}; let p=0, m=0, sal=0, fd = hs[0].date;
+    const hs = groups[k]; const byDay = {}; let p=0, m=0, sal=0, sh=0, fd = hs[0].date;
     hs.forEach(h=>{
       if(h.date<fd) fd = h.date;
-      if(h.m) m += h.delta; else if(h.sal) sal += h.delta; else { p += h.delta; byDay[h.date] = (byDay[h.date]||0) + h.delta; }
+      if(h.m) m += h.delta; else if(h.sal) sal += h.delta; else if(h.shop) sh += h.delta; else { p += h.delta; byDay[h.date] = (byDay[h.date]||0) + h.delta; }
     });
     let r = monthly.find(x=>x.k===k);
-    if(!r){ r = {k, p:0, m:0, sal:0, n:0, bs:0, fd}; monthly.push(r); }
-    r.p += p; r.m += m; r.sal += sal; r.n += hs.length;
+    if(!r){ r = {k, p:0, m:0, sal:0, sh:0, n:0, bs:0, fd}; monthly.push(r); }
+    r.p += p; r.m += m; r.sal += sal; r.sh = (r.sh||0) + sh; r.n += hs.length;
     r.bs = Math.max(r.bs||0, bestRunOfDays(byDay));
     if(fd < (r.fd||fd)) r.fd = fd;
   });
@@ -4240,9 +4551,10 @@ function compactHistory(todayIso){
   const cutKey = jMonthKeyOf(isoFromDate(cutoff));
   const plan = [];
   for(const s of state.students){
+    { const pk = peakScore(s); if(pk > (s.peak||0)) s.peak = pk; }   /* رکورد امتیاز قبل از فشرده‌سازی ذخیره می‌شود تا قفل‌های باز شده بسته نشوند */
     const r = compactStudent(s, cutKey); if(!r) continue;
     const before = total(s);
-    const after = r.history.reduce((a,h)=>a+h.delta,0) + r.monthly.reduce((a,x)=>a+(x.p||0)+(x.m||0)+(x.sal||0),0);
+    const after = r.history.reduce((a,h)=>a+h.delta,0) + r.monthly.reduce((a,x)=>a+monthNet(x),0);
     if(before !== after) return 0;
     plan.push({s, r, n: (s.history||[]).length - r.history.length});
   }
@@ -4517,6 +4829,31 @@ document.getElementById('btn-report-back').addEventListener('click', renderRepor
 document.getElementById('btn-talent-back').addEventListener('click', renderTalentList);
 document.getElementById('talent-search').addEventListener('input', renderTalentList);
 document.getElementById('btn-add-student').addEventListener('click', addStudent);
+document.querySelectorAll('#msSeg button').forEach(b=>b.addEventListener('click', ()=>{
+  msMode = b.dataset.ms;
+  document.querySelectorAll('#msSeg button').forEach(x=>x.classList.toggle('on', x===b));
+  document.getElementById('student-missions').style.display = msMode==='missions' ? '' : 'none';
+  document.getElementById('student-shop').style.display = msMode==='shop' ? '' : 'none';
+  document.getElementById('student-perks').style.display = msMode==='perks' ? '' : 'none';
+  if(msMode==='shop'){ shopMsg=''; pendingBuy=null; renderShop(); } else if(msMode==='perks') renderPerks();
+}));
+document.getElementById('student-shop').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  if(b.dataset.buy) buyItem(b.dataset.buy); else if(b.dataset.vip) buyVip(b.dataset.vip); else if(b.dataset.equip) equipTitle(b.dataset.equip);
+});
+document.getElementById('ordersList').addEventListener('click', e=>{
+  const ok = e.target.closest('[data-odone]'), no = e.target.closest('[data-oref]');
+  if(ok){ orderAction(ok.dataset.odone, 'done'); return; }
+  if(no){
+    const id = no.dataset.oref;
+    if(pendingOrderRef!==id){                      /* ضربه‌ی اول فقط آماده می‌کند */
+      pendingOrderRef = id; clearTimeout(pendingOrderRefTimer);
+      pendingOrderRefTimer = setTimeout(()=>{ pendingOrderRef = null; renderOrdersPanel(); }, 3500);
+      renderOrdersPanel(); return;
+    }
+    orderAction(id, 'refund');
+  }
+});
 document.getElementById('btn-salary').addEventListener('click', giveSalary);
 document.getElementById('btn-add-role').addEventListener('click', addRole);
 document.getElementById('new-role-name').addEventListener('keydown', e=>{ if(e.key==='Enter') addRole(); });
@@ -4736,5 +5073,82 @@ stateRef.onSnapshot({includeMetadataChanges:true}, (snap)=>{
   run();
 })();
 </script>
+<style id="perk-style">
+.ttl-chip{display:inline-block; font-size:10px; font-weight:800; padding:3px 9px; margin-bottom:5px; border-radius:999px; color:#e4d8ff; background:rgba(154,114,255,.2); border:1px solid rgba(154,114,255,.4);}
+.pk-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px;}
+.pk-head small{display:block; font-size:10px; color:var(--muted);} .pk-head b{font-size:28px; font-weight:800;}
+.pk-head p{margin:0; font-size:10.5px; color:var(--muted); line-height:1.8; max-width:55%; text-align:left;}
+.perk{padding:14px 16px;}
+.pk-top{display:flex; align-items:center; gap:12px; margin-bottom:12px;}
+.pk-top b{display:block; font-size:13.5px;} .pk-top small{display:block; font-size:10.5px; color:var(--muted); margin-top:2px; line-height:1.7;}
+.pk-ic,.pk-sw{width:44px; height:44px; border-radius:15px; flex:none; display:flex; align-items:center; justify-content:center; font-size:21px; background:rgba(255,255,255,.07); box-shadow:inset 0 1px 0 rgba(255,255,255,.2);}
+.pk-sw{border:2px solid rgba(255,255,255,.5); box-shadow:0 0 18px -2px currentColor, inset 0 1px 0 rgba(255,255,255,.4);}
+.perk.locked{opacity:.78;} .perk.locked .pk-ic{filter:grayscale(.4);}
+.pk-bar{height:7px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden;} .pk-bar i{display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#8c68ff,#c4a8ff);}
+.pk-foot{font-size:10px; color:var(--muted); margin-top:8px;}
+.pk-lbl{font-size:10.5px; color:var(--muted); margin:10px 2px 6px;}
+.pk-range{-webkit-appearance:none; appearance:none; width:100%; height:16px; border-radius:99px; outline:none; direction:ltr; border:1px solid rgba(255,255,255,.25); box-shadow:inset 0 1px 3px rgba(0,0,0,.4); padding:0; display:block;}
+.pk-range.hue{background:linear-gradient(90deg,hsl(0 85% 55%),hsl(60 85% 55%),hsl(120 85% 50%),hsl(180 85% 50%),hsl(240 85% 60%),hsl(300 85% 58%),hsl(360 85% 55%));}
+.pk-range.lite{background:linear-gradient(90deg,#150c2e,#8c68ff,#f1e8ff);}
+.pk-range::-webkit-slider-thumb{-webkit-appearance:none; width:26px; height:26px; border-radius:50%; background:#fff; border:3px solid #8c68ff; box-shadow:0 3px 10px rgba(0,0,0,.5); cursor:pointer;}
+.pk-range::-moz-range-thumb{width:22px; height:22px; border-radius:50%; background:#fff; border:3px solid #8c68ff; cursor:pointer;}
+.perk .si-btn{margin-top:14px; width:100%; height:38px; border-radius:999px; font-family:inherit; font-size:11.5px; font-weight:800; cursor:pointer; color:#fff; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2);}
+.pk-chips{display:flex; flex-wrap:wrap; gap:8px;}
+.pk-chip{height:38px; padding:0 14px; border-radius:999px; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; color:var(--text); background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16);}
+.pk-chip.on{color:#fff; border-color:rgba(255,255,255,.5); background:linear-gradient(180deg,#b79bff,#7a52ec 55%,#5a34cf); box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 8px 16px -8px rgba(124,84,240,.8);}
+.perk-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:6px 2px;}
+.perk-row span{font-size:12px; font-weight:700;} .perk-row input{width:96px; height:38px; text-align:center;}
+.perk-note{font-size:10px; color:var(--muted); line-height:1.9; margin-top:8px;}
+</style>
+<style id="shop2-style">
+.ttl-chip{color:#fff; border-color:var(--rc,#9a72ff); background:color-mix(in srgb,var(--rc,#9a72ff) 22%,transparent);}
+.shop-sec{display:flex; align-items:center; gap:8px; font-size:12.5px; font-weight:800; margin:18px 4px 9px; color:var(--rc,#fff);}
+.shop-sec i{width:9px; height:9px; border-radius:50%; background:var(--rc); box-shadow:0 0 10px var(--rc);}
+.shop-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+.shop-item{display:flex; flex-direction:column; align-items:center; gap:4px; text-align:center; padding:14px 10px 12px; border-radius:22px; border:1px solid color-mix(in srgb,var(--rc) 45%,transparent); background:radial-gradient(90% 60% at 50% 0%, color-mix(in srgb,var(--rc) 18%,transparent), transparent 70%), linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02)); box-shadow:inset 0 1px 0 rgba(255,255,255,.12), 0 14px 26px -16px rgba(0,0,0,.7);}
+.shop-item.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 0 22px -6px var(--rc);}
+.shop-item b{font-size:12px; line-height:1.6; min-height:38px; display:flex; align-items:center;}
+.shop-item small{font-size:9.5px; color:var(--muted); margin-bottom:6px;}
+.si-ic{width:54px; height:54px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:26px; background:color-mix(in srgb,var(--rc) 20%,transparent); box-shadow:inset 0 1px 0 rgba(255,255,255,.25);}
+.shop-item .si-btn,.vip-row .si-btn,.shop-orders .si-btn{width:100%; height:36px; margin:0; border-radius:999px; border:1px solid rgba(255,255,255,.35); background:linear-gradient(180deg,#b79bff,#7a52ec 55%,#5a34cf); color:#fff; font-family:inherit; font-size:11.5px; font-weight:800; cursor:pointer; box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 8px 16px -8px rgba(124,84,240,.8);}
+.vip-row .si-btn{width:96px; flex:none; height:34px;}
+.si-btn:active{transform:scale(.96);}
+.si-btn.low{opacity:.45;}
+.shop-item .si-btn.alt{background:rgba(255,255,255,.08); box-shadow:none; border-color:rgba(255,255,255,.2);}
+.shop-item .si-btn.on{background:rgba(70,200,150,.18); border-color:rgba(70,200,150,.5); color:#8ff0c4; box-shadow:none;}
+.si-btn.sure{background:linear-gradient(180deg,#ff9bb4,#e0506b)!important;}
+.vip-card{margin-bottom:10px; border-color:rgba(255,201,77,.5); background:radial-gradient(100% 70% at 50% 0%, rgba(255,201,77,.2), transparent 70%), linear-gradient(160deg,rgba(255,255,255,.08),rgba(255,255,255,.02)); box-shadow:inset 0 1px 0 rgba(255,255,255,.2), 0 0 26px -10px rgba(255,201,77,.7);}
+.vip-row{display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid rgba(255,255,255,.07);}
+.vip-row b{flex:1; font-size:12.5px;}
+.pips{display:flex; gap:5px;} .pips i{width:11px; height:11px; border-radius:50%; border:1.5px solid rgba(255,201,77,.5);} .pips i.on{background:#ffc94d; box-shadow:0 0 8px #ffc94d; border-color:#ffc94d;}
+.vip-max{width:96px; text-align:center; font-size:11px; font-weight:800; color:#ffc94d;}
+.vip-line{display:flex; align-items:center; justify-content:space-between; gap:8px; margin:0 0 10px; padding:9px 12px; border-radius:12px; font-size:11px; line-height:1.8; color:#ffe39a; background:rgba(255,201,77,.12); border:1px solid rgba(255,201,77,.35);}
+.vip-chip{font-size:10px; font-weight:800; padding:2px 8px; border-radius:99px; color:#ffe39a; background:rgba(255,201,77,.16); border:1px solid rgba(255,201,77,.4); white-space:nowrap;}
+.shop-orders{padding:6px 14px;}
+.so-row{display:flex; justify-content:space-between; align-items:center; gap:8px; padding:9px 0; font-size:11.5px; border-bottom:1px solid rgba(255,255,255,.06);}
+.so-row:last-child{border-bottom:0;} .so-row em{font-style:normal; font-size:10px; color:var(--muted);}
+.so-row em.pending{color:#ffd98a;} .so-row em.done{color:#8ff0c4;}
+.lvl-orb.orb-custom .lvl-core{background:radial-gradient(circle at 35% 28%, hsl(var(--oh) 95% 82%) 0%, hsl(var(--oh) 80% 58%) 42%, hsl(var(--oh) 75% 30%) 100%); box-shadow:inset 0 2px 3px rgba(255,255,255,.45), inset 0 -6px 10px rgba(0,0,0,.35), 0 8px 16px -4px hsl(var(--oh) 80% 40% / .8);}
+.lvl-orb.orb-custom .lvl-ring{stroke:hsl(var(--oh) 95% 82%); filter:drop-shadow(0 0 4px hsl(var(--oh) 95% 70%));}
+.shop-row{display:flex; align-items:center; gap:8px; padding:8px; margin-bottom:6px; border-radius:14px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.055);}
+.shop-row.dim{opacity:.55;}
+.sr-ic{font-size:18px; flex:none;} .sr-nm{flex:1; min-width:0; font-size:12px; font-weight:700; line-height:1.5;}
+.sr-nm small{display:block; font-size:9.5px; color:var(--muted); font-weight:400;}
+.sp-in{width:64px; height:34px; border-radius:10px; text-align:center; padding:0 4px; font-size:12px; flex:none;}
+.sr-x,.sr-ok{height:34px; padding:0 11px; border-radius:11px; font-family:inherit; font-size:11px; font-weight:700; cursor:pointer; flex:none; border:1px solid rgba(255,125,156,.4); background:rgba(255,125,156,.1); color:var(--danger);}
+.sr-x.sure{background:rgba(255,125,156,.3);}
+.sr-ok{border-color:rgba(70,200,150,.5); background:rgba(70,200,150,.14); color:#8ff0c4;}
+
+/* درخواست‌های خرید (معلم) */
+.orders-card.mg-open{display:block;}
+.orders-card .shop-row{text-align:start;}
+.so-st{font-style:normal; font-size:10px; font-weight:700; flex:none;} .so-st.done{color:#8ff0c4;} .so-st.refunded{color:#ffb3c4;}
+.ord-badge{position:absolute; top:3px; left:calc(50% + 4px); min-width:18px; height:18px; padding:0 5px; border-radius:99px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:800; line-height:1; color:#fff; background:linear-gradient(135deg,#b794ff,#7a4cf0); border:2px solid #0e0a1f; box-shadow:0 0 12px rgba(150,100,255,.85); pointer-events:none;}
+.ord-badge[hidden]{display:none;}
+.tabbar .ord-badge{top:-1px; left:calc(50% + 3px);}
+.seg.mg{gap:4px; padding:4px;}
+.seg.mg button{position:relative; flex-direction:column; gap:3px; height:54px; font-size:10.5px; padding:0 1px; letter-spacing:-.1px;}
+@media (max-width:359px){ .seg.mg button svg{display:block; width:16px; height:16px;} .seg.mg button{font-size:9.5px;} }
+</style>
 </body>
 </html>
