@@ -929,6 +929,10 @@ input.slider.ability::-moz-range-thumb{background:#4e9eff;}
         <div class="rm-hint" id="ordersMsg"></div>
         <div id="ordersList"></div>
       </div>
+      <div class="card orders-card lottery-card mg-panel" id="giftCard">
+        <div class="lottery-title">اهدای امتیاز<small id="giftState" style="font-size:10.5px; color:var(--muted); font-weight:700;">۵ مورد آخر</small></div>
+        <div id="giftLog"></div>
+      </div>
       <div class="card mt-card lottery-card mg-panel" id="missionTeacherCard">
         <div class="lottery-title">ماموریت‌های دانش‌آموز<small id="mtState" style="font-size:10.5px; color:var(--muted); font-weight:700;"></small></div>
         <div class="mt-info" id="mtInfo"></div>
@@ -1826,17 +1830,20 @@ function renderReportDetail(s){
 
 /* ---------- انضباط: ثبت اخطار توسط معلم، نمایش برای اولیا ---------- */
 const DISC_TYPES = [
-  {key:'talk',  label:'صحبت بدون اجازه'},
-  {key:'focus', label:'بی‌توجهی به درس'},
+  {key:'fight', label:'دعوا و درگیری'},
   {key:'rude',  label:'بی‌احترامی'},
-  {key:'fight', label:'دعوا یا اذیت هم‌کلاسی'},
-  {key:'task',  label:'تکلیف یا وسایل'},
-  {key:'play',  label:'بازی یا خوردن در کلاس'},
-  {key:'leave', label:'ترک جا بدون اجازه'},
-  {key:'other', label:'موارد دیگر'}
+  {key:'talk',  label:'صحبت بدون اجازه'},
+  {key:'play',  label:'آب‌بازی و شیطنت'},
+  {key:'task',  label:'انجام ندادن تکالیف'},
+  {key:'focus', label:'بی‌توجهی به تذکرات معلم'},
+  {key:'bully', label:'اذیت کردن یا مسخره کردن دیگران'},
+  {key:'cheat', label:'تقلب در آزمون'},
+  {key:'damage',label:'آسیب زدن به وسایل مدرسه'},
+  {key:'run',   label:'دویدن و شلوغ‌کاری در راهرو'},
+  {key:'line',  label:'بی نظمی در صف'}
 ];
 const DISC_WARN = {label:'اخطار', color:'#ff9f5a'}, DISC_SERIOUS = {label:'اخطار جدی', color:'#ff7d9c'};
-function discType(k){ return DISC_TYPES.find(t=>t.key===k) || DISC_TYPES[DISC_TYPES.length-1]; }
+function discType(k){ return DISC_TYPES.find(t=>t.key===k) || {key:k, label:'موارد دیگر'}; }   /* ثبت‌های قدیمی با نوع حذف‌شده «موارد دیگر» دیده می‌شوند */
 function discSev(n){ return n>=3 ? DISC_SERIOUS : DISC_WARN; }      /* ۲ = اخطار، ۳ = اخطار جدی (مقدارهای قدیمی ۱ و ۲ هم اخطار حساب می‌شوند) */
 let discDraft = {sid:null, type:'talk', sev:2, note:'', date:''};
 const DC_CHEV = '<svg class="chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
@@ -1996,6 +2003,7 @@ function applyMgTabs(){
     b.classList.toggle('on', on);
     const el = document.getElementById(b.dataset.mg); if(el) el.classList.toggle('mg-open', on);
   });
+  const gc = document.getElementById('giftCard'); if(gc) gc.classList.toggle('mg-open', mgOpen==='ordersCard');
 }
 function renderManage(){
   renderMissionTeacher();
@@ -2652,7 +2660,7 @@ function shopStudent(){ return state.students.find(x=>x.id===currentStudentId); 
 /* بالاترین امتیازی که دانش‌آموز تا حالا داشته؛ چیزی که یک‌بار باز شد دوباره قفل نمی‌شود و خرج‌کردن روی آن اثر ندارد */
 function peakScore(s){
   let run = monthlyBase(s), peak = Math.max(0, run, s.peak||0);   /* s.peak: رکوردی که قبل از فشرده‌شدن ماه‌های قدیمی ذخیره شده */
-  [...s.history].sort((a,b)=>a.date.localeCompare(b.date)).forEach(h=>{ run += h.delta; if(run>peak) peak = run; });
+  [...s.history].sort((a,b)=>a.date.localeCompare(b.date)).forEach(h=>{ if(h.gift) return; run += h.delta; if(run>peak) peak = run; });   /* هدیه‌ی دوستان در رکورد باز شدن شخصی‌سازی حساب نمی‌شود */
   return peak;
 }
 function perkOn(s,k){ return !!s && peakScore(s) >= ((state.perks && state.perks[k])||0); }
@@ -2702,6 +2710,7 @@ function renderHeroId(){
 }
 function titleChipHtml(){ return ''; }
 var sheetId = null;
+var giftAmt = 50, giftPick = null, giftQuery = '', giftBusy = false;
 let shopCat = 'adj', svcOpen = false, titOpen = false;
 let msMode = 'missions', shopMsg = '', pendingBuy = null, pendingBuyTimer = null;
 function armBuy(key){
@@ -2746,6 +2755,41 @@ async function buyItem(id){
   });
   shopMsg = out && out.err ? out.err : (out && out.msg) || '';
   refreshShopUi(); renderHeroId();
+}
+/* اهدای امتیاز به دوستان: ۵۰ تا ۵۰ تا؛ با تأیید؛ روی سرور به‌صورت تراکنش (هر دو حساب هم‌زمان) */
+const GIFT_STEP = 50;
+function giftMax(s){ return Math.floor(Math.max(0,total(s))/GIFT_STEP)*GIFT_STEP; }
+function giftHtml(s){
+  const mx = giftMax(s);
+  if(mx < GIFT_STEP) return '<div class="empty-note">برای اهدا حداقل ۵۰ امتیاز لازم است</div>';
+  if(giftAmt > mx) giftAmt = mx; if(giftAmt < GIFT_STEP) giftAmt = GIFT_STEP;
+  const q = giftQuery.trim();
+  const others = state.students.filter(x=>x.id!==s.id).slice().sort((a,b)=>a.name.localeCompare(b.name,'fa'));
+  const pick = giftPick && others.find(x=>x.id===giftPick);
+  const ask = pick ? `<div class="gift-ask"><div>${faNum(giftAmt)} امتیاز به «<b>${escapeHtml(pick.name)}</b>» اهدا شود؟</div><div class="gift-btns"><button type="button" class="gift-yes" data-gyes="1"${giftBusy?' disabled':''}>بله، اهدا کن</button><button type="button" class="gift-no" data-gno="1">نه</button></div></div>` : '';
+  return `<div class="gift-amt"><button type="button" class="gift-step" data-gamt="-${GIFT_STEP}"${giftAmt<=GIFT_STEP?' disabled':''}>−</button><div class="gift-val"><b>${faNum(giftAmt)}</b><small>امتیاز</small></div><button type="button" class="gift-step" data-gamt="${GIFT_STEP}"${giftAmt>=mx?' disabled':''}>+</button></div>
+    ${ask}
+    <input type="text" class="note-input" id="giftQ" placeholder="جستجوی اسم دوست" value="${escapeHtml(giftQuery)}" autocomplete="off">
+    <div class="gift-names">${others.map(x=>`<button type="button" class="gift-n${giftPick===x.id?' on':''}" data-gto="${x.id}"${q && !x.name.includes(q) ? ' hidden' : ''}>${escapeHtml(x.name)}</button>`).join('')}</div>`;
+}
+async function giftSend(){
+  const s = shopStudent(), to = giftPick, amt = giftAmt; if(!s || !to || giftBusy) return;
+  giftBusy = true; renderShop();
+  const out = await shopRun(d=>{
+    const st = d.students.find(x=>x.id===s.id), rc = d.students.find(x=>x.id===to);
+    if(!st || !rc) return {err:'دانش‌آموز پیدا نشد'};
+    if(st.id===rc.id) return {err:'به خودت نمی‌شود اهدا کرد'};
+    if(!(amt>=GIFT_STEP) || amt%GIFT_STEP) return {err:'مقدار درست نیست'};
+    if(total(st) < amt) return {err:'امتیازت کافی نیست'};
+    const date = todayISO();
+    const ts = Date.now();
+    st.history.push({date, ts, delta:-amt, shop:'gift', gift:'out', to:rc.id, note:'اهدا به '+rc.name});
+    rc.history.push({date, ts, delta:amt, shop:'gift', gift:'in', from:st.id, note:'هدیه از '+st.name});
+    return {msg:`${faNum(amt)} امتیاز به ${rc.name} اهدا شد 🎁`};
+  });
+  giftBusy = false; giftPick = null;
+  shopMsg = out && out.err ? out.err : (out && out.msg) || '';
+  renderShop();
 }
 const SELL_CUT = 50;   /* فروش لقب: ۵۰ امتیاز کمتر از قیمت اصلی */
 function sellPrice(it){ return Math.max(0, it.price - SELL_CUT); }
@@ -2819,7 +2863,8 @@ function renderShop(){
     return `<div class="sv-row"><span class="sv-ic">${it.icon}</span><span class="sv-nm"><b>${escapeHtml(it.name)}</b>${note?`<small>${note}</small>`:''}</span>${btn}</div>`;
   };
   const shopRow = (id, color, title, badge, inner)=>`<div class="subj-row"><div class="subj-head" data-toggle="${id}"><span class="dot" style="background:${color}; color:${color};"></span><b>${title}</b><span class="badge">${badge}</span>${DC_CHEV}</div><div class="subj-detail" id="${id}"><div class="subj-inner">${inner}</div></div></div>`;
-  const svcSec = shopRow('shop-svc', '#b9a9ff', 'امکانات کلاس', `${faNum(svc.length)} مورد`, svc.map(svcCard).join(''));
+  const svcSec = shopRow('shop-svc', '#b9a9ff', 'امکانات کلاس', `${faNum(svc.length)} مورد`, svc.map(svcCard).join(''))
+    + shopRow('shop-gift', '#ff9fc0', 'اهدای امتیاز به دوستان', '۵۰ تا ۵۰ تا', giftHtml(s));
   const items = state.shop.items.filter(i=>i.kind==='title' && i.cat===shopCat);
   const tcard = it=>{
     const own = s.owned.includes(it.id), left = stockLeft(it);
@@ -2966,7 +3011,17 @@ function updateOrderBadges(){
   document.querySelectorAll('.ord-badge').forEach(b=>{ b.textContent = txt; b.hidden = n===0; });
 }
 let ordersMsg = '', pendingOrderRef = null, pendingOrderRefTimer = null;
+function renderGiftLog(){
+  const box = document.getElementById('giftLog'); if(!box) return;
+  const nm = id=>{ const x = state.students.find(y=>y.id===id); return x ? x.name : '—'; };
+  const rows = [];
+  state.students.forEach(st=> (st.history||[]).forEach(h=>{ if(h.gift==='out') rows.push({from:st.name, to:h.to ? nm(h.to) : String(h.note||'').replace('اهدا به ',''), amt:-h.delta, date:h.date, ts:h.ts||0}); }));
+  rows.sort((a,b)=> b.date.localeCompare(a.date) || b.ts-a.ts);
+  const last = rows.slice(0,5);
+  box.innerHTML = last.length ? last.map(r=>`<div class="shop-row dim"><span class="sr-ic">🎁</span><span class="sr-nm">${escapeHtml(r.from)} ← ${escapeHtml(r.to)}<small>${faNum(r.amt)} امتیاز · ${faDate(r.date)}</small></span></div>`).join('') : '<div class="empty-note" style="padding:10px 6px;">هنوز اهدایی ثبت نشده</div>';
+}
 function renderOrdersPanel(){
+  renderGiftLog();
   const box = document.getElementById('ordersList'); if(!box) return;
   const nameOf = id=>{ const st = state.students.find(x=>x.id===id); return st ? st.name : '—'; };
   const pend = pendingOrders().slice().reverse();
@@ -5088,10 +5143,19 @@ document.querySelectorAll('#msSeg button').forEach(b=>b.addEventListener('click'
   if(msMode==='shop'){ shopMsg=''; pendingBuy=null; renderShop(); } else if(msMode==='perks') renderPerks();
 }));
 document.getElementById('student-shop').addEventListener('click', e=>{
+  const ga = e.target.closest('[data-gamt]'); if(ga){ giftAmt += parseInt(ga.dataset.gamt); giftPick = null; renderShop(); return; }
+  const gt = e.target.closest('[data-gto]'); if(gt){ giftPick = (giftPick===gt.dataset.gto) ? null : gt.dataset.gto; renderShop(); return; }
+  if(e.target.closest('[data-gno]')){ giftPick = null; renderShop(); return; }
+  if(e.target.closest('[data-gyes]')){ giftSend(); return; }
   const op = e.target.closest('[data-open]'); if(op){ openSheet(op.dataset.open); return; }
   const ct = e.target.closest('[data-cat]'); if(ct){ shopCat = ct.dataset.cat; renderShop(); return; }
   const b = e.target.closest('button'); if(!b) return;
   if(b.dataset.buy) buyItem(b.dataset.buy); else if(b.dataset.vip) buyVip(b.dataset.vip);
+});
+document.getElementById('student-shop').addEventListener('input', e=>{
+  if(e.target.id!=='giftQ') return;
+  giftQuery = e.target.value; const q = giftQuery.trim();
+  document.querySelectorAll('#student-shop .gift-n').forEach(b=>{ b.hidden = !!q && !b.textContent.includes(q); });
 });
 document.getElementById('ordersList').addEventListener('click', e=>{
   const ok = e.target.closest('[data-odone]'), no = e.target.closest('[data-oref]');
@@ -5369,6 +5433,7 @@ stateRef.onSnapshot({includeMetadataChanges:true}, (snap)=>{
 .sv-nm{flex:1; min-width:0;} .sv-nm b{display:block; font-size:12.5px; font-weight:700; line-height:1.6;} .sv-nm small{display:block; font-size:9.5px; color:var(--muted); margin-top:1px;}
 .sv-row .si-btn{width:104px; flex:none; height:34px;}
 .subj-inner .t-in{padding:0;} .subj-inner .t-note{margin-top:0;}
+.subj-list{grid-template-columns:minmax(0,1fr);} .subj-list>.subj-row,.dc-list,.dc-item{min-width:0;}
 .si-btn:active{transform:scale(.96);}
 .si-btn.low{opacity:.45;}
 .shop-item .si-btn.alt{background:rgba(255,255,255,.08); box-shadow:none; border-color:rgba(255,255,255,.2);}
@@ -5452,8 +5517,6 @@ stateRef.onSnapshot({includeMetadataChanges:true}, (snap)=>{
 .drawer{margin:12px 0; border-radius:22px; border:1px solid rgba(255,255,255,.14); background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02)); overflow:hidden;}
 .drawer-h{width:100%; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 16px; background:none; border:0; color:var(--text); font-family:inherit; cursor:pointer; text-align:right;}
 .drawer-h span{display:flex; flex-direction:column; gap:3px;} .drawer-h b{font-size:14px;} .drawer-h small{font-size:10.5px; color:var(--muted);}
-.chev{width:10px; height:10px; border-left:2px solid var(--muted); border-bottom:2px solid var(--muted); transform:rotate(-45deg); transition:transform .25s; flex:none;}
-.drawer.open .chev{transform:rotate(135deg);}
 .drawer .shop-grid{padding:0 12px 14px;}
 .drawer .shop-item b{min-height:34px;}
 .t-in{padding:0 12px 14px;}
@@ -5514,6 +5577,20 @@ stateRef.onSnapshot({includeMetadataChanges:true}, (snap)=>{
 .hb-more{font-size:10px; font-weight:800; color:#fff; background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.3); border-radius:99px; padding:2px 7px;}
 @media (prefers-reduced-motion:reduce){.hbw::before,.sp{animation:none!important;} .sp{display:none;}}
 .sheet-prev{--c1:#9a72ff; --c2:#cdbbff; --glow:rgba(154,114,255,.65);}
+</style>
+<style id="gift-style">
+.gift-amt{direction:ltr; display:flex; align-items:center; justify-content:center; gap:16px; margin:2px 0 14px;}
+.gift-step{width:46px; height:46px; border-radius:50%; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.08); color:#fff; font-family:inherit; font-size:24px; font-weight:800; cursor:pointer; line-height:1;}
+.gift-step:disabled{opacity:.3; cursor:default;} .gift-step:active:not(:disabled){transform:scale(.92);}
+.gift-val{min-width:96px; text-align:center;} .gift-val b{display:block; font-size:30px; font-weight:800; line-height:1.1;} .gift-val small{font-size:10.5px; color:var(--muted);}
+.gift-ask{margin:0 0 12px; padding:12px; border-radius:16px; text-align:center; font-size:12.5px; line-height:1.9; background:rgba(255,159,192,.12); border:1px solid rgba(255,159,192,.4);}
+.gift-btns{display:flex; gap:8px; margin-top:8px;}
+.gift-yes,.gift-no{height:40px; border-radius:999px; font-family:inherit; font-size:12.5px; font-weight:800; cursor:pointer; border:1px solid rgba(255,255,255,.3); color:#fff;}
+.gift-yes{flex:2; background:linear-gradient(180deg,#ffb3cf,#e0507f); color:#2a0b17;} .gift-no{flex:1; background:rgba(255,255,255,.08);} .gift-yes:disabled{opacity:.5;}
+#giftQ{margin-bottom:10px;}
+.gift-names{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; max-height:300px; overflow-y:auto; overscroll-behavior:contain; padding:2px;}
+.gift-n{height:42px; padding:0 8px; border-radius:14px; font-family:inherit; font-size:12px; font-weight:700; color:var(--text); background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); cursor:pointer; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0;}
+.gift-n[hidden]{display:none;} .gift-n.on{background:rgba(255,159,192,.22); border-color:#ff9fc0; color:#fff;}
 </style>
 </body>
 </html>
